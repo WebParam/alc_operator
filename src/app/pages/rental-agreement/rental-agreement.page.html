@@ -90,11 +90,9 @@
                           {{fullvehicles?.registration}}</small><br /><br />
                         <small style="  text-transform: uppercase;">Transmission:
                           {{fullvehicles?.manualAuto=="A"?"Automatic":"Manual"}}</small><br /><br />
-                        <small style="  text-transform: uppercase;">Fuel type:
-                          {{fullvehicles?.fuelType=="D"?"Diesel":"Petrol"}}</small><br /><br />
-                        <small style="  text-transform: uppercase;">Max Passengers:
-                          {{leg?.vehiclePax}}</small><br /><br />
-                        <small style="  text-transform: uppercase;">Km at start: {{leg?.lastOdo}}</small>
+                        <small style="  text-transform: uppercase;">Fuel reading:
+                          {{fullvehicles?.fuelLevel}}</small><br /><br />
+                        <small style="  text-transform: uppercase;">Latest Odo: {{fullvehicles?.lastOdo}}</small>
                       </ion-col>
 
                       <ion-col>
