@@ -18,9 +18,9 @@ import { AlertController } from '@ionic/angular';
 })
 export class ScanLicencePage implements OnInit {
   public photos: any[] = [];
-    currentLeg: any = {};
   public isUploading = false;
   public mva = '';
+  currentLeg: any = {};
 
   public additionalDrivers: {
     licenceNumber: string;
@@ -34,18 +34,18 @@ export class ScanLicencePage implements OnInit {
   });
 
   months = [
-    { name: 'January', value: '01' },
-    { name: 'February', value: '02' },
-    { name: 'March', value: '03' },
-    { name: 'April', value: '04' },
-    { name: 'May', value: '05' },
-    { name: 'June', value: '06' },
-    { name: 'July', value: '07' },
-    { name: 'August', value: '08' },
-    { name: 'September', value: '09' },
-    { name: 'October', value: '10' },
-    { name: 'November', value: '11' },
-    { name: 'December', value: '12' },
+    { name: 'January', value: '01', index: 0 },
+    { name: 'February', value: '02', index: 1 },
+    { name: 'March', value: '03', index: 2 },
+    { name: 'April', value: '04', index: 3 },
+    { name: 'May', value: '05', index: 4 },
+    { name: 'June', value: '06', index: 5 },
+    { name: 'July', value: '07', index: 6 },
+    { name: 'August', value: '08', index: 7 },
+    { name: 'September', value: '09', index: 8 },
+    { name: 'October', value: '10', index: 9 },
+    { name: 'November', value: '11', index: 10 },
+    { name: 'December', value: '12', index: 11 },
   ];
 
   years: string[] = [];
@@ -64,12 +64,20 @@ export class ScanLicencePage implements OnInit {
       .subscribe((res) => {
         console.log('Booking status:', res.status);
       });
-      this.currentLeg = this.bookingsService.currentLeg;
+    this.currentLeg = this.bookingsService.currentLeg;
   }
 
   ngOnInit() {
     this.form.markAllAsTouched();
-    const currentYear = new Date().getFullYear();
+
+    const currentDate = new Date();
+    const currentMonthIndex = currentDate.getMonth(); // 0-based (0 = Jan)
+    const currentYear = currentDate.getFullYear();
+
+    // Only show months from current month onward
+    this.months = this.months.filter((m) => m.index >= currentMonthIndex);
+
+    // Add 20 years for expiryYear dropdown
     for (let i = 0; i < 20; i++) {
       this.years.push((currentYear + i).toString());
     }
@@ -83,10 +91,12 @@ export class ScanLicencePage implements OnInit {
         quality: 100,
       });
 
-      this.photos = [{
-        filepath: 'soon...',
-        webviewPath: capturedPhoto.webPath,
-      }];
+      this.photos = [
+        {
+          filepath: 'soon...',
+          webviewPath: capturedPhoto.webPath,
+        },
+      ];
     } catch (err) {
       this.toast.showToast('Camera error. Please try again.');
     }
@@ -111,6 +121,10 @@ export class ScanLicencePage implements OnInit {
 
   public addAdditionalDriver() {
     this.additionalDrivers.push({ licenceNumber: '', photo: undefined });
+  }
+
+  removeAdditionalDriver(index: number) {
+    this.additionalDrivers.splice(index, 1);
   }
 
   async markAsNoShow() {
@@ -149,9 +163,8 @@ export class ScanLicencePage implements OnInit {
 
       const payload = new FormData();
 
-      // Main driver photo
       const mainPhoto = this.photos[0];
-      const mainPhotoBlob = await fetch(mainPhoto.webviewPath ?? '').then(res => res.blob());
+      const mainPhotoBlob = await fetch(mainPhoto.webviewPath ?? '').then((res) => res.blob());
       payload.append('file', mainPhotoBlob);
       payload.append('licenceNumber', this.form.value.licenceNumber ?? '');
 
@@ -160,7 +173,6 @@ export class ScanLicencePage implements OnInit {
       const formattedDate = `${expiryYear}-${expiryMonth}`;
       payload.append('expiryDate', formattedDate);
 
-      // Additional drivers
       for (let i = 0; i < this.additionalDrivers.length; i++) {
         const driver = this.additionalDrivers[i];
 
@@ -170,7 +182,7 @@ export class ScanLicencePage implements OnInit {
           return;
         }
 
-        const blob = await fetch(driver.photo.webviewPath).then(res => res.blob());
+        const blob = await fetch(driver.photo.webviewPath).then((res) => res.blob());
         payload.append(`additionalDriverPhotos`, blob, `driver${i + 1}.jpg`);
         payload.append(`additionalDriverNumbers`, driver.licenceNumber);
       }
@@ -196,29 +208,28 @@ export class ScanLicencePage implements OnInit {
     }
   }
 
-    inspection() {
-    const isDel = this.bookingsService.delieveryType =='BOOKING COLLECTION' ? true : false;
-    
-    const mva = this.currentLeg?.mvaNumber
+  inspection() {
+    const isDel = this.bookingsService.delieveryType == 'BOOKING COLLECTION';
+    const mva = this.currentLeg?.mvaNumber;
 
-    if(isDel) {
+    if (isDel) {
       this.router.navigateByUrl(`/vehicle-inspection/${mva}/${this.currentLeg?.bookingNumber}`);
-
-    }else{
-      this.router.navigateByUrl(
-        `/customer-accessories/${mva}`
-      );
-
+    } else {
+      this.router.navigateByUrl(`/customer-accessories/${mva}`);
     }
   }
 
-
   // Navigation
-  manifest() { this.router.navigateByUrl('/manifest-screen'); }
-  transfer() { this.router.navigateByUrl('/vehicle-transfer'); }
-  lostitem() { this.router.navigateByUrl('/forgot-item'); }
-  logoff() { this.router.navigateByUrl('/login'); }
-  removeAdditionalDriver(index: number) {
-  this.additionalDrivers.splice(index, 1);
-}
+  manifest() {
+    this.router.navigateByUrl('/manifest-screen');
+  }
+  transfer() {
+    this.router.navigateByUrl('/vehicle-transfer');
+  }
+  lostitem() {
+    this.router.navigateByUrl('/forgot-item');
+  }
+  logoff() {
+    this.router.navigateByUrl('/login');
+  }
 }
