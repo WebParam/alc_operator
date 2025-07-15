@@ -1,0 +1,93 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <!-- <ion-button>
+        <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
+      </ion-button> -->
+      <ion-button>
+        <ion-back-button> </ion-back-button>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Login</ion-title>
+    <!-- <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons> -->
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="loginForm" (ngSubmit)="login()" novalidate>
+    <div>
+      <ion-list class="ion-margin-top-50">
+        <div *ngIf="''!=alert_text" class="ion-text-center">
+          <ion-text color="danger">{{alert_text}}</ion-text>
+        </div>
+        <ion-item class="ion-margin-top" lines="none">
+          <ion-input
+            type="tel"
+            label="Employee No."
+            labelPlacement="floating"
+            formControlName="employeeNumber"
+            errorText="A valid employee number is required"
+          ></ion-input>
+        </ion-item>
+        <ion-item class="ion-margin-top" lines="none">
+          <ion-input
+            type="tel"
+            label="Pin"
+            labelPlacement="floating"
+            formControlName="pin"
+            errorText="Pin is required"
+          ></ion-input>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <ion-button expand="full" class="ion-margin-top-50" type="submit">
+      Log in
+    </ion-button>
+
+    <ion-list>
+      <div *ngIf="''!=alert_text" class="ion-text-center">
+        <ion-text color="danger">{{alert_text}}</ion-text>
+      </div>
+    </ion-list>
+    <ion-list class="ion-margin-top-50">
+      <ion-item>
+        <ion-checkbox
+          [checked]="resetPassworChecked"
+          (ionChange)="toggleReset()"
+          slot="start"
+        ></ion-checkbox>
+        <ion-label>Reset pin</ion-label>
+      </ion-item>
+      <ion-label *ngIf="resetPassworChecked==true" style="margin-left: 2%"
+        >An SMS containing your new pin will be sent to your phone number.
+      </ion-label>
+      <ion-item
+        *ngIf="resetPassworChecked==true"
+        class="ion-margin-top"
+        lines="none"
+      >
+        <ion-input
+          (ionChange)="updateresetstaff($event)"
+          type="text"
+          label="Employee No."
+          labelPlacement="floating"
+          errorText="A valid employee number is required"
+        ></ion-input>
+      </ion-item>
+    </ion-list>
+    <ion-button
+      *ngIf="resetPassworChecked==true"
+      (click)="resetPassword()"
+      expand="full"
+      class="ion-margin-top-50"
+      type="submit"
+    >
+      Reset
+    </ion-button>
+  </form>
+</ion-content>

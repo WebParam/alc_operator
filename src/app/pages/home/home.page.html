@@ -1,0 +1,33 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-title>Home</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form novalidate>
+    <ion-button
+      fill="solid"
+      color="light"
+      routerLink="/manifest-screen"
+      expand="full"
+      class="ion-margin-top-50"
+    >
+      View Bookings
+    </ion-button>
+    <ion-button
+      fill="solid"
+      color="light"
+      expand="full"
+      class="ion-margin-top-50"
+    >
+      Create VTC
+    </ion-button>
+  </form>
+</ion-content>

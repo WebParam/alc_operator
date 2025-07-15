@@ -1,0 +1,22 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Pre-Inspection: Accessories </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-list>
+    <ion-item *ngFor="let accessory of apiResponse">
+      <ion-checkbox
+        justify="space-between"
+        [(ngModel)]="accessory.accessoryFound2"
+        >{{accessory?.accessorySpecification}}</ion-checkbox
+      >
+    </ion-item>
+  </ion-list>
+  <div class="ion-padding">
+    <ion-button expand="full" class="ion-margin-top-50" (click)="update()">
+      Confirm
+    </ion-button>
+  </div>
+</ion-content>

@@ -1,0 +1,31 @@
+.img-lic {
+  height: 60px;
+}
+.grey-bg {
+  background-color: #ccc;
+}
+.bottom-left-corner {
+  border-left: #ccc solid 1px;
+  border-bottom: #ccc solid 1px;
+}
+.top-left-corner {
+  border-left: #ccc solid 1px;
+  border-top: #ccc solid 1px;
+}
+
+.bottom-right-corner {
+  border-right: #ccc solid 1px;
+  border-bottom: #ccc solid 1px;
+}
+.top-right-corner {
+  border-right: #ccc solid 1px;
+  border-top: #ccc solid 1px;
+}
+.bordered-top {
+  border-top: #ccc solid 2px;
+}
+.lic-photo {
+  display: flex;
+  justify-content: center;
+  padding-top: 50px;
+}

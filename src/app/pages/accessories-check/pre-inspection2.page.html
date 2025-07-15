@@ -1,0 +1,31 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-title>Accessories Checker</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <ion-grid [fixed]="false">
+    <ion-row style="border-bottom: groove; margin-top: 5%; margin-bottom: 10%;">
+      <ion-col size="4">Book: {{booking.bookingId}}</ion-col>
+         <ion-col>Code</ion-col>
+      <ion-col>Present</ion-col>
+    </ion-row>
+    <ng-container *ngFor="let item of leg.vehicle.vehicleExtras.vehicleExtra ">
+      <ion-row>
+        <ion-col size="6"><small>{{item.description}}</small></ion-col>
+        <ion-col size="2"><small>{{item.code}}</small></ion-col>
+        <ion-col size="4"><ion-toggle checked="isChecked(item.code)" (ionChange)="markAsMissing(item)" ></ion-toggle></ion-col>
+      </ion-row>
+      <br/>
+    </ng-container>
+  </ion-grid>
+  <ion-button expand="full" (click)="continue()" class="ion-margin-top-50" type="submit">
+    Continue
+  </ion-button>
+</ion-content>

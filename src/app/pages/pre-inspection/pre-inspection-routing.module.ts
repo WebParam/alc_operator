@@ -1,0 +1,17 @@
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+
+import { PreInspectionPage } from './pre-inspection.page';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: PreInspectionPage
+  }
+];
+
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
+})
+export class PreInspectionPageRoutingModule {}

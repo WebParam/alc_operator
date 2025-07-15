@@ -1,0 +1,115 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Scan Licence</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- Main Licence Number Input -->
+  <ion-item>
+    <ion-label position="stacked">Licence Number</ion-label>
+    <ion-input [formControl]="form.controls['licenceNumber']" placeholder="Enter licence number"></ion-input>
+  </ion-item>
+
+  <!-- Expiry Date Inputs -->
+  <ion-item>
+    <ion-label position="stacked">Expiry Month</ion-label>
+    <ion-select placeholder="Select month" [formControl]="form.controls['expiryMonth']">
+      <ion-select-option *ngFor="let m of months" [value]="m.value">{{ m.name }}</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Expiry Year</ion-label>
+    <ion-select placeholder="Select year" [formControl]="form.controls['expiryYear']">
+      <ion-select-option *ngFor="let y of years" [value]="y">{{ y }}</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <!-- Preview of main driver photo -->
+  <div *ngIf="photos.length > 0" class="preview-container" style="margin-top: 16px;">
+    <ion-text color="medium">
+      <p>Preview of captured licence:</p>
+    </ion-text>
+    <img [src]="photos[0].webviewPath" alt="Captured Photo" style="width: 30%; border-radius: 8px;" />
+  </div>
+
+  <!-- Button Row -->
+  <div class="ion-margin-top-10">
+    <ion-row>
+      <ion-col size="4">
+        <ion-button expand="block" (click)="takePhoto()">Capture Licence Photo</ion-button>
+      </ion-col>
+      <ion-col size="4">
+        <ion-button expand="block" (click)="addAdditionalDriver()">Add Additional Driver</ion-button>
+      </ion-col>
+      <ion-col size="4">
+        <ion-button expand="full" (click)="markAsNoShow()">
+          Mark licence expired / no show
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </div>
+
+  <!-- Additional Driver Entries -->
+  <div *ngFor="let driver of additionalDrivers; let i = index" class="ion-margin-top">
+    <ion-item>
+      <ion-label position="stacked">Driver {{ i + 1 }} Licence Number</ion-label>
+      <ion-input [(ngModel)]="driver.licenceNumber" placeholder="Enter licence number"></ion-input>
+      <ion-button slot="end" fill="clear" color="danger" (click)="removeAdditionalDriver(i)">
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+
+    <ion-button expand="block" fill="clear" (click)="takeAdditionalPhoto(i)">
+      Capture Photo for Driver {{ i + 1 }}
+    </ion-button>
+
+    <div *ngIf="driver.photo?.webviewPath">
+      <img [src]="driver.photo?.webviewPath" alt="Additional Driver Photo"
+        style="max-width: 30%; border-radius: 8px;" />
+    </div>
+  </div>
+
+  <!-- Continue Button -->
+  <ion-button expand="block" [disabled]="photos.length === 0 || form.invalid || isUploading" (click)="inspection()">
+    <ion-spinner *ngIf="isUploading" name="dots" slot="start"></ion-spinner>
+    Continue
+  </ion-button>
+
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-tabs>
+      <ion-tab-bar slot="bottom">
+        <ion-tab-button (click)="manifest()">
+          <ion-label>Home</ion-label>
+          <ion-icon name="home-outline"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="manifest()">
+          <ion-label>Manifest</ion-label>
+          <ion-icon name="calendar-number-outline"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="transfer()">
+          <ion-label>Transfer</ion-label>
+          <ion-icon name="build-outline"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="lostitem()">
+          <ion-label>Lost item</ion-label>
+          <ion-icon name="eye-outline"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="logoff()">
+          <ion-label>Logoff</ion-label>
+          <ion-icon name="power-outline"></ion-icon>
+        </ion-tab-button>
+      </ion-tab-bar>
+    </ion-tabs>
+  </ion-toolbar>
+</ion-footer>

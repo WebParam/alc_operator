@@ -1,0 +1,24 @@
+ion-content {
+    --background: #000000; /* Set the background color to black */
+  }
+
+  ion-content ion-text {
+    color: #ffffff; /* Set the text color to black */
+  }
+
+  .center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Set the container height to fill the viewport */
+  }
+  
+  .center-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  ion-text {
+    font-size: 24px; /* Adjust the font size as needed */
+  }

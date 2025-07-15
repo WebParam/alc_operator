@@ -1,0 +1,63 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-title>Start VTC</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="scanner-container" style="margin-top: 10%;">
+    <video *ngIf="hasScanned"  #video width="100%" height="300" autoplay muted playsinline></video>
+  </div>
+
+  <p *ngIf="scanResult">Scanned MVA: {{ scanResult }}</p>
+
+  <ion-button expand="block" *ngIf="!hasScanned" (click)="continue()">Scan</ion-button>
+   <!-- <ion-button expand="block" *ngIf="!hasScanned" (click)="scanDrivers()">Scan Licence</ion-button> -->
+
+
+    <ion-input 
+  type="string" 
+  placeholder="MVA number" 
+  [(ngModel)]="mvaNumber"  
+></ion-input>
+
+<ion-button expand="block" [disabled]="mvaNumber.length<5" (click)="manual()">Proceed</ion-button>
+</ion-content>
+
+<ion-footer>
+ <ion-toolbar>
+    <ion-tabs>
+      <ion-tab-bar slot="bottom">
+        <ion-tab-button (click)="home()">
+          <ion-label>Home</ion-label>
+          <ion-icon           
+            name="home-outline"
+          ></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="manifest()">
+          <ion-label>Manifest</ion-label>
+          <ion-icon            
+            name="calendar-number-outline"
+          ></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="transfer()">
+          <ion-label>Transfer</ion-label>
+          <ion-icon name="build-outline"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="lostitem()">
+          <ion-label>Lost item</ion-label>
+          <ion-icon  name="eye-outline"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="logoff()">
+          <ion-label>Logoff</ion-label>
+          <ion-icon  name="power-outline"></ion-icon>
+        </ion-tab-button>
+      </ion-tab-bar>
+    </ion-tabs>
+  </ion-toolbar>
+</ion-footer>

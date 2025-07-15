@@ -1,0 +1,192 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-title>Navigate to delivery</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <div class="trip-details">
+    <div class="ion-padding" slot="content">
+      <ion-card>
+        <ion-card-content>
+          <ion-list>
+            <ng-container>
+              <!-- <ion-item> -->
+              <span
+                style=" float:right; margin-left:10px;width: fit-content; color: black; padding: 2px 8px; font-size: 16px; font-weight: bold; transform: skew(-15deg); border-radius: 3px;">
+                BOOKING: {{currentLeg?.bookingNumber}} - Stage: {{currentLeg?.stageNumber}} ({{currentLeg?.serviceTypeDescription}})
+              </span>
+
+              <!-- </ion-item> -->
+              <ion-item style="border: none;">
+                <p>
+                  <span className="mr-2" style="font-weight: bold;">
+                    CUSTOMER:
+                  </span>
+                  {{currentLeg?.customerName }}
+                </p>
+              </ion-item>
+              <ion-item>
+                <p>
+                  <span className="mr-2" style="font-weight: bold;">
+                    COLLECTION:
+                  </span>
+
+                  {{currentLeg?.collectionAddress}}{{currentLeg?.collectionAddress2}}
+                </p>
+              </ion-item>
+              <ion-item>
+                <p>
+                  <span className="mr-2" style="font-weight: bold;">
+                    DESTINATION:
+                  </span>
+                  {{currentLeg?.destinationAddress}}{{currentLeg?.destinationAddress2}}
+                </p>
+              </ion-item>
+              <ion-item>
+                <p>
+
+                  <span className="mr-2" style="font-weight: bold; text-transform: capitalize;"> BOOKING DATE: </span>
+                  {{currentLeg?.bookingDate}} 
+                </p>
+              </ion-item>
+              <ion-item>
+                <p>
+
+                  <span className="mr-2" style="font-weight: bold; text-transform: capitalize;"> BOOKING TIME: </span>
+                
+                  {{currentLeg?.timeFrom}}
+                </p>
+              </ion-item>
+              <!-- <ion-item>
+
+                <p>
+                  Customer phone:
+                  {{currentLeg?.vehicleDetails?.results[0]?.mainPassengerContactNumber}}
+                </p>
+              </ion-item> -->
+              <!-- <ion-item>
+                <div class="ion-text-right">
+                  <p *ngIf="estimatedTime">
+                    Est arrival: {{estimatedTime | date : 'HH:mm'}}
+                  </p>
+                </div>
+              </ion-item> -->
+            </ng-container>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+
+
+      <ion-card>
+        <ion-card-content>
+          <ion-list>
+            <!-- <ion-item> -->
+            <span
+              style=" float:right; margin-left:10px;width: fit-content; color: black; padding: 2px 8px; font-size: 16px; font-weight: bold; transform: skew(-15deg); border-radius: 3px;">
+              TRIP DETAILS
+            </span>
+            <!-- </ion-item> -->
+            <ng-container *ngFor="let vehicle of currentLeg?.vehicleDetails.results">
+              <ion-row>
+                <ion-col>
+                  <ion-item>
+
+                    <p>
+
+                      <span className="mr-2" style="font-weight: bold;"> {{vehicle.vehicleTypeDescription}}
+                        ({{vehicle.vehicleType}})</span><br />
+                    </p>
+                  </ion-item>
+                </ion-col>
+                <ion-col>
+                  <ion-item>
+
+
+
+                  </ion-item>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-item>
+
+                    <p>
+
+                      <span className="mr-2" style="font-weight: bold;"> 
+                      KM's: </span> {{vehicle.kilometerValue}} <br />
+                    </p>
+                  </ion-item>
+                </ion-col>
+
+                <ion-col>
+                  <ion-item>
+
+                    <p>
+
+                      <span className="mr-2" style="font-weight: bold;"> Passengers:
+                        ({{vehicle.paxTo  }})</span><br />
+                    </p>
+                  </ion-item>
+                </ion-col>
+
+              </ion-row>
+              <ion-item>
+
+
+                <img [src]="vehicle?.storageUrl?.storageUrl" />
+
+              </ion-item>
+
+
+            </ng-container>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-content>
+          <ion-list>
+            <!-- <ion-item> -->
+            <span
+              style=" float:right; margin-left:10px;width: fit-content; color: black; padding: 2px 8px; font-size: 16px; font-weight: bold; transform: skew(-15deg); border-radius: 3px;">
+              PASSENGERS
+            </span>
+            <!-- </ion-item> -->
+            <ng-container *ngFor="let passenger of currentLeg?.passengers.results">
+
+              <ion-item>
+                <p>
+                  <!-- <ion-icon name="map-outline"></ion-icon> -->
+                  <span className="mr-2" style="font-weight: bold; text-transform: capitalize;">
+                    {{passenger.passengerTitle}} {{passenger.passengerName}} </span> - Contact:
+                  {{passenger.passengerContactNumber}}
+                </p>
+              </ion-item>
+
+            </ng-container>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- 
+      <ion-card>
+        <ion-card-content> -->
+      <!-- <ion-button expand="full" color="light">Call</ion-button>
+      <ion-button expand="full" color="light">Notify</ion-button> -->
+      <ion-button expand="full" *ngIf="navText=='Start'" (click)="startTrip()">
+        Start navigation</ion-button>
+      <ion-button expand="full" *ngIf="navText!='Start'" (click)="endTrip()">At delivery</ion-button>
+      <!-- </ion-card-content>
+        </ion-card> -->
+
+
+
+    </div>
+  </div>
+</ion-content>

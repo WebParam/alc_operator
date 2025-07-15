@@ -1,0 +1,86 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-title>Book a Luxury Vehicle</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear">
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ng-container >
+    <ion-img [src]="selectedVehicle?.image?.storageUrl"></ion-img>
+    <div class="vehicle-text-header">
+      <ion-text>{{selectedVehicle?.description}}</ion-text>
+      <ion-icon name="heart-outline"></ion-icon>
+    </div>
+
+    <ion-grid class="ion-margin-top-5">
+      <ion-row>
+        <ion-col>
+          No of Doors:
+        </ion-col>
+        <ion-col>
+          {{selectedVehicle?.doors}}
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          Max passengers:
+        </ion-col>
+        <ion-col>
+          {{selectedVehicle?.maxPassengers}}
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          No. of Med Suitcases:
+        </ion-col>
+        <ion-col>
+          {{selectedVehicle?.suitCases}}
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          Transmission:
+        </ion-col>
+        <ion-col>
+          {{selectedVehicle?.transmissionType}}
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          Fuel type:
+        </ion-col>
+        <ion-col>
+          {{selectedVehicle?.fuelType}}
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <div class="ion-margin-top-5">
+      <sub> Note: Minimum age for this vehicle is 25 years of age. Renters be-tween 21 & 25 will be at managers
+        discretion and
+        a young drivers sur-charge will apply.</sub>
+    </div>
+    <div class="ion-margin-top-5">
+      <div *ngFor="let extra of selectedVehicle?.vehicleExtras?.vehicleExtra; let i = index">
+        <div class="extra">
+          <ion-select [placeholder]="extra.description" (ionChange)="addRemoveOption($event, extra)">
+            <ion-select-option [value]="i" *ngFor="let i of generateRange(extra.maxAllowed)">{{i}}</ion-select-option>
+          </ion-select>
+        </div>
+      </div>
+    </div>
+    <div class="ion-margin-top-10">
+      <a routerLink="/">View Rental Summary</a>
+    </div>
+    <ion-button expand="full" class="ion-margin-top-10" color="secondary" (click)="onChangeVehicle()">
+      Change Vehicle
+    </ion-button>
+    <ion-button expand="full" class="ion-margin-top-5" (click)="onConfirmVehicle()">
+      Confirm Vehicle
+    </ion-button>
+  </ng-container>
+</ion-content>

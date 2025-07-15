@@ -1,0 +1,244 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-title>Your bookings</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-row>
+    <!-- <ion-col size="8">
+      <ion-segment value="t1">
+        <ion-segment-button value="t1">
+          <ion-label>Today</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="t3">
+          <ion-label>Future</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </ion-col> -->
+    <ion-col size="4">
+      <ion-select placeholder="Select Option" [(ngModel)]="selectedOption" (ionChange)="onBookingTypeChange($event)">
+        <ion-select-option value="">All</ion-select-option>
+        <ion-select-option value="ci">CI</ion-select-option>
+        <ion-select-option value="co">CO</ion-select-option>
+        <ion-select-option value="ex">EX</ion-select-option>
+      </ion-select>
+    </ion-col>
+  </ion-row>
+  <div class="bookings-container ion-margin-top">
+    <ion-grid ion-padding>
+      <ng-container *ngFor="let _booking of selectedBookings">
+        <ng-container *ngFor="let booking of _booking?.legs;  let i = index">
+          <ion-row>
+            <ion-col>
+              <ion-img style="width: 150px"
+                [src]="booking?.vehicleDetails?.results[booking?.vehicleDetails?.results.length-1]?.storageUrl?.storageUrl"></ion-img>
+
+            </ion-col>
+            <ion-col>
+              <span class="" style="font-weight: bold; font-size:18px">
+                {{booking?.vehicleDetails?.results[booking?.vehicleDetails?.results.length-1]?.vehicleTypeDescription}}
+                </span>
+            </ion-col>
+
+          </ion-row>
+          <ion-row>
+            <ion-col size="9">
+              <ion-row [class.confirmed-booking]="booking.status === 'Booking Confirmed'">
+                <ion-col>
+                  <ion-label>
+                    <p>
+
+                    </p>
+                  </ion-label>
+                </ion-col>
+              </ion-row>
+
+              <ion-row>
+                <p style="font-weight: bold;">START</p>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-label>
+                    <p style="font-weight: bold;">
+                      Customer:
+                      <small style="font-weight: normal;">{{booking.customerTitle}}
+                        {{switchNameFormat(booking.vehicleDetails.results[booking?.vehicleDetails?.results.length-1]?.mainPassengerName)}}</small>
+                    </p>
+
+
+                  </ion-label>
+                </ion-col>
+
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-label>
+
+                    <p style="font-weight: bold;">
+                      <!-- {{booking.serviceTypeDescription}}    -->
+                      Location:
+                      <small style="font-weight: normal;">
+                        <span class="small-text">
+                          {{booking.destinationAddress}}
+                          {{booking.destinationAddress2}}
+                        </span>
+
+                      </small>
+                    </p>
+                    <p style="font-weight: bold;">
+                      Start:
+                      <small style="font-weight: normal;">
+                        <span class="small-text">
+                          {{booking.bookingDate}}  {{booking.timeFrom}}
+                        </span>
+
+                      </small>
+                    </p>
+                     <p style="font-weight: bold;">
+                      End:
+                      <small style="font-weight: normal;">
+                        <span class="small-text">
+                          {{booking.vehicleDetails?.results[0]?.bookingDateTo}}  {{booking.timeTo}}
+                        </span>
+
+                      </small>
+                    </p>
+
+
+                  </ion-label>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-label *ngIf="booking.miscellaneousCharges.results.length > 0">
+                    <p style="font-weight: bold;">
+                      <span style=""> Accessories </span>
+                    </p>
+                    <ng-container *ngFor="let accessory of booking.miscellaneousCharges.results">
+                      <p>
+                        <small style="font-weight: normal;">
+                          <span class="small-text">
+                            - {{accessory.description}}
+                          </span>
+                        </small>
+                      </p>
+                    </ng-container>
+                  </ion-label>
+                  <ion-label *ngIf="booking.miscellaneousCharges.results.length == 0">
+                    <p><span style="font-weight: bold;"> No accessories </span></p>
+
+
+                  </ion-label>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col *ngIf="booking.remarks.results.length > 0">
+                  <ion-label>
+                    <p><span style="font-weight: bold;">Note: </span><span class="xsmall-text">
+                        {{booking.remarks.results[0].remarkText}} </span></p>
+                  </ion-label>
+                </ion-col>
+                <ion-col *ngIf="booking.remarks.results.length == 0">
+                  <ion-label>
+                    <p><span style="font-weight: bold;" class="xsmall-text">No note </span></p>
+                  </ion-label>
+                </ion-col>
+              </ion-row>
+            </ion-col>
+            <ion-col size="3" style="text-align: center">
+              <p style="
+                  padding-top: 8%;
+                  padding-bottom: 8%;
+                  padding-left: 1%;
+                  padding-right: 1%;
+                  font-weight: bold;
+                ">
+                <ion-label>
+                  <div
+                    style=" font-size: 35px;width: fit-content; background-color: rgb(96, 96, 96); color: white; padding: 2px 8px; font-weight: bold; border-radius: 3px;">
+                    {{_booking.bookingType?.trim() =="booking delivery"?"C/O":_booking.bookingType?.trim()=="exchange"?"EX": _booking.bookingType?.trim()=="booking collection"?"C/I":"TR" }}
+                  </div>
+                </ion-label>
+              </p>
+
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="selectedTab !=='t3'">
+            <ion-col size="4">
+              <ion-button expand="full" (click)="view(booking)" class="action-buttons">View</ion-button>
+            </ion-col> 
+           
+            <ion-col size="4">
+              <ion-button *ngIf="booking.vehicleDetails?.results.length==1" expand="full"
+                (click)="inspect(booking, _booking,booking.bookingType?.trim())" class="action-buttons">
+
+                Begin inspection
+
+              </ion-button>
+
+              <ion-button *ngIf="booking.vehicleDetails?.results.length>1" expand="full"
+                (click)="inspect(booking, _booking,booking.vehicleDetails?.results[0]?.allocationType?.trim())"
+                class="action-buttons">
+                Begin exchange
+              </ion-button>
+
+            </ion-col>
+ <ion-col size="4">
+              <ion-button expand="full" (click)="skipInspect(booking, _booking)" class="action-buttons">
+                Begin {{ _booking.bookingType?.trim() =="booking delivery"?"delivery":"collection"}}</ion-button>
+            </ion-col>
+            <ion-col>
+
+            </ion-col>
+          </ion-row>
+          <ion-row *ngIf="selectedTab === 't3'">
+            <ion-col size="12">
+              <ion-button expand="full" (click)="view(booking)" class="action-buttons" size="small">View</ion-button>
+            </ion-col>
+            <ion-col>
+            </ion-col>
+          </ion-row>
+        </ng-container>
+        <hr style="border-bottom: 1px solid whitesmoke; margin: 21px" />
+      </ng-container>
+    </ion-grid>
+    <div *ngIf="selectedBookings.length == 0" class="ion-text-center">
+      <h3>{{message}}</h3>
+    </div>
+  </div>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-tabs>
+      <ion-tab-bar slot="bottom">
+        <ion-tab-button (click)="home()">
+          <ion-label>Home</ion-label>
+          <ion-icon name="home-outline"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="manifest()">
+          <ion-label>Manifest</ion-label>
+          <ion-icon name="calendar-number-outline"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="transfer()">
+          <ion-label>Transfer</ion-label>
+          <ion-icon name="build-outline"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="lostitem()">
+          <ion-label>Lost item</ion-label>
+          <ion-icon name="eye-outline"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="logoff()">
+          <ion-label>Logoff</ion-label>
+          <ion-icon name="power-outline"></ion-icon>
+        </ion-tab-button>
+      </ion-tab-bar>
+    </ion-tabs>
+  </ion-toolbar>
+</ion-footer>

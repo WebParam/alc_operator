@@ -1,0 +1,94 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Payment & Authorisation</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-card>
+    <ion-card-header >
+      <ion-col class="ion-text-left">
+      <ion-img style="width: 80px;" src="https://avis-dev-storage.s3.af-south-1.amazonaws.com/54e08622-6fc4-4165-98a0-d6b183363871/121.jpg"></ion-img>
+      </ion-col>
+      <ion-text style="" class="ion-text-right">Order 001 - CPT - Audi A3</ion-text>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <br><br>
+        <ion-row>
+          <ion-col class="ion-text-left">
+            <ion-text >START</ion-text>
+            <br>
+            <ion-text>05 Feb 2023 - 11:30</ion-text>
+           <br><br>
+           <ion-label>Mr. John Doe</ion-label>
+            <br>
+            <ion-label>Delivery Location</ion-label>
+            <br>
+           
+            <ion-label>Audi A3 Sportback</ion-label>  
+          </ion-col>
+          <ion-col offset="6">
+          
+            <ion-button expand="full">
+             View Booking
+            </ion-button>
+                      
+        </ion-col>
+        
+          <!-- <ion-col class="centered-column">
+            
+              
+                <ion-text>
+                  BK
+                </ion-text>
+              
+            
+          </ion-col> -->
+          
+        </ion-row>
+        
+        <br><br>
+        <ion-row>
+          
+          <ion-col class="centered-column">
+            <div class="content-container">
+              <ion-text>Method of Payment</ion-text>
+              <br><br>
+              <ion-text>VISA - XXXX XXXX XXXX 0089</ion-text>
+            </div>
+          </ion-col>
+        </ion-row>
+        <br>
+        <ion-row>
+          
+          <ion-col offset="6">
+          
+            <ion-button expand="full">
+              Amend MOP
+            </ion-button>
+                      
+        </ion-col>
+        
+        </ion-row>
+        <br><br>
+        <ion-row>
+          <ion-col>
+            <ngx-datatable class="fullscreen"  [rows]="rows" [columnMode]="'force'"  [reorderable]="false">
+              <ngx-datatable-column name="Type"></ngx-datatable-column>
+              <ngx-datatable-column name="Date"></ngx-datatable-column>
+              <ngx-datatable-column name="Code"></ngx-datatable-column>
+              <ngx-datatable-column name="Amount"></ngx-datatable-column>
+              
+            </ngx-datatable>
+            
+            
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+  <ion-button expand="full" (click)="complete()" class="ion-margin-top">
+    Complete
+  </ion-button>
+</ion-content>

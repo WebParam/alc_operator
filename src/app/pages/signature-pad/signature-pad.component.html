@@ -1,0 +1,28 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-title>Signature</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <canvas
+    #canvas
+    (touchstart)="startDrawing($event)"
+    (touchmove)="moved($event)"
+    width="700"
+    height="200"
+    style="border-bottom: 1px solid #ccc"
+  ></canvas>
+  <div class="ion-text-center">Sign above</div>
+  <ion-toolbar>
+    <ion-button expand="full" (click)="savePad()">Done</ion-button>
+    <ion-button expand="full" (click)="clearPad()" color="secondary"
+      >Clear</ion-button
+    >
+  </ion-toolbar>
+</ion-content>

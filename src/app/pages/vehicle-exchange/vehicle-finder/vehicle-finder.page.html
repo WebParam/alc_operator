@@ -1,0 +1,93 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-title>Book a Luxury Vehicle</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true" class="ion-padding">
+  <form [formGroup]="vehicleFinderForm" (ngSubmit)="doSearch()" novalidate>
+    <div>
+      <ion-list class="ion-margin-top">
+        <ion-item>
+          <ion-checkbox labelPlacement="end" [checked]="isAirportPickUp"
+            (ionChange)="enablePickUpAirport($event)">Airport Pick-up</ion-checkbox>
+          <ion-icon name="airplane-outline" slot="end"></ion-icon>
+        </ion-item>
+        <ion-item>
+          <ion-checkbox labelPlacement="end" [checked]="isAirportDropOff"
+            (ionChange)="enableDropOffAirport($event)">Airport Drop Off</ion-checkbox>
+          <ion-icon name="airplane-outline" slot="end"></ion-icon>
+        </ion-item>
+        <ion-item class="ion-margin-top address-picker-item" lines="none" *ngIf="!isAirportPickUp">
+          <ion-icon name="search" slot="start" class="address-picker-icon search-icon"></ion-icon>
+          <app-address-autocomplete (setAddress)="setPickUp($event)" label="Pick up address"></app-address-autocomplete>
+          <ion-icon name="location-outline" class="address-picker-icon map-icon" slot="end"></ion-icon>
+        </ion-item>
+        <ion-item *ngIf="isAirportPickUp">
+          <ion-select formControlName="pickUpAirport" aria-label="Pick-up Airport" placeholder="Pick-up Airport">
+            <ion-select-option [value]="airport.shortName" *ngFor="let airport of pickUpAirports">{{ airport.shortName
+              }}</ion-select-option>
+          </ion-select>
+          <!-- <ion-input type="text" label="Flight no" labelPlacement="floating" formControlName="pickupflightno"
+            errorText="Flight Number is required"></ion-input> -->
+        </ion-item>
+        <ion-item class="ion-margin-top-5 address-picker-item" lines="none" *ngIf="!isAirportDropOff">
+          <ion-icon name="search" class="address-picker-icon search-icon" slot="start"></ion-icon>
+          <app-address-autocomplete (setAddress)="setDropOff($event)"
+            label="Drop off address"></app-address-autocomplete>
+          <ion-icon name="location-outline" class="address-picker-icon map-icon" slot="end"></ion-icon>
+        </ion-item>
+        <ion-item *ngIf="isAirportDropOff">
+          <ion-select formControlName="dropOffAirport" aria-label="Drop Off Airport" placeholder="Drop Off Airport">
+            <ion-select-option [value]="airport.shortName" *ngFor="let airport of dropOffAirports">{{ airport.shortName
+              }}</ion-select-option>
+
+          </ion-select>
+          <!-- <ion-input type="text" label="Flight no" labelPlacement="floating" formControlName="dropoffflightno"
+            errorText="Flight Number is required"></ion-input> -->
+        </ion-item>
+
+        <ion-item>
+          <ion-grid>
+            <ion-row>
+              <ion-col>
+                <ion-text class="ion-text-center">
+                  <h5>START</h5>
+                  <div>
+                    <span class="date-day"> {{pickUpDate | date: 'dd'}}</span><span class="date-month">{{pickUpDate |
+                      date: 'MMM'}}</span><span class="date-year">{{pickUpDate |
+                      date: 'yyyy'}}</span><span class="date-time">{{pickUpDate |
+                      date: 'HH:mm'}}</span>
+                  </div>
+                </ion-text>
+              </ion-col>
+              <ion-col>
+                <ion-text class="ion-text-center">
+                  <h5>END</h5>
+                  <div>
+                    <span class="date-day"> {{dropOffDate | date: 'dd'}}</span><span class="date-month">{{dropOffDate |
+                      date: 'MMM'}}</span><span class="date-year">{{dropOffDate |
+                      date: 'yyyy'}}</span><span class="date-time">{{dropOffDate |
+                      date: 'HH:mm'}}</span>
+                  </div>
+                </ion-text>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-item>
+        <ion-item>
+          <ion-datetime [value]="now" [highlightedDates]="highlightedDates" min="{{minDate}}" max="{{maxDate}}"
+            (ionChange)="dateSelected($event)">
+          </ion-datetime>
+        </ion-item>
+      </ion-list>
+      <ion-button expand="full" (click)="doSearch()">Search Vehicles</ion-button>
+    </div>
+  </form>
+</ion-content>
+<!-- <app-bottom-menu></app-bottom-menu> -->

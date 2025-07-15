@@ -1,0 +1,47 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>confirmation</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-card class="ion-margin-top">
+    <ion-card-header class="ion-text-center">
+      <ion-card-title>Description of item</ion-card-title>
+      
+    </ion-card-header>
+    <ion-card-content  >
+      
+      <ion-grid>
+        <ion-row>
+          <ion-col  class="ion-text-center">
+            
+            <div>
+              <ion-textarea
+              style="text-align: left;"
+              placeholder="Please enter a brief description of the item/items."
+              [autoGrow]="true"
+              value=""
+            >
+            </ion-textarea>
+            </div>
+            <!-- <div>
+              <span>Fuel guage:</span>
+                <ion-range [pin]="true"></ion-range>
+
+            </div> -->
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+        
+      
+    </ion-card-content>
+    <ion-grid>
+      <ion-row>
+        <ion-col><ion-button color="secondary" (click)="cancel()" expand="full">Cancel</ion-button></ion-col>
+        <ion-col><ion-button color="primary" (click)="capture()" expand="full">Ok</ion-button></ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+</ion-content>

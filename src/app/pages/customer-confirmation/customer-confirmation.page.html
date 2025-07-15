@@ -1,0 +1,46 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>confirmation</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-card class="ion-margin-top">
+    <ion-card-header class="ion-text-center">
+      <ion-card-title>Update VTC</ion-card-title>
+      
+    </ion-card-header>
+    <ion-card-content  >
+      
+      <ion-grid>
+        <ion-row>
+          <ion-col  class="ion-text-center">
+            <div >
+              <span>Vehicle details</span>
+              <p>
+                Vehicle details here..
+              </p>
+            </div>
+            <div>
+              <ion-input type="Number" placeholder="Enter Kilometers" ></ion-input>
+            </div>
+            <div>
+              <span>Fuel guage:</span>
+                <ion-range [pin]="true"></ion-range>
+
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+        
+      
+    </ion-card-content>
+    <ion-grid>
+      <ion-row>
+        <ion-col><ion-button color="secondary" (click)="manifest()" expand="full">Cancel</ion-button></ion-col>
+        <ion-col><ion-button color="primary" (click)="inspection()" expand="full">Ok</ion-button></ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+</ion-content>

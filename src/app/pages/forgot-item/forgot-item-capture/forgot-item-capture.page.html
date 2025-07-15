@@ -1,0 +1,36 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-title>Capture</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <ion-card>
+    <ion-card-content *ngIf="webUrl !=''">
+      <ion-img
+        [src]="webUrl"
+        alt="">
+      </ion-img>
+      <ion-input  type="description" label="Description" labelPlacement="floating"
+            errorText="Description is required"></ion-input>
+    </ion-card-content>
+    
+  </ion-card>
+  <ion-button *ngIf="webUrl ==''" expand="full" class="ion-margin-top-50" (click)="takePicture()">
+    Capture Image 3
+  </ion-button>
+  <ion-button *ngIf="webUrl !=''" expand="full" class="" (click)="takePicture()">
+    Retake
+  </ion-button>
+  <ion-button *ngIf="webUrl !=''" expand="full" class="" (click)="savePicture()">
+    Save
+  </ion-button>
+  <ion-button *ngIf="webUrl !=''" expand="full" class="" (click)="cancel()">
+    Cancel
+  </ion-button>
+</ion-content>

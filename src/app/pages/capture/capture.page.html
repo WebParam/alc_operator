@@ -1,0 +1,72 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-title>Capture</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <ion-card>
+    
+    <ion-card-content *ngIf="webUrl !=''">
+  <ion-img [src]="webUrl" style="max-width: 25%;" alt=""> </ion-img>
+
+  <ion-item lines="none">
+    <ion-label>Damaged?</ion-label>
+    <ion-checkbox
+      slot="end"
+      [(ngModel)]="requireDescription"
+    ></ion-checkbox>
+  </ion-item>
+
+  <ion-input
+    [(ngModel)]="description"
+    type="text"
+    label="Description"
+    labelPlacement="floating"
+    [required]="requireDescription"
+    [errorText]="requireDescription && !description ? 'Description is required' : ''"
+  ></ion-input>
+</ion-card-content>
+
+
+  </ion-card>
+</ion-content>
+<ion-footer>
+  <!-- <label>Camera Type 1</label> -->
+  <!-- <input type="file" accept="image/*" capture="environment" >   -->
+
+  <!-- <label>Camera Type 2</label> -->
+  <ion-button
+    *ngIf="webUrl ==''"
+    expand="full"
+    class="ion-margin-top-50"
+    (click)="takePicture()"
+  >
+    Capture Images
+  </ion-button>
+<ion-button
+  *ngIf="webUrl !=''"
+  expand="full"
+  [disabled]="requireDescription && !description"
+  (click)="savePicture()"
+>
+  Save
+</ion-button>
+  <ion-button
+    *ngIf="webUrl !=''"
+    expand="full"
+    class=""
+    (click)="takePicture()"
+  >
+    Retake
+  </ion-button>
+ 
+  <ion-button *ngIf="webUrl !=''" expand="full" class="" (click)="cancel()">
+    Cancel
+  </ion-button>
+</ion-footer>

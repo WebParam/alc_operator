@@ -1,0 +1,189 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-title>View Booking</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+ 
+  <ion-card>
+    <ion-grid>
+      <ion-row *ngFor="let vehicle of vehicles"  class="img-vehicle-container">
+
+        <ion-img [src]="vehicle?.storageUrl?.storageUrl" />
+       <div style=" margin-top:5px; width: fit-content; background-color: rgb(96, 96, 96); color: white; padding: 2px 8px; font-size: 20px; font-weight: bold; transform: skew(-15deg); border-radius: 3px;"> {{ vehicle.allocationType}} :  {{ vehicle.vehicleTypeDescription}}</div>
+                
+      </ion-row>
+     
+      <ion-row *ngFor="let vehicle of vehicles"  class="img-vehicle-container">
+
+       <ion-col>
+            <p>VEHICLE DETAILS</p>
+            <ion-item>
+             {{ booking?.vehicle?.description ??  booking?.vehicleDetails.results[0]?.vehicleTypeDescription }}
+              
+            </ion-item>
+                <ion-item>
+             MVA: {{ booking.mvaNumber }}
+            </ion-item>
+                  <ion-item>
+             Odo: {{ booking?.vehicleDetails.results[0]?.kilometerValue }}
+            </ion-item>
+            <ion-item>
+             Reg Number: {{ vehicleDetails?.registration }}
+            </ion-item>
+            
+            
+             
+          </ion-col>
+          <ion-col *ngIf=" booking?.miscellaneousCharges.results.length >0">
+          <p>ACCESSORIES</p>
+          <ion-item *ngFor="
+          let accessory of booking?.miscellaneousCharges.results">
+            <ion-item>
+              {{ accessory.description }} X {{ accessory.numberOf}}
+            </ion-item>
+          </ion-item>
+          </ion-col>
+      </ion-row>
+
+      
+      <ion-row style="margin-top:1%">
+        <ion-col>
+           BOOKING DETAILS
+              <ion-text *ngIf="booking?.passengers?.results?.length>0">
+           
+            <div *ngFor="let driver of booking?.passengers?.results">
+              <ion-item> Passenger:  {{ driver.passengerTitle }} 
+              {{ driver.passengerName }} 
+              Contact: {{ driver.passengerContactNumber
+              }}</ion-item>
+            </div>
+              <div *ngFor="let driver of booking?.additionalDrivers">
+              <ion-item>
+              Name: {{ driver.Name }} 
+              </ion-item>
+            <ion-item>
+              Last name: 
+              {{ driver.Lastname }}
+            </ion-item>
+            <ion-item>
+              ID: {{ driver.idNumber }}
+            </ion-item>
+            </div>
+
+            <br/>
+          </ion-text>
+          <ion-row>
+                        <ion-col>
+         
+       <ion-label>BOOKING: </ion-label><br/>
+           <ion-item>{{ booking?.bookingNumber }}</ion-item>
+             
+        </ion-col>
+        <ion-col>
+         
+       <ion-label>STAGE: </ion-label><br/>
+           <ion-item>{{ booking?.stageNumber }}</ion-item>
+             
+        </ion-col>
+          </ion-row>
+             <ion-row>
+               
+        <ion-col>
+         
+       <ion-label>START</ion-label><br/>
+           <ion-item>{{ booking?.collectionAddress }} {{booking?.fromDestination}}</ion-item>
+               <ion-item>{{ booking?.bookingDate }}</ion-item>
+                <ion-item>{{ booking?.timeFrom }}</ion-item>
+        </ion-col>
+        <ion-col>
+            <ion-label>END</ion-label><br/>
+                 <ion-item>{{ booking?.destinationAddress }} {{booking?.toDestination}}</ion-item>
+               <ion-item> {{ booking?.vehicleDetails?.results[0]?.bookingDateTo }}</ion-item>
+                <ion-item> {{ booking?.timeTo}}</ion-item>
+
+        </ion-col> 
+   
+        <ion-col>
+            <ion-label>END</ion-label><br/>
+                 <ion-item>{{ booking?.destinationAddress }} {{booking?.toDestination}}</ion-item>
+               <ion-item> {{ booking?.vehicleDetails?.results[0]?.bookingDateTo }}</ion-item>
+                <ion-item> {{ booking?.timeTo}}</ion-item>
+
+        </ion-col>
+             </ion-row>
+
+        
+    
+          <ion-text>
+            <p>NOTES</p>
+            <ion-item>
+              {{ booking?.note }}  {{ booking?.remarks?.results[0]?.remarkText }}
+            </ion-item>
+          </ion-text>
+          <!-- <ion-text>
+            <p>Documents</p>
+          </ion-text> -->
+        </ion-col>
+
+      </ion-row>
+      <!-- <ion-row *ngFor="let fee of booking?.vehicle?.feeBreakdown?.fee">
+        <ion-col>
+          <ion-text class="ion-margin-top">{{fee.feeType}}: </ion-text>
+        </ion-col>
+        <ion-col>
+          <ion-text class="ion-margin-top">{{fee.price | currency : "R" }}: </ion-text>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-text class="ion-margin-top">Sub Total: </ion-text>
+        </ion-col>
+        <ion-col>
+          <ion-text class="ion-margin-top">{{total | currency : "R" }}: </ion-text>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-text class="ion-margin-top">Total: </ion-text>
+        </ion-col>
+        <ion-col>
+          <ion-text class="ion-margin-top">{{total | currency : "R" }}: </ion-text>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-text class="ion-margin-top" *ngFor="let fee of booking?.vehicle?.feeBreakdown?.fee">
+            <p>{{fee.feeType}}: {{ fee.price | currency : "R" }}</p>
+          </ion-text>
+          <ion-text>
+            <p>Sub Total: {{ total | currency : "R" }}</p>
+          </ion-text>
+          <ion-text>
+            <p>Total: {{ total | currency : "R" }}</p>
+          </ion-text>
+
+          <div class="ion-margin-top-10">
+            <ion-radio-group value="email" labelPlacement="end">
+              <ion-radio value="email">Email</ion-radio><br />
+            </ion-radio-group>
+          </div>
+        </ion-col>
+        <ion-col></ion-col>
+      </ion-row> -->
+    </ion-grid>
+  </ion-card>
+  <ion-toolbar>
+    <ion-button expand="full" (click)="back()" color="primary">Back</ion-button>
+  </ion-toolbar>
+</ion-content>
+<!-- <ion-footer class="ion-padding">
+
+</ion-footer> -->

@@ -1,0 +1,96 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Vehicle Inspection</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="form" (ngSubmit)="updateVehicleData()" novalidate>
+    <div>
+      <ion-list class="ion-margin-top-50">
+        <!-- <div *ngIf="''!=alert_text" class="ion-text-center">
+          <ion-text color="danger">{{alert_text}}</ion-text>
+        </div> -->
+        <ion-item class="ion-margin-top" lines="none">
+          <ion-input
+            type="number"
+            label="Odometer Reading"
+            labelPlacement="floating"
+            [placeholder]="form.controls.odoMeter.value"
+            formControlName="odoMeter"
+            errorText="Odometer reading is required"
+            ngModel
+            [min]="minOdoMeter"
+            (ionChange)="checkOdo()"
+          >
+          </ion-input
+          ><span style="position: absolute; right: 1.5rem; bottom: 1rem"
+            >KMS</span
+          >
+        </ion-item>
+        <ion-item class="ion-margin-top" lines="none">
+          <ion-label>
+            <ion-select
+              formControlName="fuelLevel"
+              label="Fuel Level"
+              [placeholder]="form.controls.fuelLevel.value"
+              errorText="Fuel Level is required"
+            >
+              <ion-select-option value="G1">G1</ion-select-option>
+              <ion-select-option value="G2">G2</ion-select-option>
+              <ion-select-option value="G3">G3</ion-select-option>
+              <ion-select-option value="G4">G4</ion-select-option>
+              <ion-select-option value="G5">G5</ion-select-option>
+              <ion-select-option value="G6">G6</ion-select-option>
+              <ion-select-option value="G7">G7</ion-select-option>
+              <ion-select-option value="G8">G8</ion-select-option>
+            </ion-select>
+            <ion-text
+              color="danger"
+              *ngIf="form.controls.fuelLevel.touched && form.controls.fuelLevel.status == 'INVALID'"
+              >Fuel level is required</ion-text
+            >
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-toggle
+            formControlName="regConfirmed"
+            errorText="Confirm Registration Nunber"
+          >
+            <ion-label>{{regNumber}}</ion-label>
+            <ion-note
+              color="medium"
+              *ngIf="!form.controls.regConfirmed.touched && form.controls.regConfirmed.status == 'INVALID'"
+              >Registration Number</ion-note
+            >
+            <ion-note
+              color="danger"
+              *ngIf="form.controls.regConfirmed.touched && form.controls.regConfirmed.status == 'INVALID'"
+              >Confirm Registration Number</ion-note
+            >
+          </ion-toggle>
+          <!-- <ion-text
+            color="danger"
+            *ngIf="form.controls.regConfirmed.touched && form.controls.regConfirmed.status == 'INVALID'"
+            >Confirmation is required</ion-text
+          > -->
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <div class="ion-padding">
+      <ion-button expand="full" class="ion-margin-top-50" type="submit">
+        Confirm
+      </ion-button>
+     
+    </div>
+  </form>
+  
+  <div class="ion-padding">
+    <ion-button expand="full"
+    (click)="markAsNoShow()"
+     class="ion-margin-top-50">
+      Back
+    </ion-button>
+  </div>
+</ion-content>

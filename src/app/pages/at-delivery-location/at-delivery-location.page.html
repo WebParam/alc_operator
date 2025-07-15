@@ -1,0 +1,151 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-title>At delivery location</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-card>
+    <ion-grid [fixed]="false" *ngIf="currentLeg?.vehicleDetails?.results.length ==1">
+    
+      <ion-row >
+        <ion-col size="6">
+          <p> <span className="mr-2" style="font-weight: bold;"> CUSTOMER:</span> {{currentLeg?.customerName}}</p>
+          <p><span className="mr-2" style="font-weight: bold;"> 
+            {{currentLeg?.vehicleDetails?.results[0].mainPassengerName}} {{currentLeg?.vehicleDetails?.results[0].mainPassengerContactNumber}} / {{currentLeg?.passengers?.results[0]?.passengerContactNumber}}
+          </span>
+            
+          </p>
+          <p><span className="mr-2" style="font-weight: bold;"> VEHICLE:</span> {{currentLeg?.vehicleDetails?.results[0].vehicleTypeDescription}}</p>
+          
+        </ion-col>
+        <ion-col style="text-align: center">
+          <ion-img
+            [src]="currentLeg?.vehicleDetails?.results[0]?.storageUrl.storageUrl"
+            alt="Silhouette of mountains"
+          >
+          </ion-img>
+        </ion-col>
+      </ion-row>
+      
+    </ion-grid>
+
+    <ion-grid [fixed]="false" *ngIf="currentLeg?.vehicleDetails?.results.length >1">
+    
+      <ion-row *ngFor="let curLeg of currentLeg?.vehicleDetails?.results">
+        <ion-col size="6">
+          <p> <span className="mr-2" style="font-weight: bold;"> CUSTOMER:</span> {{currentLeg?.customerName}}</p>
+          <p><span className="mr-2" style="font-weight: bold;"> 
+            {{curLeg.mainPassengerName}} {{curLeg.mainPassengerContactNumber}} 
+          </span>
+           
+          </p>
+          <p><span className="mr-2" style="font-weight: bold;"> ALLOCATION:</span> {{curLeg.allocationType}}</p>
+          <p><span className="mr-2" style="font-weight: bold;"> VEHICLE:</span> {{curLeg.vehicleTypeDescription}}</p>
+          <p *ngIf="curLeg.replacesMva=='0'" ><span className="mr-2"  style="font-weight: bold;"> MVA:</span> {{currentLeg.mvaNumber}}</p>
+          <p *ngIf="curLeg.replacesMva.length>1"><span className="mr-2"  style="font-weight: bold;"> REPLACEMENT MVA:</span> {{curLeg.replacesMva}}</p>
+          
+        </ion-col>
+        <ion-col style="text-align: center">
+          <ion-img
+            [src]="curLeg?.storageUrl.storageUrl"
+            alt="Silhouette of mountains"
+          >
+          </ion-img>
+        </ion-col>
+      </ion-row>
+      
+    </ion-grid>
+
+    <ion-item></ion-item>
+    <ion-grid>
+      <form [formGroup]="form">
+  <ion-item class="ion-margin-top" lines="none">
+    <ion-input
+      type="number"
+      label="Odometer Reading"
+      labelPlacement="floating"
+      formControlName="odoMeter"
+      errorText="Odometer reading is required"
+      [min]="minOdoMeter"
+      (ionChange)="checkOdo()"
+    >
+    </ion-input>
+    <span style="position: absolute; right: 1.5rem; bottom: 1rem">KMS</span>
+  </ion-item>
+
+  <ion-item class="ion-margin-top" lines="none">
+    <ion-label>
+      <ion-select
+        formControlName="fuelLevel"
+        label="Fuel Level"
+        placeholder="Select fuel level"
+        errorText="Fuel Level is required"
+      >
+        <ion-select-option value="G1">G1</ion-select-option>
+        <ion-select-option value="G2">G2</ion-select-option>
+        <ion-select-option value="G3">G3</ion-select-option>
+        <ion-select-option value="G4">G4</ion-select-option>
+        <ion-select-option value="G5">G5</ion-select-option>
+        <ion-select-option value="G6">G6</ion-select-option>
+        <ion-select-option value="G7">G7</ion-select-option>
+        <ion-select-option value="G8">G8</ion-select-option>
+      </ion-select>
+    </ion-label>
+  </ion-item>
+</form>
+
+      <!-- <ion-row>
+        <ion-col size="6"> <span className="mr-2" style="font-weight: bold;">ODO READING</span></ion-col>
+        <ion-col size="6">{{currentLeg?.vehicleDetails?.results[0]?.kilometerValue}}</ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col size="6"> <span className="mr-2" style="font-weight: bold;">DATE / TIME</span></ion-col>
+        <ion-col size="6">{{currentLeg?.timeFrom}}</ion-col>
+      </ion-row> -->
+    </ion-grid>
+  </ion-card>
+<ion-button
+  [color]="form.valid ? 'medium' : 'dark'"
+  expand="full"
+  (click)="board()"
+>
+  View nameboard
+</ion-button>
+
+<ion-button
+  [disabled]="!form.valid || currentLeg?.allocationType === 'booking collection'"
+  [color]="form.valid ? 'dark' : 'medium'"
+  expand="full"
+  (click)="scanLicense()"
+  *ngIf="currentLeg?.allocationType !== 'booking collection'"
+>
+  Scan driver license
+</ion-button>
+
+ <!-- <div class="ion-padding"> -->
+    <ion-button expand="full"
+    (click)="markAsNoShow()"
+     class="">
+      Mark as no show
+    </ion-button>
+  <!-- </div> -->
+
+  <ion-button color="dark" *ngIf="currentLeg?.allocationType=='exchange'" 
+    (click)="replacementInspection(currentLeg?.mvaNumber)" expand="full"
+  >Begin replacement inspection</ion-button
+  >
+
+   <ion-button color="dark" *ngIf="currentLeg?.allocationType=='booking collection'" 
+    (click)="collectionNavigation(currentLeg?.mvaNumber)" expand="full"
+  >Begin inspection</ion-button
+  >
+
+
+</ion-content>

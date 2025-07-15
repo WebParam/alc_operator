@@ -1,0 +1,53 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-title>Vehicle Transfer</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-row>
+    <ion-button style="margin-left: 45%; margin-top: 15%;" color="dark" (click)="scanLicense()" expand="full"
+    >Scan Driver License</ion-button
+  >
+  </ion-row>
+
+</ion-content>
+<ion-footer>
+<ion-toolbar>
+    <ion-tabs>
+      <ion-tab-bar slot="bottom">
+        <ion-tab-button (click)="home()">
+          <ion-label>Home</ion-label>
+          <ion-icon           
+            name="home-outline"
+          ></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="manifest()">
+          <ion-label>Manifest</ion-label>
+          <ion-icon            
+            name="calendar-number-outline"
+          ></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="transfer()">
+          <ion-label>Transfer</ion-label>
+          <ion-icon name="build-outline"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="lostitem()">
+          <ion-label>Lost item</ion-label>
+          <ion-icon  name="eye-outline"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="logoff()">
+          <ion-label>Logoff</ion-label>
+          <ion-icon  name="power-outline"></ion-icon>
+        </ion-tab-button>
+      </ion-tab-bar>
+    </ion-tabs>
+  </ion-toolbar>
+  </ion-footer>
+

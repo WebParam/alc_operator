@@ -1,0 +1,145 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Forgot Item</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-row>
+    <ion-segment value="t1">
+      <ion-segment-button value="t1">
+        <ion-label>Previous bookings</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="t3">
+        <ion-label>History</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+  </ion-row>
+  <div class="bookings-container ion-margin-top">
+    <ion-grid>
+      <ng-container *ngFor="let _booking of pastBookings">
+        <ng-container *ngFor="let booking of _booking.legs;  let i = index">
+   
+
+
+
+
+
+          <ion-row>
+            <ion-col>
+              <ion-img style="width: 150px"
+                [src]="booking?.vehicleDetails?.results[0]?.storageUrl?.storageUrl"></ion-img>
+            </ion-col>
+            <ion-col style="text-align: center;">
+              <div>
+                <!-- <div style="background-color: rgb(255, 77, 79); color: white; padding: 2px 8px; font-size: 20px; font-weight: bold; transform: skew(-15deg); border-radius: 3px;">  {{booking.serviceType}}</div>  -->
+                <p style="font-weight: bold; 
+  font-size: 21px;">
+                  <!-- {{booking.serviceTypeDescription}}    -->
+                  {{booking.customerTitle}} {{booking.customerName}}
+                </p>
+
+              </div>
+
+            </ion-col>
+            <ion-col>
+              <ion-label>
+                <div
+                  style=" font-size: 20px;   margin-top: 7%;width: fit-content; background-color: rgb(255, 77, 79); color: white; padding: 2px 8px; font-weight: bold; transform: skew(-15deg); border-radius: 3px;">
+                  {{booking.vehicleDetails?.results[0]?.allocationType?.trim()}}
+                </div>
+              </ion-label>
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col>
+              <ion-label>
+                <div style="width: fit-content; background-color: rgb(255, 77, 79); color: white; padding: 2px 8px; font-size: 12px; font-weight: bold; transform: skew(-15deg); border-radius: 3px;">PICK UP</div>
+                <p><br/>
+                  <span class="small-text" style="font-weight: bold;">
+                    {{booking.collectionAddress}}
+                    {{booking.collectionAddress2}}
+                  </span>
+                </p>
+                <p>
+                  <span class="small-text" style="font-weight: bold;">
+                    Time: {{booking.timeFrom}}
+                  </span>
+                </p>
+              </ion-label>
+            </ion-col>
+            <ion-col>
+              <ion-label>
+                <div style="width: fit-content; background-color: rgb(255, 77, 79); color: white; padding: 2px 8px; font-size: 12px; font-weight: bold; transform: skew(-15deg); border-radius: 3px;">DROP OFF</div>
+                <p><br/>
+                  <span class="small-text" style="font-weight: bold;">
+                     {{booking.destinationAddress}}
+                    {{booking.destinationAddress2}}
+                  </span>
+                </p>
+                <p>
+                  <span class="small-text" style="font-weight: bold;"> Time: {{booking.timeTo}} </span>
+                </p>
+                
+              </ion-label>
+            </ion-col>
+          </ion-row>
+          
+          <ion-row>
+            <!-- <ion-col style="width: 50%;"> -->
+            <ion-button expand="full" style="width: 45%;" (click)="view(booking)" size="small"
+              class="action-buttons">View</ion-button>
+            <!-- </ion-col> -->
+            <!-- <ion-col style="width: 50%;"> -->
+            <ion-button expand="full" style="width: 45%;" (click)="logitem(booking )" size="small"
+              class="action-buttons">Log item</ion-button>
+            <!-- </ion-col> -->
+            <ion-col>
+              <!-- <ion-button expand="full" size="small" class="action-buttons">Cancel</ion-button> -->
+            </ion-col>
+          </ion-row>
+        </ng-container>
+        <hr style="border-bottom: 1px solid whitesmoke; margin: 21px;" />
+      </ng-container>
+    </ion-grid>
+  </div>
+</ion-content>
+<ion-footer>
+  <ion-toolbar>
+    <ion-tabs>
+      <ion-tab-bar slot="bottom">
+        <ion-tab-button (click)="home()">
+          <ion-label>Home</ion-label>
+          <ion-icon           
+            name="home-outline"
+          ></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="manifest()">
+          <ion-label>Manifest</ion-label>
+          <ion-icon            
+            name="calendar-number-outline"
+          ></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="transfer()">
+          <ion-label>Transfer</ion-label>
+          <ion-icon name="build-outline"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="lostitem()">
+          <ion-label>Lost item</ion-label>
+          <ion-icon  name="eye-outline"></ion-icon>
+        </ion-tab-button>
+        <ion-tab-button (click)="logoff()">
+          <ion-label>Logoff</ion-label>
+          <ion-icon  name="power-outline"></ion-icon>
+        </ion-tab-button>
+      </ion-tab-bar>
+    </ion-tabs>
+  </ion-toolbar>
+</ion-footer>

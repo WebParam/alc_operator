@@ -1,0 +1,411 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-title>Rental agreement</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <ion-card class="ion-margin-top">
+    <ion-card-header class="ion-text-center">
+      <ion-text>Booking #{{currentBooking?.bookingNumber}} - {{currentBooking?.fullNamesRegisteredName}}
+        {{currentBooking?.surnameTradingName}} <br />
+      </ion-text>
+    </ion-card-header>
+  </ion-card>
+  <ion-accordion-group>
+    <ion-accordion value="personalDetails">
+      <ion-item slot="header" color="light">
+        <ion-label>Billing Contact</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <!-- <ion-card> -->
+        <!-- <ion-card-content> -->
+        <ion-list>
+          <ng-container>
+            <ion-item>
+              <ion-grid>
+                <ion-row>
+                  <ion-col>
+                    <small style="  text-transform: uppercase;">Name: {{currentBooking?.billingContact?.title}}
+                      {{currentBooking?.billingContact?.name}}
+                      {{currentBooking?.billingContact?.surname}}</small><br /><br />
+                    <small style="  text-transform: uppercase;">Email: {{customer?.email}}</small><br /><br />
+                    <small style="  text-transform: uppercase;">Address 2:
+                      {{customer?.billAddress2}}</small><br /><br />
+                    <small style="  text-transform: uppercase;">Address 1: {{customer?.billAddress1}}</small>
+
+
+                  </ion-col>
+
+                  <ion-col>
+                    <small style="  text-transform: uppercase;">Cell: {{customer?.cellNumber}}</small><br /><br />
+                    <small style="  text-transform: uppercase;">Landline: {{customer?.landline}}</small><br /><br />
+                    <small style="  text-transform: uppercase;">Wizard number:
+                      {{customer?.wizardNumber}}</small><br /><br />
+                    <small style="  text-transform: uppercase;">PPNNumber: {{customer?.licPpnNumber}}</small>
+                  </ion-col>
+                </ion-row>
+                <!-- <ion-row>
+                  <ion-col
+                    ><small
+                      >15 Macbeth Street, Wynberg Cape Town, Western Cape, South
+                      Africa, 2064</small
+                    ></ion-col
+                  >
+                  <ion-col><small>Licence number: 9897889-P</small></ion-col>
+                </ion-row> -->
+                <ion-row>
+
+                  <!-- <ion-col><small>ID Number:{{currentBooking?.billingContact?.email}}</small></ion-col> -->
+                </ion-row>
+              </ion-grid>
+            </ion-item>
+          </ng-container>
+        </ion-list>
+        <!-- <ion-button class="ion-text-end"  color="light" fill="solid" expand="full">Add new</ion-button> -->
+        <!-- </ion-card-content> -->
+
+        <!-- </ion-card> -->
+      </div>
+    </ion-accordion>
+    <ion-accordion value="vehicleDetails">
+      <ion-item slot="header" color="light">
+        <ion-label>Vehicle Details</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <!-- <ion-card> -->
+        <!-- <ion-card-content> -->
+        <ion-list>
+          <ng-container>
+            <ion-item>
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="12">
+                    <ion-row>
+                      <ion-col>
+                        <small style="  text-transform: uppercase;">Vehicle: {{leg?.vehicleTypeAndWizCode}}
+                        </small><br /><br />
+                        <small style="  text-transform: uppercase;">Vehicle Code: {{leg?.vehicleCode}}
+                        </small><br /><br />
+                        <small style="  text-transform: uppercase;">MVA Number: {{mva}}</small><br /><br />
+                      </ion-col>
+                      <ion-col>
+                        <small style="  text-transform: uppercase;">Doors: {{leg?.vehicleCode}}</small><br /><br />
+                        <small style="  text-transform: uppercase;">Max Passengers:
+                          {{leg?.vehiclePax}}</small><br /><br />
+                        <small style="  text-transform: uppercase;">Rate: {{leg?.rateBreakdownDescription}}</small>
+                      </ion-col>
+
+                      <ion-col>
+                        <img style="max-width: 40%;margin-top: -40px;" [src]="leg?.vehicleImage?.storageUrl" />
+                      </ion-col>
+                      <!-- <ion-col>
+                        <small>Km's at start: {{apiResponse.}} </small>
+                      </ion-col> -->
+                    </ion-row>
+                    <!--                   
+                    <ion-row>
+                      <ion-col>
+                      
+                      </ion-col>
+                      <ion-col>
+                        <small style="  text-transform: uppercase;">Max Passengers: {{leg?.vehiclePax}}</small>
+                      </ion-col>
+                   
+                      <ion-col>
+                        <small style="  text-transform: uppercase;">Transmission: {{leg?.vehicleCode}}</small>
+                      </ion-col>
+                    
+                      <ion-col>
+                        <small style="  text-transform: uppercase;">Fuel Type: {{leg?.vehicleCode}}</small>
+                      </ion-col>
+                    </ion-row> -->
+
+
+                  </ion-col>
+
+
+                </ion-row>
+              </ion-grid>
+            </ion-item>
+          </ng-container>
+        </ion-list>
+        <!-- <ion-button class="ion-text-end"  color="light" fill="solid" expand="full">Add new</ion-button> -->
+        <!-- </ion-card-content> -->
+
+        <!-- </ion-card> -->
+      </div>
+    </ion-accordion>
+    <ion-accordion value="rentalDetails">
+      <ion-item slot="header" color="light">
+        <ion-label>Rental Details</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <!-- <ion-card> -->
+        <!-- <ion-card-content> -->
+        <ion-list>
+          <ng-container>
+            <ion-item>
+              <ion-grid>
+                <ion-row>
+                  <ion-col>
+                    <small style="  text-transform: uppercase;">Check out
+                      location:{{leg?.collectionAddress?.name}}</small><br /><br />
+                    <small style="  text-transform: uppercase;">Checkout Date & Time :
+                      {{leg?.destinationDateTime}}</small><br /><br />
+                    <small style="  text-transform: uppercase;">Reservation
+                      number:{{currentBooking?.bookingNumber}}</small><br /><br />
+                    <small style="  text-transform: uppercase;">Rate: {{leg?.rateBreakdownDescription}}</small>
+                  </ion-col>
+
+                  <!--  <ion-col><small> {{currentBooking?.bookingNumber}}</small> <br/><br/></ion-col> -->
+
+                  <ion-col>
+                    <small style="  text-transform: uppercase;">Checkin location:
+                      {{leg?.destinationAddress?.name}}</small><br /><br />
+                    <small style="  text-transform: uppercase;">Checkin date & Time:
+                      {{leg?.destinationDateTime}}</small><br /><br />
+                    <small style="  text-transform: uppercase;">Service Type: {{leg?.serviceTypeDescription}}</small>
+
+                  </ion-col>
+
+                </ion-row>
+
+                <!-- <ion-row>
+                  <ion-col><small>ODO Reading</small></ion-col>
+                  <ion-col><small>n/a</small></ion-col>
+                </ion-row> -->
+                <!-- <ion-row>
+                  <ion-col><small style="  text-transform: uppercase;">Checkin location</small></ion-col>
+                  <ion-col
+                    ><small>{{leg?.destinationAddress?.name}}</small></ion-col
+                  >
+                </ion-row>
+                <ion-row>
+                  <ion-col><small style="  text-transform: uppercase;">Date & Time</small></ion-col>
+                  <ion-col><small>{{leg?.destinationDateTime}}</small></ion-col>
+                </ion-row> -->
+              </ion-grid>
+            </ion-item>
+          </ng-container>
+        </ion-list>
+        <!-- <ion-button class="ion-text-end"  color="light" fill="solid" expand="full">Add new</ion-button> -->
+        <!-- </ion-card-content> -->
+
+        <!-- </ion-card> -->
+      </div>
+    </ion-accordion>
+    <ion-accordion value="billingDetails">
+      <ion-item slot="header" color="light">
+        <ion-label>Billing Details</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <!-- <ion-card> -->
+        <!-- <ion-card-content> -->
+        <ion-list>
+          <ng-container>
+            <ion-item>
+              <ion-grid>
+                <ion-col>
+
+                  <ion-row>
+
+
+                    <ion-col>
+                      <small style="  text-transform: uppercase;"> Zone code:
+                        {{leg?.zoneDescription}}</small><br /><br />
+                      <small style="  text-transform: uppercase;"> Fuel Charge: {{leg?.fuelCharge}} </small><br /><br />
+                      <small style="  text-transform: uppercase;"> Total Rate Amount:
+                        {{leg?.totalRateAmount}}</small><br /><br />
+                      <small style="  text-transform: uppercase;"> Km Rate: {{leg?.kmRate}}</small><br /><br />
+                      <small style="  text-transform: uppercase;"> Wizard Rate Code:
+                        {{leg?.wizardRateCode}}</small><br /><br />
+                    </ion-col>
+                    <ion-col>
+                      <small style="  text-transform: uppercase;"> Rate Type Code:
+                        {{leg?.rateTypeCode}}</small><br /><br />
+                      <small style="  text-transform: uppercase;"> Rate Hub Code:
+                        {{leg?.rateHubCode}}</small><br /><br />
+                      <small style="  text-transform: uppercase;"> Rate Description:
+                        {{leg?.rateTypeDescription}}</small><br /><br />
+                      <small style="  text-transform: uppercase;"> Responsibility:
+                        {{leg?.responsibilityAmount}}</small><br /><br />
+                      <small style="  text-transform: uppercase;"> Daily fee Km's:
+                        {{leg?.dailyFreeKms}}</small><br /><br />
+
+                    </ion-col>
+                  </ion-row>
+                  <hr />
+                  <!-- <hr />
+                  <small style="  text-transform: uppercase;"> Additional extra's</small>
+                  <hr />
+                  <ng-container *ngFor="let accessory of equipment">
+                    <ion-row>
+                      <ion-col><small>{{accessory?.quantity}} X {{accessory?.description}}</small></ion-col>
+                      <ion-col><small>R{{accessory?.amount}}</small></ion-col>
+                    </ion-row>
+                  </ng-container>
+                  <hr />-->
+                  <br /><br />
+                  <small style="  text-transform: uppercase;"> Fee breakdown</small>
+                  <hr />
+                  <ng-container *ngFor="let accessory of equipment">
+                    <ion-row>
+                      <ion-col><small>{{accessory?.quantity}} X {{accessory?.description}}</small></ion-col>
+                      <ion-col><small>R{{accessory?.amount}}</small></ion-col>
+                    </ion-row>
+                  </ng-container>
+                  <ion-row>
+                    <ion-col><small style="  text-transform: uppercase;">Total </small></ion-col>
+                    <ion-col><small style="  text-transform: uppercase;">
+                        R{{leg?.totalRateAmount}}
+                      </small></ion-col>
+                  </ion-row>
+
+
+                  <br /><br />
+                  <small style="  text-transform: uppercase;"> Card details</small>
+                  <hr />
+                  <ion-row>
+
+                    <ion-col><small style="  text-transform: uppercase;">Card: {{cc}}</small></ion-col>
+                    <ion-col><small style="  text-transform: uppercase;">Exp
+                        Date:{{customer?.creditCardExpiry}}</small></ion-col>
+                  </ion-row><ion-row>
+                    <ion-col><small style="  text-transform: uppercase;">Rate code:
+                        {{leg?.rateTypeDescription}}</small></ion-col> <ion-col><small
+                        style="  text-transform: uppercase;">
+                        Total rate amount:
+                        {{leg?.totalRateAmount}}
+                      </small></ion-col>
+                  </ion-row>
+
+
+
+                </ion-col>
+              </ion-grid>
+            </ion-item>
+          </ng-container>
+        </ion-list>
+
+      </div>
+    </ion-accordion>
+    <ion-accordion value="additionalInformation">
+      <ion-item slot="header" color="light">
+        <ion-label>Additional Information</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+
+        <ion-list>
+          <ng-container>
+            <ion-item>
+              <ion-grid>
+                <!-- <ion-row>
+                  <small style="text-transform: uppercase;">
+                    An administration fee will be levied in the event
+                    of:</small
+                  ><br />
+                </ion-row> -->
+                <ion-row class="ion-padding">
+                  <ion-col><small style="text-transform: uppercase;">Exclusions: {{leg?.exclusions}}</small></ion-col>
+                  <ion-col><small style="text-transform: uppercase;">Special Requests:
+                      {{leg?.specialRequests}}</small></ion-col>
+                </ion-row>
+                <ion-row class="ion-padding">
+                  <ion-col><small style="text-transform: uppercase;">Inclusions: {{leg?.inclusions}}</small></ion-col>
+                  <ion-col><small style="text-transform: uppercase;">Theft Loss Waiver:
+                      {{leg?.theftLossWaiverDescription}}</small></ion-col>
+
+                </ion-row>
+                <ion-row class="ion-padding">
+
+                  <ion-col><small style="text-transform: uppercase;">Remarks: {{leg?.remarks}}</small></ion-col>
+                </ion-row>
+                <!-- <ion-row class="ion-padding">
+                  <ion-col><small>Important information</small></ion-col>
+                  <ion-col><small>Terms and Conditions</small></ion-col>
+                </ion-row> -->
+              </ion-grid>
+            </ion-item>
+          </ng-container>
+        </ion-list>
+        <!-- <ion-button class="ion-text-end"  color="light" fill="solid" expand="full">Add new</ion-button> -->
+        <!-- </ion-card-content> -->
+
+        <!-- </ion-card> -->
+      </div>
+    </ion-accordion>
+    <ion-accordion value="termsAndConditions">
+      <ion-item slot="header" color="light">
+        <ion-label>Terms and Conditions</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <!-- <ion-card> -->
+        <!-- <ion-card-content> -->
+        <ion-list>
+          <ng-container>
+            <ion-item>
+              <ion-grid>
+                <ion-row *ngFor="let term of terms">
+                  <div [innerHTML]="term.termDetail"></div>
+                  <br />
+                </ion-row>
+              </ion-grid>
+            </ion-item>
+          </ng-container>
+        </ion-list>
+        <!-- <ion-button class="ion-text-end"  color="light" fill="solid" expand="full">Add new</ion-button> -->
+        <!-- </ion-card-content> -->
+
+        <!-- </ion-card> -->
+      </div>
+    </ion-accordion>
+    <!-- <ion-accordion value="intBackSeats">
+      <ion-item slot="header" color="light">
+        <ion-label>Kilometer Reading: 5114</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">Third Content</div>
+    </ion-accordion> -->
+  </ion-accordion-group>
+  <ion-list>
+    <ng-container>
+      <ion-item>
+        <ion-grid>
+          <ion-row class="ion-padding">
+            <p>I hereby agree to the terms and conditions of this rental and my
+              liability in the event of damage or loss of the vehicle</p>
+          </ion-row>
+          <ion-row class="ion-padding">
+            <p><span style="font-size: 16px;float:left;">Email: {{currentBooking?.billingContact?.email}}</span></p>
+          </ion-row>
+          <ion-row class="ion-padding">
+            <ion-col>
+            Please rate our service
+              <p> <span style="font-size: 16px;">
+                  <ngx-star-rating  
+                  [(ngModel)]="rating"
+                   style="float: left;" [id]="'rating'"></ngx-star-rating>
+                </span>
+              </p>
+          
+
+            </ion-col>
+          </ion-row>
+          <ion-row class="ion-padding">
+            <p>Customer to sign below</p>
+            <canvas #canvas (touchstart)="startDrawing($event)" (touchmove)="moved($event)" width="700"
+              height="400"></canvas>
+          </ion-row>
+        </ion-grid>
+      </ion-item>
+    </ng-container>
+  </ion-list>
+  <ion-button expand="full" (click)="complete()" class="ion-margin-top-50" type="submit">
+    Complete inspection
+  </ion-button>
+</ion-content>

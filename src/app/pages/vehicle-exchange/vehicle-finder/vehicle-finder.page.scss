@@ -1,0 +1,43 @@
+ion-select {
+  width: 100%;
+}
+h5 {
+  font-size: 12px;
+}
+.date-day,
+.date-time {
+  margin-right: 5px;
+  font-size: 16px;
+  font-weight: 500;
+}
+.date-month,
+.date-year {
+  margin-right: 5px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+ion-title {
+  margin-left: 25px;
+}
+.address-picker-icon {
+  margin: 5px;
+}
+app-address-autocomplete {
+  width: 100%;
+}
+// .address-picker-item {
+//   display: flex;
+//   flex-direction: row;
+//   align-items: flex-start;
+// }
+.search-icon {
+  position: absolute;
+  top: 22px;
+}
+
+.map-icon {
+  position: absolute;
+  top: 22px;
+  right: 0;
+}

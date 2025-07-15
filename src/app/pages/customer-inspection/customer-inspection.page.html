@@ -1,0 +1,96 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-title>Customer Inspection</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true">
+  <ion-accordion-group>
+    <ion-accordion
+      [value]="damage.damageLocation"
+      *ngFor="let damage of apiResponse"
+    >
+      <ion-item slot="header" color="light">
+        <ion-label>{{damage.damageLocation}}</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">
+        <ion-card>
+          <ion-card-content>
+            <ion-list>
+              <ng-container *ngFor="let damage of frontDamages">
+                <ion-item>
+                  <ion-thumbnail slot="start">
+                    <img [src]="damage.damageImage" />
+                  </ion-thumbnail>
+                  <ion-card-content>
+                    <p><small>{{ damage.damageRemark}}</small></p>
+                    <!-- <p><small>{{ damage.reporter}}</small></p>
+                    <p><small>{{ damage.date}}</small></p> -->
+                  </ion-card-content>
+                  <ion-buttons>
+                    <ion-button
+                      ><ion-icon name="eye-outline"></ion-icon
+                    ></ion-button>
+                    <!-- <ion-button (click)="removeDamage(damage.id)"
+                      ><ion-icon name="trash-outline"></ion-icon
+                    ></ion-button> -->
+                  </ion-buttons>
+                </ion-item>
+              </ng-container>
+            </ion-list>
+
+                 <ion-img style="max-width: 25%; margin-left: 40%;" *ngIf="damage?.image" [src]="damage?.image" alt=""> </ion-img>
+            <ion-label style="max-width: 35%; margin-left: 40%;" *ngIf="damage?.damageRemark" >
+            {{damage?.damageRemark}}  
+            </ion-label>
+            
+            <ion-img style="max-width: 25%; margin-left: 40%;" *ngIf="damage?.base64Image" [src]="'data:image/png;base64,' + damage?.base64Image" alt="Damage Image"></ion-img>
+            
+            <div  *ngIf="!damage?.base64Image" class="ion-padding">
+              <ion-button
+                class="ion-text-end"
+                (click)="capture(damage)"
+                color="light"
+                fill="solid"
+                expand="full"
+                >Add new</ion-button
+              >
+            </div>
+            <ion-icon
+              (click)="deleteDamage(damage)"
+              name="trash"
+              *ngIf="damage.image"
+              size="large"
+            ></ion-icon>
+            <ion-icon
+              (click)="deleteDamage(damage)"
+              name="trash"
+              *ngIf="damage.base64Image?.length>1"
+              size="large"
+            ></ion-icon>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </ion-accordion>
+    <!-- <ion-accordion value="intBackSeats">
+      <ion-item slot="header" color="light">
+        <ion-label>Kilometer Reading: 5114</ion-label>
+      </ion-item>
+      <div class="ion-padding" slot="content">Third Content</div>
+    </ion-accordion> -->
+  </ion-accordion-group>
+
+  <ion-button
+    expand="full"
+    (click)="continue()"
+    class="ion-margin-top-50"
+    type="submit"
+  >
+   Rental agreement
+  </ion-button>
+</ion-content>

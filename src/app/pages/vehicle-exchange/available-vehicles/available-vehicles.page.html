@@ -1,0 +1,123 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-title>Book a Luxury Vehicle</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" id="open-filter">
+        <ion-icon name="filter" slot="end"></ion-icon>Filter
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-modal id="example-modal" #modal trigger="open-filter">
+    <ng-template>
+      <div class="wrapper ion-padding">
+
+        <ion-item>
+          <ion-select aria-label="Select Vehicle Make" label="Select Vehicle Make" label-placement="floating">
+            <ion-select-option value="Audi">Audi</ion-select-option>
+            <ion-select-option value="Mercedes">Mercedes</ion-select-option>
+            <ion-select-option value="BMW">BMW</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <div class="ion-text-center">
+          <ion-text>
+            Vehicle Type
+          </ion-text>
+        </div>
+        <ion-radio-group value="" class="ion-margin-bottom">
+          <ion-grid>
+            <ion-row>
+              <ion-col>
+                <ion-radio labelPlacement="end" value="Coupe">Coupe</ion-radio>
+              </ion-col>
+              <ion-col>
+                <ion-radio labelPlacement="end" value="SUV">SUV</ion-radio>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-radio labelPlacement="end" value="Convertable">Convertable</ion-radio>
+              </ion-col>
+              <ion-col>
+                <ion-radio labelPlacement="end" value="Sedan">Sedan</ion-radio>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-radio-group>
+        <div class="ion-text-center">
+          <ion-text>No. of Doors</ion-text>
+        </div>
+        <ion-radio-group value="" class="ion-margin-bottom" [(ngModel)]="doors">
+          <ion-grid>
+            <ion-row>
+              <ion-col>
+                <ion-radio labelPlacement="end" value="2">2</ion-radio>
+              </ion-col>
+              <ion-col>
+                <ion-radio labelPlacement="end" value="3">3</ion-radio>
+              </ion-col>
+              <ion-col>
+                <ion-radio labelPlacement="end" value="4">4</ion-radio>
+              </ion-col>
+              <ion-col>
+                <ion-radio labelPlacement="end" value="5">5</ion-radio>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-radio-group>
+        <div class="ion-text-center">
+          <ion-text>No. of Seats</ion-text>
+        </div>
+        <ion-range aria-label="Range with ticks" [ticks]="true" [snaps]="true" [min]="2" [max]="10"
+          (ionChange)="onSeatsChange($event)"></ion-range>
+
+      </div>
+      <div class="btns">
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-button color="secondary" expand="full" (click)="modal.dismiss();">
+                Cancel
+              </ion-button>
+            </ion-col>
+            <ion-col>
+              <ion-button expand="full" (click)="applyFilter(); modal.dismiss();">
+                Ok
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+    </ng-template>
+  </ion-modal>
+
+  <!-- <ng-container *ngFor="let vehicle of availableVehicles; let i = index"> -->
+    <!-- <div class="header-filter">
+      <ion-text>
+        {{availableVehicles.serviceTypeCode}} - {{availableVehicles?.vehicles?.length}} Vehicles
+      </ion-text>
+    </div> -->
+    <!-- <ng-container *ngIf="availableVehicles.vehicles.length > 0 else notfound"> -->
+      <div class="ion-padding" *ngFor="let vehicle of availableVehicles" (click)="viewVehicle(vehicle)">
+        <hr>
+        <ion-text>
+          {{vehicle.description}}
+        </ion-text>
+        <ion-img [src]="vehicle?.image?.storageUrl" class="" alt=""></ion-img>
+        <!-- {{vehicle | json}} -->
+        <div class="ion-text-center">
+          <ion-text>
+            {{vehicle.fee.dayRate | currency : 'R'}} | {{vehicle.fee.price | currency : 'R'}}
+          </ion-text>
+        </div>
+      </div>
+    <!-- </ng-container> -->
+    <ng-template #notfound>
+      <p class="ion-text-center">No vehicles found in this category</p>
+    </ng-template>
+  <!-- </ng-container> -->
+
+</ion-content>
+<!-- <app-bottom-menu></app-bottom-menu> -->

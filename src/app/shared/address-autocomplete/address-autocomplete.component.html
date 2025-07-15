@@ -1,0 +1,9 @@
+<ion-input type="text" [label]="label" labelPlacement="floating" style="--padding-start: 30px;"
+  [(ngModel)]="autocomplete.input" (ionInput)="UpdateSearchResults()" errorText="{{label}} is required"></ion-input>
+<div class="address-results">
+  <ion-list [hidden]="autocompleteItems.length === 0">
+    <ion-item *ngFor="let item of autocompleteItems" tappable (click)="SelectSearchResult(item)">
+      {{ item.description }}
+    </ion-item>
+  </ion-list>
+</div>

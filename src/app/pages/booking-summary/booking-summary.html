@@ -1,0 +1,112 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-title>Booking Summary</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-card>
+    <ion-grid>
+      <ion-row>
+        <ion-header class="ion-text-center">
+          Order: {{booking?.bookingNumber}} - {{booking?.serviceType}}
+        </ion-header>
+        <ion-col>
+          <ion-text> </ion-text>
+          <hr />
+          <ion-text *ngIf="delieveryType == ''">
+            <p>Drop-off/ Pick-up</p>
+            <p>
+              <small>
+                Drop-off: {{booking.dropOff}} - {{booking.dropOffDate}}</small
+              >
+            </p>
+            <p>
+              <small>
+                Pick-up: {{booking.pickUp}} - {{booking.pickUpDate}}</small
+              >
+            </p>
+          </ion-text>
+          <hr />
+          <ion-text>
+            <p>Vehicle details</p>
+
+            <p>
+              <small>
+                {{booking?.vehicleDetails?.results[0]?.vehicleTypeDescription}}
+                ({{booking?.shortVehicleType}})</small
+              >
+            </p>
+            <!-- <p><small> {{booking.vehicle.fuelType}}</small></p>
+            <p><small>{{booking.vehicle.doors}} door</small></p> -->
+          </ion-text>
+          <hr />
+          <ion-text>
+            <p>Driver details</p>
+            <p>
+              <small>
+                {{booking?.driverDetails?.title}}
+                {{booking?.driverDetails?.name}}
+                {{booking?.driverDetails?.surname}}</small
+              >
+            </p>
+            <p><small> {{booking?.driverDetails?.phone}} </small></p>
+            <p><small> {{booking?.driverDetails?.emailAddress}}</small></p>
+          </ion-text>
+          <hr />
+          <ion-text>
+            <p>Accessories</p>
+          </ion-text>
+          <hr />
+          <ion-text>
+            <p>Notes</p>
+          </ion-text>
+          <hr />
+          <ion-text>
+            <p>Documents</p>
+          </ion-text>
+        </ion-col>
+        <ion-col class="img-vehicle-container">
+          <ion-img
+            [src]="booking?.vehicleDetails?.results[0]?.storageUrl?.storageUrl"
+          />
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <!-- <ion-text class="ion-margin-top">
+            <p>Charge 1: {{2500 | currency: 'R' }}</p>
+          </ion-text>
+          <ion-text>
+            <p>Charge 2: {{2500 | currency: 'R' }}</p>
+          </ion-text>
+          <ion-text>
+            <p>Sub Total: {{5000 | currency: 'R' }}</p>
+          </ion-text> -->
+          <ng-container *ngFor="let fee of booking?.vehicle?.feeBreakdown?.fee">
+            <ion-text class="ion-margin-top">
+              <p>{{fee?.feeType}} {{fee?.price | currency: 'R' }}</p>
+            </ion-text>
+          </ng-container>
+          <ion-text>
+            <p>Total: {{booking?.vehicle?.fee?.price | currency: 'R' }}</p>
+          </ion-text>
+        </ion-col>
+        <ion-col></ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+  <ion-toolbar>
+    <ion-button expand="full" (click)="viewRentalAgreement()"
+      >View Rental Agreement</ion-button
+    >
+    <ion-button expand="full" (click)="sign()">Sign</ion-button>
+    <ion-button expand="full" color="secondary">Back</ion-button>
+  </ion-toolbar>
+</ion-content>
