@@ -116,6 +116,11 @@ export class VehicleService {
   getVehicleVTC(mva: any) {
     return this.http.get(`${this.baseUrl}vehicles/vtc/${mva}`);
   }
+  getVehicleVTCBasic(mva: any) {
+    return this.http.get(`${this.baseUrl}vehicles/vtcbasic/${mva}`);
+  }
+  
+  
   updateVehicleAccessories(payload: any) {
     return this.http.post(
       `${this.baseUrl}vehicles/UpdateVehicleAccessory`,

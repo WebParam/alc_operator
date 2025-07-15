@@ -17,6 +17,7 @@ export class AtDeliveryLocationPage implements OnInit {
 
   form!: FormGroup;
   minOdoMeter = 0;
+  vehicleDetails:any;
 
   constructor(
     private router: Router,
@@ -25,18 +26,32 @@ export class AtDeliveryLocationPage implements OnInit {
     private alertController: AlertController,
     private fb: FormBuilder,
      private vehicleService: VehicleService
-  ) {}
+  ) {
+    
+  }
 
   ngOnInit() {
-    this.currentLeg = this.bookingService.currentLeg;
-
-    this.form = this.fb.group({
+          this.form = this.fb.group({
       odoMeter: [
-        this.currentLeg?.vehicleDetails?.results[0]?.kilometerValue || '',
+       0,
         [Validators.required, Validators.min(this.minOdoMeter)],
       ],
-      fuelLevel: [this.currentLeg?.vehicleDetails?.results[0]?.fuelLevel, Validators.required],
+      fuelLevel: ["G1", Validators.required],
     });
+  
+    this.currentLeg = this.bookingService.currentLeg;
+
+     this.vehicleService.getVehicleVTCBasic(this.currentLeg.mvaNumber).subscribe((result: any) => {
+      
+        this.vehicleDetails = result.result.getVehicleDataWithVTCOutput;
+     debugger;
+          this.form.patchValue({
+            odoMeter: this.vehicleDetails.lastOdo || 0,
+            fuelLevel: this.vehicleDetails.fuelLevel || 'G1'
+          });
+     });
+
+ 
 
     this.route.params.subscribe((params) => {
       const type = this.bookingService.delieveryType;

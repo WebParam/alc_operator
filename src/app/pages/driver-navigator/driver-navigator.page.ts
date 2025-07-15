@@ -204,7 +204,7 @@ export class DriverNavigatorPage implements OnInit {
           const destGPS = result.getBookingResult.legs.leg[0].destinationAddress.coordinate;
            const collGPS = result.getBookingResult.legs.leg[0].collectionAddress.coordinate;
 
-          const url = `https://www.google.com/maps/dir/?api=1&destination=${destGPS.latitude},${destGPS.longitude}&travelmode=driving&dir_action=navigate`;
+          const url = `https://waze.com/ul?ll=${destGPS.latitude},${destGPS.longitude}&navigate=yes`;
           window.open(url);
         });
 

@@ -56,7 +56,22 @@
       
       <ion-row style="margin-top:1%">
         <ion-col>
-           BOOKING DETAILS
+       
+           <ion-row>
+                        <ion-col>
+         
+       <ion-label>BOOKING: </ion-label><br/>
+           <ion-item>{{ booking?.bookingNumber }}</ion-item>
+             
+        </ion-col>
+        <ion-col>
+         
+       <ion-label>STAGE: </ion-label><br/>
+           <ion-item>{{ booking?.stageNumber }}</ion-item>
+             
+        </ion-col>
+          </ion-row>
+
               <ion-text *ngIf="booking?.passengers?.results?.length>0">
            
             <div *ngFor="let driver of booking?.passengers?.results">
@@ -80,44 +95,25 @@
 
             <br/>
           </ion-text>
-          <ion-row>
-                        <ion-col>
-         
-       <ion-label>BOOKING: </ion-label><br/>
-           <ion-item>{{ booking?.bookingNumber }}</ion-item>
-             
-        </ion-col>
-        <ion-col>
-         
-       <ion-label>STAGE: </ion-label><br/>
-           <ion-item>{{ booking?.stageNumber }}</ion-item>
-             
-        </ion-col>
-          </ion-row>
+          
              <ion-row>
                
         <ion-col>
          
        <ion-label>START</ion-label><br/>
-           <ion-item>{{ booking?.collectionAddress }} {{booking?.fromDestination}}</ion-item>
-               <ion-item>{{ booking?.bookingDate }}</ion-item>
-                <ion-item>{{ booking?.timeFrom }}</ion-item>
+           <ion-item>Location: {{ booking?.collectionAddress }} {{booking?.fromDestination}}</ion-item>
+               <ion-item>Date: {{ booking?.bookingDate }}</ion-item>
+                <ion-item>Time: {{ booking?.timeFrom }}</ion-item>
         </ion-col>
         <ion-col>
             <ion-label>END</ion-label><br/>
-                 <ion-item>{{ booking?.destinationAddress }} {{booking?.toDestination}}</ion-item>
-               <ion-item> {{ booking?.vehicleDetails?.results[0]?.bookingDateTo }}</ion-item>
-                <ion-item> {{ booking?.timeTo}}</ion-item>
+                 <ion-item>Location: {{ booking?.destinationAddress }} {{booking?.toDestination}}</ion-item>
+               <ion-item> Date: {{ booking?.vehicleDetails?.results[0]?.bookingDateTo }}</ion-item>
+                <ion-item>Time {{ booking?.timeTo}}</ion-item>
 
         </ion-col> 
    
-        <ion-col>
-            <ion-label>END</ion-label><br/>
-                 <ion-item>{{ booking?.destinationAddress }} {{booking?.toDestination}}</ion-item>
-               <ion-item> {{ booking?.vehicleDetails?.results[0]?.bookingDateTo }}</ion-item>
-                <ion-item> {{ booking?.timeTo}}</ion-item>
-
-        </ion-col>
+ 
              </ion-row>
 
         
