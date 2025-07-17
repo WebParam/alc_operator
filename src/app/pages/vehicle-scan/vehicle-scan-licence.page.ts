@@ -1,17 +1,12 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
-import {  BrowserMultiFormatReader,
-  BarcodeFormat,
-  DecodeHintType} from '@zxing/library';
+import { BrowserMultiFormatReader } from '@zxing/library';
 import { Store } from '@ngrx/store';
 import { BookingService } from 'src/app/services/booking.service';
+
+import { VehicleService } from 'src/app/services/vehicle.service';
 import { ToastService } from 'src/app/services/toast.service';
-import {
-  Camera,
-  CameraResultType,
-  CameraSource,
-} from '@capacitor/camera';
-import { Preferences } from '@capacitor/preferences';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { FormBuilder, Validators } from '@angular/forms';
 
 @Component({
@@ -27,7 +22,9 @@ export class VehicleScanLicencePage implements OnInit {
   private codeReader = new BrowserMultiFormatReader();
   public photos: any[] = [];
   mvaNumber: string = '';
- hasScanned: boolean = false;
+  hasScanned: boolean = false;
+  mvaResults: any[] = [];
+
   form = this.fb.group({
     licenceNumber: ['', [Validators.required]],
   });
@@ -36,6 +33,7 @@ export class VehicleScanLicencePage implements OnInit {
     private router: Router,
     private store: Store,
     private bookingsService: BookingService,
+        private vehicleService: VehicleService,
     private toast: ToastService,
     private fb: FormBuilder
   ) {
@@ -48,19 +46,11 @@ export class VehicleScanLicencePage implements OnInit {
     this.form.markAllAsTouched();
   }
 
-  done() {}
-  next() {}
-
   async continue() {
- 
-      this.hasScanned = true;
-      await this.doScan();
-      this.proceedText = 'Continue';
-  
+    this.hasScanned = true;
+    await this.doScan();
+    this.proceedText = 'Continue';
   }
-
-
- 
 
   public async takePhoto() {
     const capturedPhoto = await Camera.getPhoto({
@@ -88,92 +78,99 @@ export class VehicleScanLicencePage implements OnInit {
     });
   }
 
-async manual() {
-  
-  if (!this.mvaNumber) {
-    this.toast.showToast('Please enter an MVA number');
-    return;
-  }
-
-  const payload = new FormData();
-  payload.append('mvaNumber', this.mvaNumber);
-  this.router.navigateByUrl('/vehicle-scan-inspection/' + this.mvaNumber + '?vtc=true');
-       
-}
-
-async doScan() {
-  try {
-    const videoInputDevices = await this.codeReader.listVideoInputDevices();
-
-    if (videoInputDevices.length === 0) {
-      console.warn('No camera devices found');
+  async manual() {
+    if (!this.mvaNumber || this.mvaNumber.length < 5) {
+      this.toast.showToast('Please enter a valid MVA number');
       return;
     }
 
-    // Prefer a rear camera if available
-    
-    let selectedDevice = videoInputDevices.find(device =>
-      device.label.toLowerCase().includes('back') ||
-      device.label.toLowerCase().includes('rear')
-    );
+    const payload = new FormData();
+    payload.append('mvaNumber', this.mvaNumber);
 
-    // Fallback to the first device if no rear-facing one is found
-    if (!selectedDevice) {
-      console.warn('Rear camera not found, using default');
-      selectedDevice = videoInputDevices[0];
+  this.vehicleService.getVehicleVTC(this.mvaNumber).subscribe({
+  next: (data: any) => {
+    debugger;
+   const _res = JSON.parse(data);
+      const output = _res?.mvaOpenVtcOutput?.results ?? [];
+
+      if (output.length > 0) {
+        this.mvaResults = output;
+      } else {
+        this.toast.showToast('No VTC results found for this MVA');
+      }
+      },
+      error: async (error:any) => {
+      console.error('Error fetching VTC data:', error);
+      this.toast.showToast('Error fetching VTC data');
+    }
+    
+     });
+  
     }
 
-    this.codeReader.decodeFromVideoDevice(
-      selectedDevice.deviceId,
-      this.video?.nativeElement,
-      (result: any, err: any) => {
-        if (result) {
-          console.error('Scanned result:', result.text);
-          const mva = this.extractMVANumber(result.text);
-          this.scanResult = mva;
-          this.mvaNumber = mva??"";
-          console.error('Scanned MVA:', mva);
-          // this.router.navigateByUrl('/vehicle-scan-inspection/' + mva +"?vtc=true");
-          // this.codeReader.reset();
-        
-        }
+  async doScan() {
+    try {
+      const videoInputDevices = await this.codeReader.listVideoInputDevices();
+
+      if (videoInputDevices.length === 0) {
+        console.warn('No camera devices found');
+        return;
       }
-    );
-  } catch (error) {
-    console.error('Error during scanning:', error);
+
+      let selectedDevice = videoInputDevices.find(device =>
+        device.label.toLowerCase().includes('back') ||
+        device.label.toLowerCase().includes('rear')
+      );
+
+      if (!selectedDevice) {
+        console.warn('Rear camera not found, using default');
+        selectedDevice = videoInputDevices[0];
+      }
+
+      this.codeReader.decodeFromVideoDevice(
+        selectedDevice.deviceId,
+        this.video?.nativeElement,
+        (result: any, err: any) => {
+          if (result) {
+            const mva = this.extractMVANumber(result.text);
+            this.scanResult = mva;
+            this.mvaNumber = mva ?? '';
+          }
+        }
+      );
+    } catch (error) {
+      console.error('Error during scanning:', error);
+    }
   }
-}
 
-
-extractMVANumber(barcodeData:string) {
-
-  const parts = barcodeData.split('%').filter(Boolean); // removes empty strings
-  if (parts.length >= 6) {
-    return parts[5]; // CAA number is at index 5
+  extractMVANumber(barcodeData: string) {
+    const parts = barcodeData.split('%').filter(Boolean);
+    if (parts.length >= 6) {
+      return parts[5];
+    }
+    return null;
   }
-  return null;
-}
 
-
-
-
-//footer
-   home() {
+  home() {
     this.router.navigateByUrl('/home-screen');
   }
 
   manifest() {
     this.router.navigateByUrl('/manifest-screen');
   }
+
   exchange() {
     this.router.navigateByUrl('/vehicle-exchange');
   }
-  transfer(){
+
+  transfer() {
     this.router.navigateByUrl('/vehicle-scan-licence');
   }
+
   lostitem() {
     this.router.navigateByUrl('/forgot-item');
   }
+
   logoff() {
     this.router.navigateByUrl('/login');
   }

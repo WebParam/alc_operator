@@ -29,7 +29,7 @@
                   </ion-thumbnail>
                   <ion-card-content>
                  
-                    <p><small>{{ damage.damageDescription}}</small></p>
+                    <p><small>{{damage.description}} {{ damage.damageDescription}}</small></p>
 
                   </ion-card-content>
                   <ion-buttons>
@@ -46,8 +46,8 @@
             <div>
              
             <ion-img style="max-width: 25%; margin-left: 40%;" *ngIf="damage?.image" [src]="damage?.image" alt=""> </ion-img>
-            <ion-label style="max-width: 35%; margin-left: 40%;" *ngIf="damage?.damageRemark" >
-            {{damage?.damageRemark}}  
+            <ion-label style="max-width: 35%; margin-left: 40%;" *ngIf="damage?.damageRemark || damage?.description" >
+            {{damage?.damageRemark}} {{damage?.description}}
             </ion-label>
             
             <ion-img style="max-width: 25%; margin-left: 40%;" *ngIf="damage?.base64Image" [src]="'data:image/png;base64,' + damage?.base64Image" alt="Damage Image"></ion-img>

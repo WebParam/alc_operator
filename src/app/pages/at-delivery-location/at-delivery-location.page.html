@@ -114,6 +114,7 @@
 <ion-button
   [color]="form.valid ? 'medium' : 'dark'"
   expand="full"
+  *ngIf="currentLeg?.allocationType!=='booking collection'"
   (click)="board()"
 >
   View nameboard
@@ -130,7 +131,7 @@
 </ion-button>
 
  <!-- <div class="ion-padding"> -->
-    <ion-button expand="full"
+    <ion-button  *ngIf="currentLeg?.allocationType!=='booking collection'"  expand="full"
     (click)="markAsNoShow()"
      class="">
       Mark as no show

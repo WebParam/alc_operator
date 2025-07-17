@@ -234,10 +234,13 @@ deleteDamage(damage:any){
         // }
       )
       .subscribe((result) => {
-        
+        debugger;
         switch (type) {        
+           case("booking collection"):this.router.navigateByUrl(`/rental-agreement-checkin/${this.currentLeg?.bookingNumber}/${this.mva}`);
+           break;
           default:
             this.router.navigateByUrl(`/rental-agreement/${this.currentLeg?.bookingNumber}/${this.mva}`);
+           
         }
         
 

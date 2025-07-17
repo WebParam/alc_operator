@@ -4,6 +4,7 @@ import { AlertController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BookingService } from 'src/app/services/booking.service';
 import { VehicleService } from 'src/app/services/vehicle.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-at-delivery-location',
@@ -25,7 +26,8 @@ export class AtDeliveryLocationPage implements OnInit {
     private route: ActivatedRoute,
     private alertController: AlertController,
     private fb: FormBuilder,
-     private vehicleService: VehicleService
+     private vehicleService: VehicleService,
+      private userService: UserService
   ) {
     
   }
@@ -38,11 +40,11 @@ export class AtDeliveryLocationPage implements OnInit {
       ],
       fuelLevel: ["G1", Validators.required],
     });
-  
+   debugger;
     this.currentLeg = this.bookingService.currentLeg;
 
      this.vehicleService.getVehicleVTCBasic(this.currentLeg.mvaNumber).subscribe((result: any) => {
-      
+       debugger;
         this.vehicleDetails = result.result.getVehicleDataWithVTCOutput;
      debugger;
           this.form.patchValue({
@@ -78,9 +80,12 @@ export class AtDeliveryLocationPage implements OnInit {
           text: 'OK',
           handler: () => {
             this.route.params.subscribe((params: any) => {
-              const bId = params['bookingId'];
+               const user = this.userService?.user?.employeeNumber;
+              const bId = parseInt(this.currentLeg.bookingNumber) || params['bookingId'];
+              const stageNumber = parseInt(this.currentLeg.stageNumber) || params['stageNumber'];
+              debugger;
               this.bookingService
-                .postNoShow(bId, '1', this.bookingService.currentLeg.mvaNumber)
+                .postNoShow(bId, stageNumber, this.bookingService.currentLeg.mvaNumber,user )
                 .subscribe(() => {
                   this.router.navigateByUrl('/manifest-screen');
                 });
@@ -129,7 +134,7 @@ export class AtDeliveryLocationPage implements OnInit {
     this.vehicleService.lastFuel = this.form.controls['fuelLevel'].value ?? 'G1';
 
     this.router.navigateByUrl(
-      `/vehicle-inspection-collection/${mva}/${this.currentLeg?.bookingNumber}`
+      `/customer-accessories/${mva}`
     );
   }
 

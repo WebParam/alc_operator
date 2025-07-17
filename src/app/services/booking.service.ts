@@ -163,12 +163,13 @@ export class BookingService {
 
   }
 
-  postNoShow(bookingId: string, stage: string, mvaNumber:string) {
+  postNoShow(bookingId: string, stage: string, mvaNumber:string, employeeNumber?: string) {
    
     const body ={
-      bookingId: bookingId,
-      stage:stage,
-      mvaNumber:mvaNumber
+      bookingNumber: bookingId,
+      stageNumber:stage,
+      mvaNumber:mvaNumber,
+      employeeNumber: employeeNumber
     };
 
     return this.http.post(`${this.baseUrl}vehicles/MarkAsNoShow`, body, {
