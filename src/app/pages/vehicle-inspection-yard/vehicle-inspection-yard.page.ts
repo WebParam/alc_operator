@@ -41,11 +41,9 @@ export class VehicleInspectionPage implements OnInit {
   ) {
     this.route.params.subscribe((params) => {
       this.mva = params['mva'];
-      this.bookingId = params['bookingId'];
-      this._bookingId = params['bookingId'];
+ 
       this.deliveryType = params['delivery-type'];
       const mva = parseInt(this.mva);
-      this.form.controls.bookingId.setValue(params['bookingId']);
        const type = this.route.snapshot.queryParamMap.get('type');
 this.deliveryType = type ?? this.deliveryType;
        
@@ -79,6 +77,7 @@ this.deliveryType = type ?? this.deliveryType;
   }
 
   ngOnInit() {}
+
   updateVehicleData() {
     console.log(this.form.value);
     console.log(this.form.valid);
@@ -102,6 +101,7 @@ this.deliveryType = type ?? this.deliveryType;
         });
     }
   }
+
   checkOdo() {
     try {
       const reading = parseInt(this.form.controls.odoMeter.value ?? '0');
@@ -144,7 +144,7 @@ this.deliveryType = type ?? this.deliveryType;
 
 
   navigate() {
-    
+    debugger;
   //  if( this.bookingService.delieveryType=="BOOKING COLLECTION"){
       this.router.navigateByUrl(
         `/vehicle-accessories-yard/${this.form.controls.mva.value}`

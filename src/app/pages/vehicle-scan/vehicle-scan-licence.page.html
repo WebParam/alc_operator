@@ -10,6 +10,8 @@
 </ion-header>
 
 <ion-content>
+      <!-- <ion-button fill="outline" (click)="newVTC()">Create New</ion-button> -->
+
   <div class="scanner-container" style="margin-top: 10%;">
     <video *ngIf="hasScanned" #video width="100%" height="300" autoplay muted playsinline></video>
   </div>
@@ -33,10 +35,11 @@
     <ion-card-content>
       <ion-grid>
         <ion-row class="ion-text-center ion-padding">
-          <ion-col><strong>MVA</strong></ion-col>
-          <ion-col><strong>Driver</strong></ion-col>
-          <ion-col><strong>Check Out</strong></ion-col>
-          <ion-col><strong>Check In</strong></ion-col>
+          <ion-col style="text-align:left"><strong>MVA</strong></ion-col>
+          <ion-col  style="text-align:left"><strong>Driver</strong></ion-col>
+          <ion-col  style="text-align:left"><strong>Check Out</strong></ion-col>
+          <ion-col  style="text-align:left"><strong>Check In</strong></ion-col>
+          <ion-col ><strong>Actions</strong></ion-col>
         </ion-row>
         <ion-row *ngFor="let item of mvaResults">
           <ion-col>{{ item.mva }}</ion-col>
@@ -49,6 +52,9 @@
             {{ item.checkInStationDescrtn }}<br />
             {{ item.checkInDate }} {{ item.checkInTime }}
           </ion-col>
+          <ion-col style="text-align:center">
+            <ion-button fill="outline" (click)="checkIn(item)">Check In</ion-button>
+            </ion-col>
         </ion-row>
       </ion-grid>
     </ion-card-content>

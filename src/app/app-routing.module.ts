@@ -192,7 +192,7 @@ const routes: Routes = [
       ),
   },
     {
-    path: 'vehicle-inspection-yard/:mva/:bookingId',
+    path: 'vehicle-inspection-yard/:mva',
     loadChildren: () =>
       import('./pages/vehicle-inspection-yard/vehicle-inspection-yard.module').then(
         (m) => m.VehicleInspectionPageModule
@@ -325,6 +325,13 @@ const routes: Routes = [
     path: 'rental-agreement/:id',
     loadChildren: () =>
       import('./pages/rental-agreement/rental-agreement.module').then(
+        (m) => m.RentalAgreementPageModule
+      ),
+  },
+   {
+    path: 'rental-agreement-replacement/:id/:mva',
+    loadChildren: () =>
+      import('./pages/rental-agreement-replacement/rental-agreement.module').then(
         (m) => m.RentalAgreementPageModule
       ),
   },

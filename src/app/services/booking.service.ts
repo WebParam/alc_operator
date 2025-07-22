@@ -155,7 +155,7 @@ export class BookingService {
   postUploadCustomerSignature(body: FormData) {
    
 
-    return this.http.post(`${this.baseUrl}vehicles/completeDelivery`, body, {
+    return this.http.post(`${this.baseUrl}vehicles/CompleteCheckin`, body, {
       headers: {
         enctype: 'multipart/form-data',
       },

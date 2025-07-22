@@ -77,6 +77,15 @@ export class VehicleScanLicencePage implements OnInit {
       }
     });
   }
+newVTC(){
+
+}
+  checkIn(item:any){     
+    const mva = item.mva;
+    debugger;
+    this.router.navigateByUrl(`vehicle-inspection-yard/${mva}`);
+
+  }
 
   async manual() {
     if (!this.mvaNumber || this.mvaNumber.length < 5) {
@@ -87,24 +96,23 @@ export class VehicleScanLicencePage implements OnInit {
     const payload = new FormData();
     payload.append('mvaNumber', this.mvaNumber);
 
-  this.vehicleService.getVehicleVTC(this.mvaNumber).subscribe({
+this.vehicleService.getVehicleVTCRegistration(this.mvaNumber).subscribe({
   next: (data: any) => {
     debugger;
-   const _res = JSON.parse(data);
-      const output = _res?.mvaOpenVtcOutput?.results ?? [];
+    const _res = data.result;
+    const output = _res?.mvaOpenVtcOutput?.results ?? [];
 
-      if (output.length > 0) {
-        this.mvaResults = output;
-      } else {
-        this.toast.showToast('No VTC results found for this MVA');
-      }
-      },
-      error: async (error:any) => {
-      console.error('Error fetching VTC data:', error);
-      this.toast.showToast('Error fetching VTC data');
+    if (output.length > 0) {
+      this.mvaResults = output;
+    } else {
+      this.toast.showToast('No VTC results found for this MVA');
     }
-    
-     });
+  },
+  error: async (error: any) => {
+    console.error('Error fetching VTC data:', error);
+    this.toast.showToast('Error fetching VTC data');
+  }
+});
   
     }
 
