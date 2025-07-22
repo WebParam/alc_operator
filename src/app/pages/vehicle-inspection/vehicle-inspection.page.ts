@@ -52,7 +52,7 @@ export class VehicleInspectionPage implements OnInit {
       this.form.controls.bookingId.setValue(params['bookingId']);
       const type = this.route.snapshot.queryParamMap.get('type');
       this.deliveryType = type ?? this.deliveryType;
-       debugger;  
+         
       bookingService.getVTC(mva).subscribe((data: any) => {
         console.log(data);
         this.form.controls.fuelLevel.setValue(
@@ -139,7 +139,7 @@ export class VehicleInspectionPage implements OnInit {
   navigate() {
     
     this.vehicleService.lastOdo = parseInt(this.form.controls.odoMeter.value?? '0');
-    debugger;
+    
     this.vehicleService.lastFuel = this.form.controls.fuelLevel.value??"G1";
 
     var isDel = this.bookingService.currentLeg.allocationType.trim();

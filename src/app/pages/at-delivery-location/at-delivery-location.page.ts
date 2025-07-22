@@ -40,13 +40,13 @@ export class AtDeliveryLocationPage implements OnInit {
       ],
       fuelLevel: ["G1", Validators.required],
     });
-   debugger;
+   
     this.currentLeg = this.bookingService.currentLeg;
 
      this.vehicleService.getVehicleVTCBasic(this.currentLeg.mvaNumber).subscribe((result: any) => {
-       debugger;
+       
         this.vehicleDetails = result.result.getVehicleDataWithVTCOutput;
-     debugger;
+     
           this.form.patchValue({
             odoMeter: this.vehicleDetails.lastOdo || 0,
             fuelLevel: this.vehicleDetails.fuelLevel || 'G1'
@@ -83,7 +83,7 @@ export class AtDeliveryLocationPage implements OnInit {
                const user = this.userService?.user?.employeeNumber;
               const bId = parseInt(this.currentLeg.bookingNumber) || params['bookingId'];
               const stageNumber = parseInt(this.currentLeg.stageNumber) || params['stageNumber'];
-              debugger;
+              
               this.bookingService
                 .postNoShow(bId, stageNumber, this.bookingService.currentLeg.mvaNumber,user )
                 .subscribe(() => {
@@ -110,7 +110,7 @@ export class AtDeliveryLocationPage implements OnInit {
     this.vehicleService.lastOdo = parseInt(this.form.controls['odoMeter'].value ?? '0');
     this.vehicleService.lastFuel = this.form.controls['fuelLevel'].value ?? 'G1';
 
-    debugger;
+    
     if (isDel) {
       this.router.navigateByUrl(
         `/vehicle-inspection/${mva}/${this.currentLeg?.bookingNumber}`
@@ -142,7 +142,7 @@ export class AtDeliveryLocationPage implements OnInit {
     if (this.form.valid) {
           this.vehicleService.lastOdo = parseInt(this.form.controls['odoMeter'].value ?? '0');
     this.vehicleService.lastFuel = this.form.controls['fuelLevel'].value ?? 'G1';
-debugger;
+
       this.router.navigateByUrl('/scan-licence');
     }
   }

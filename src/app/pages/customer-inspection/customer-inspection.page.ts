@@ -218,7 +218,7 @@ deleteDamage(damage:any){
         VehicleQCheck: fullQCheck,
       };
      
-     debugger;
+     
       payload.append('data', JSON.stringify(jsonData));
       payload.append('stageNumber', this.currentLeg?.stageNumber);
       payload.append('bookingId', this.currentLeg?.bookingNumber);
@@ -234,7 +234,7 @@ deleteDamage(damage:any){
         // }
       )
       .subscribe((result) => {
-        debugger;
+        
         switch (type) {        
            case("booking collection"):this.router.navigateByUrl(`/rental-agreement-checkin/${this.currentLeg?.bookingNumber}/${this.mva}`);
            break;

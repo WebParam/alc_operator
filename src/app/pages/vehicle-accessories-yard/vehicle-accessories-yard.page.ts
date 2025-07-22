@@ -70,7 +70,7 @@ export class VehicleAccessoriesPage implements OnInit {
     });
     this.vehicleService.vehicleAccessories = accessories;
     
-    debugger;
+    
     this.router.navigateByUrl(`/pre-inspection-yard/${this.mva}`);
   
 

@@ -67,21 +67,47 @@ export class ScanLicencePage implements OnInit {
     this.currentLeg = this.bookingsService.currentLeg;
   }
 
-  ngOnInit() {
-    this.form.markAllAsTouched();
+ ngOnInit() {
+  this.form.markAllAsTouched();
 
-    const currentDate = new Date();
-    const currentMonthIndex = currentDate.getMonth(); // 0-based (0 = Jan)
-    const currentYear = currentDate.getFullYear();
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
 
-    // Only show months from current month onward
-    this.months = this.months.filter((m) => m.index >= currentMonthIndex);
-
-    // Add 20 years for expiryYear dropdown
-    for (let i = 0; i < 20; i++) {
-      this.years.push((currentYear + i).toString());
-    }
+  for (let i = 0; i < 20; i++) {
+    this.years.push((currentYear + i).toString());
   }
+
+  // Add validator that checks if expiry date is valid
+  this.form.valueChanges.subscribe(() => {
+    this.validateExpiryMonth();
+  });
+}
+
+
+
+validateExpiryMonth() {
+  const expiryMonth = this.form.value.expiryMonth;
+  const expiryYear = this.form.value.expiryYear;
+  const control = this.form.get('expiryMonth');
+
+  if (!expiryMonth || !expiryYear) {
+    control?.setErrors(null);
+    return;
+  }
+
+  const currentDate = new Date();
+  const selectedDate = new Date(parseInt(expiryYear), parseInt(expiryMonth) - 1, 1);
+
+  if (
+    parseInt(expiryYear) === currentDate.getFullYear() &&
+    selectedDate.getMonth() < currentDate.getMonth()
+  ) {
+    control?.setErrors({ pastMonth: true });
+  } else {
+    control?.setErrors(null);
+  }
+}
+
 
   public async takePhoto() {
     try {

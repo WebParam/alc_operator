@@ -18,12 +18,26 @@
   </ion-item>
 
   <!-- Expiry Month -->
-  <ion-item>
-    <ion-label position="stacked">Expiry Month</ion-label>
-    <ion-select placeholder="Select month" [formControl]="form.controls['expiryMonth']">
-      <ion-select-option *ngFor="let m of months" [value]="m.value">{{ m.name }}</ion-select-option>
-    </ion-select>
-  </ion-item>
+<ion-item
+  [class.ion-invalid]="form.get('expiryMonth')?.invalid && form.get('expiryMonth')?.touched"
+  [class.ion-valid]="form.get('expiryMonth')?.valid && form.get('expiryMonth')?.touched"
+  class="ion-margin-bottom"
+>
+  <ion-label position="stacked">Expiry Month</ion-label>
+  <ion-select
+    placeholder="Select month"
+    [formControl]="form.controls['expiryMonth']"
+    interface="popover"
+  >
+    <ion-select-option *ngFor="let m of months" [value]="m.value">{{ m.name }}</ion-select-option>
+  </ion-select>
+</ion-item>
+
+<ion-note slot="error" color="danger" *ngIf="form.get('expiryMonth')?.errors?.['pastMonth'] && form.get('expiryMonth')?.touched">
+  Month is in the past.
+</ion-note>
+
+
 
   <!-- Expiry Year -->
   <ion-item>
@@ -72,10 +86,10 @@
   </div>
 
   <!-- Continue Button -->
-  <ion-button
-    expand="block"
-    [disabled]="photos.length === 0 || form.invalid || isUploading"
-    (click)="inspection()">
+<ion-button
+  expand="block"
+  [disabled]="photos.length === 0 || form.invalid || isUploading"
+  (click)="inspection()">
     <ion-spinner *ngIf="isUploading" slot="start" name="dots"></ion-spinner>
     Continue
   </ion-button>

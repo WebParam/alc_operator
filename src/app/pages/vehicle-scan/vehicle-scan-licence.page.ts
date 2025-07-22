@@ -82,7 +82,7 @@ newVTC(){
 }
   checkIn(item:any){     
     const mva = item.mva;
-    debugger;
+    
     this.router.navigateByUrl(`vehicle-inspection-yard/${mva}`);
 
   }
@@ -98,7 +98,7 @@ newVTC(){
 
 this.vehicleService.getVehicleVTCRegistration(this.mvaNumber).subscribe({
   next: (data: any) => {
-    debugger;
+    
     const _res = data.result;
     const output = _res?.mvaOpenVtcOutput?.results ?? [];
 

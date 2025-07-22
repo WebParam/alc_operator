@@ -62,7 +62,7 @@ raDetails:any;
   //     .getBookingManifestByEmployee(this.userService?.user?.employeeNumber)
   //     .subscribe({
   //       next: (bookings: any) => {
-  //        debugger;
+  //        
   //       },
   //       error: (err: any) => {},
   //     });
@@ -91,11 +91,11 @@ raDetails:any;
       });
       
       const leg = this.bookingService.currentLeg; 
-      debugger;
+      
       this.bookingService.getRADetails(bookingId,leg.stageNumber).subscribe((result: any) => {
        
         this.raDetails = result.getRentalAgreementDetails;
-          debugger;
+          
       });
         
       this._vehicleService.getVehicleVTC(mva).subscribe((result: any) => {
@@ -114,11 +114,11 @@ raDetails:any;
             this.apiResponse = res;
             this.fullvehicles = result.result.getVehicleDataWithVTCOutput;
             
-            debugger;
+            
           }
         });
 
-       debugger;
+       
        this.bookingDetails= this.bookingService.currentLeg;
   
 
@@ -228,7 +228,7 @@ raDetails:any;
     var isExch = this.bookingService.currentLeg.vehicleDetails?.results[0]?.replacesMva.trim();
 
     this.bookingService.delieveryType = isExch.length>2?"EXCHANGE": isDel;
-    debugger;
+    
     const user = this.userService?.user?.employeeNumber;
 
     this.sendSignature(base64Data).subscribe({
@@ -285,7 +285,7 @@ raDetails:any;
 
     const blob = this.base64ToBlob(base64Image);
     
-debugger;
+
  const test = this.apiResponse;
     compete.append("data", JSON.stringify({
       type: this.bookingService.delieveryType,

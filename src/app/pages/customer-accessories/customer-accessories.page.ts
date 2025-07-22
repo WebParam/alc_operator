@@ -33,7 +33,7 @@ export class CustomerAccessoriesPage implements OnInit {
       vehicleService.getVehicleVTC(this.mva).subscribe((result: any) => {
         
         console.log(result);
-         debugger;
+         
           this.presentAlert()
         if (result?.result?.vehicleAccessorsOutput?.results) {
           var res = result?.result?.vehicleAccessorsOutput.results.map((r: any) => {

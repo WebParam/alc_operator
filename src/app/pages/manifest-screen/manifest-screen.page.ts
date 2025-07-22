@@ -96,7 +96,7 @@ onBookingTypeChange(event: any) {
 
 
 filterBookings(type: string) {
-  debugger;
+  
   this.filteredBookings = this.todaysBookings.filter((booking: any) => {
     if (type === 'collection') {
       return booking.bookingType === 'booking collection';
@@ -223,7 +223,7 @@ filterBookings(type: string) {
     this.store.dispatch(selectLeg({ leg: leg }));
     this.bookingService.currentLeg = {...leg, allocationType: booking.bookingType};
     const allocation = booking.bookingType;
-    debugger;
+    
 
     if(allocation=="booking collection"){
       //collection
@@ -256,7 +256,7 @@ filterBookings(type: string) {
     this.store.dispatch(selectLeg({ leg: leg }));
     this.bookingService.currentLeg = {...leg, allocationType: booking.bookingType};
     const allocation = booking.bookingType;
-    debugger;
+    
 
     if(allocation=="booking collection"){
       //collection
@@ -282,7 +282,7 @@ filterBookings(type: string) {
 
   view(booking: any) {
     console.log(booking);
-    debugger;
+    
     this.store.dispatch(selectLeg({ leg: booking }));
     this.router.navigateByUrl('/view-booking');
   }

@@ -144,7 +144,7 @@ this.deliveryType = type ?? this.deliveryType;
 
 
   navigate() {
-    debugger;
+    
   //  if( this.bookingService.delieveryType=="BOOKING COLLECTION"){
       this.router.navigateByUrl(
         `/vehicle-accessories-yard/${this.form.controls.mva.value}`

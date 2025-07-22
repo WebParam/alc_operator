@@ -223,7 +223,7 @@ deleteDamage(damage:any){
         //customer inspection with new mva
         const p = this.bookingService.currentLeg;
         const res = p.vehicleDetails.results[0].replacesMva
-        debugger;
+        
         this.router.navigateByUrl(`/manifest-screen`);
 
       });

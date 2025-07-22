@@ -176,7 +176,7 @@ deleteDamage(damage:any){
   
     var t = this.updatedDamages
     const payload = new FormData();
-    debugger;
+    
     const blobs = await Promise.all(
       this.updatedDamages.map(async (img: any, index: number) => {
         
@@ -194,7 +194,7 @@ deleteDamage(damage:any){
       
       const meta = this.apiResponse.filter((x:any)=>{return x.dmsEntryId.length>1;})
       const meta2 = meta.map((x:any)=>{return {...x, base64Image:""}});
-debugger;
+
 
       const fullQCheck = [...this.updatedDamages, ...meta2];
 
