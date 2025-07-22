@@ -42,28 +42,39 @@ export class AtDeliveryLocationPage implements OnInit {
     });
    
     this.currentLeg = this.bookingService.currentLeg;
+this.vehicleService.getVehicleVTCBasic(this.currentLeg.mvaNumber).subscribe((result: any) => {
+  this.vehicleDetails = result.result.getVehicleDataWithVTCOutput;
 
-     this.vehicleService.getVehicleVTCBasic(this.currentLeg.mvaNumber).subscribe((result: any) => {
-       
-        this.vehicleDetails = result.result.getVehicleDataWithVTCOutput;
-     
-          this.form.patchValue({
-            odoMeter: this.vehicleDetails.lastOdo || 0,
-            fuelLevel: this.vehicleDetails.fuelLevel || 'G1'
-          });
-     });
+  this.minOdoMeter = this.vehicleDetails.lastOdo || 0;
 
- 
+  // Set form control AFTER min value is known
+  this.form.get('odoMeter')?.setValidators([
+    Validators.required,
+    Validators.min(this.minOdoMeter),
+  ]);
+  this.form.get('odoMeter')?.updateValueAndValidity();
 
-    this.route.params.subscribe((params) => {
-      const type = this.bookingService.delieveryType;
-    });
+  this.form.patchValue({
+    odoMeter: this.minOdoMeter,
+    fuelLevel: this.vehicleDetails.fuelLevel || 'G1',
+  });
+});
+
   }
 
-  checkOdo() {
-    const odo = this.form.get('odoMeter')?.value;
-    this.minOdoMeter = odo || 0;
+ checkOdo() {
+  const odoControl = this.form.get('odoMeter');
+  const enteredOdo = odoControl?.value;
+
+  if (enteredOdo < this.minOdoMeter) {
+    odoControl?.patchValue(this.minOdoMeter, { emitEvent: false });
+    odoControl?.setErrors({ belowMinimum: true });
+    odoControl?.markAsTouched();
+  } else {
+    odoControl?.setErrors(null);
+    odoControl?.markAsTouched(); // ensures it gets the red/green underline
   }
+}
 
   async markAsNoShow() {
     const alert = await this.alertController.create({

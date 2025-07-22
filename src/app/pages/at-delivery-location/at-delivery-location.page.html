@@ -67,16 +67,34 @@
     <ion-grid>
       <form [formGroup]="form">
   <ion-item class="ion-margin-top" lines="none">
-    <ion-input
-      type="number"
-      label="Odometer Reading"
-      labelPlacement="floating"
-      formControlName="odoMeter"
-      errorText="Odometer reading is required"
-      [min]="minOdoMeter"
-      (ionChange)="checkOdo()"
-    >
-    </ion-input>
+<ion-item
+  lines="inset"
+  [class.ion-invalid]="form.get('odoMeter')?.invalid && form.get('odoMeter')?.touched"
+  [class.ion-valid]="form.get('odoMeter')?.valid && form.get('odoMeter')?.touched"
+>
+  <ion-label position="floating">Odometer Reading</ion-label>
+  <ion-input
+    type="number"
+    formControlName="odoMeter"
+    [min]="minOdoMeter"
+    (ionChange)="checkOdo()"
+  ></ion-input>
+  <ion-note slot="helper"> Odometer reading cannot be lower than {{ minOdoMeter }}.</ion-note>
+</ion-item>
+
+<ion-note
+  slot="error"
+  color="danger"
+  *ngIf="form.get('odoMeter')?.hasError('belowMinimum') && form.get('odoMeter')?.touched"
+>
+  Odometer reading cannot be lower than {{ minOdoMeter }}.
+</ion-note>
+
+
+<ion-note slot="error" color="danger" *ngIf="form.get('odoMeter')?.hasError('belowMinimum') && form.get('odoMeter')?.touched">
+  Odometer reading cannot be lower than {{ minOdoMeter }}.
+</ion-note>
+
     <span style="position: absolute; right: 1.5rem; bottom: 1rem">KMS</span>
   </ion-item>
 
