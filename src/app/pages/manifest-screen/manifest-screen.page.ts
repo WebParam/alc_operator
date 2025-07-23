@@ -33,16 +33,12 @@ filteredBookings:any[]=[];
   ) {}
 
   ngOnInit() {
+    // Still good for one-time setup if needed
+  }
+
+  ionViewWillEnter() {
+    // This runs every time the page is about to enter and become active
     this.getBookings();
-
-        const modal = this.modalCtrl.create({
-          component: ConfirmationPage,
-        }).then((modal) => {
-
-        // modal.present();
-
-        });
-    
   }
 
   getBookings() {

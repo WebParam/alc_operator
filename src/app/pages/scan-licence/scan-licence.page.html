@@ -89,7 +89,7 @@
 <ion-button
   expand="block"
   [disabled]="photos.length === 0 || form.invalid || isUploading"
-  (click)="inspection()">
+  (click)="continue()">
     <ion-spinner *ngIf="isUploading" slot="start" name="dots"></ion-spinner>
     Continue
   </ion-button>

@@ -67,46 +67,46 @@ export class ScanLicencePage implements OnInit {
     this.currentLeg = this.bookingsService.currentLeg;
   }
 
- ngOnInit() {
-  this.form.markAllAsTouched();
+  ngOnInit() {
+    this.form.markAllAsTouched();
 
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
 
-  for (let i = 0; i < 20; i++) {
-    this.years.push((currentYear + i).toString());
+    for (let i = 0; i < 20; i++) {
+      this.years.push((currentYear + i).toString());
+    }
+
+    // Add validator that checks if expiry date is valid
+    this.form.valueChanges.subscribe(() => {
+      this.validateExpiryMonth();
+    });
   }
 
-  // Add validator that checks if expiry date is valid
-  this.form.valueChanges.subscribe(() => {
-    this.validateExpiryMonth();
-  });
-}
 
 
+  validateExpiryMonth() {
+    const expiryMonth = this.form.value.expiryMonth;
+    const expiryYear = this.form.value.expiryYear;
+    const control = this.form.get('expiryMonth');
 
-validateExpiryMonth() {
-  const expiryMonth = this.form.value.expiryMonth;
-  const expiryYear = this.form.value.expiryYear;
-  const control = this.form.get('expiryMonth');
+    if (!expiryMonth || !expiryYear) {
+      control?.setErrors(null);
+      return;
+    }
 
-  if (!expiryMonth || !expiryYear) {
-    control?.setErrors(null);
-    return;
+    const currentDate = new Date();
+    const selectedDate = new Date(parseInt(expiryYear), parseInt(expiryMonth) - 1, 1);
+
+    if (
+      parseInt(expiryYear) === currentDate.getFullYear() &&
+      selectedDate.getMonth() < currentDate.getMonth()
+    ) {
+      control?.setErrors({ pastMonth: true });
+    } else {
+      control?.setErrors(null);
+    }
   }
-
-  const currentDate = new Date();
-  const selectedDate = new Date(parseInt(expiryYear), parseInt(expiryMonth) - 1, 1);
-
-  if (
-    parseInt(expiryYear) === currentDate.getFullYear() &&
-    selectedDate.getMonth() < currentDate.getMonth()
-  ) {
-    control?.setErrors({ pastMonth: true });
-  } else {
-    control?.setErrors(null);
-  }
-}
 
 
   public async takePhoto() {
@@ -184,6 +184,7 @@ validateExpiryMonth() {
       return;
     }
 
+    debugger;
     try {
       this.isUploading = true;
 
@@ -193,7 +194,7 @@ validateExpiryMonth() {
       const mainPhotoBlob = await fetch(mainPhoto.webviewPath ?? '').then((res) => res.blob());
       payload.append('file', mainPhotoBlob);
       payload.append('licenceNumber', this.form.value.licenceNumber ?? '');
-
+      this.bookingsService._licenceNumber = this.form.value.licenceNumber ?? '';
       const expiryMonth = this.form.value.expiryMonth;
       const expiryYear = this.form.value.expiryYear;
       const formattedDate = `${expiryYear}-${expiryMonth}`;
@@ -213,12 +214,13 @@ validateExpiryMonth() {
         payload.append(`additionalDriverNumbers`, driver.licenceNumber);
       }
 
-      this.bookingsService.uploadLicence(payload, '5379695', '1').subscribe(
+
+      this.bookingsService.uploadLicence(payload, this.currentLeg.bookingNumber, this.currentLeg.stageNumber,`${this.form.value.licenceNumber}-${this.form.value.expiryMonth}${this.form.value.expiryYear}`).subscribe(
         (res: any) => {
           this.isUploading = false;
           const _res = JSON.parse(res);
           if (_res?.createDocOutput?.result?.success === true) {
-            this.router.navigateByUrl('/at-delivery-location');
+            this.inspection();
           } else {
             this.toast.showToast('Upload failed. Please try again.');
           }

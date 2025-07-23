@@ -50,6 +50,7 @@ export class BookingService {
       `${this.baseUrl}Booking/operator/beginDelivery/${bookingId}/${stageNumber}`
     );
   }
+  _licenceNumber: string = '';
   _currentLeg: any;
   _deliveryType = '';
   set currentLeg(leg: any) {
@@ -138,8 +139,8 @@ export class BookingService {
 
   }
 
-  uploadLicence(body: FormData, bookingId: string, stage: string) {
-    return this.http.post(`${this.baseUrl}saveLicence/${bookingId}/${stage}`, body);
+  uploadLicence(body: FormData, bookingId: string, stage: string, licenceNumber?: string) {
+    return this.http.post(`${this.baseUrl}saveLicence/${bookingId}/${stage}/${licenceNumber}`, body);
 
   }
 
