@@ -21,14 +21,14 @@ export class VehicleInspectionPage implements OnInit {
     fuelLevel: ['', [Validators.required]],
     mva: ['', [Validators.required]],
     regConfirmed: [false, [Validators.requiredTrue]],
-    bookingId: ['', [Validators.required]],
-    //login_reg_test:[],
+    bookingId: ['', [Validators.required]]
   });
   minOdoMeter = 0;
   regNumber = '';
   bookingId = '';
   _bookingId = '';
   mva = '';
+  currentLeg: any = {};
   showNoshow:boolean=true;
   deliveryType = '';
   constructor(
@@ -46,7 +46,8 @@ export class VehicleInspectionPage implements OnInit {
       const mva = parseInt(this.mva);
        const type = this.route.snapshot.queryParamMap.get('type');
 this.deliveryType = type ?? this.deliveryType;
-       
+       this.currentLeg = this.bookingService.currentLeg;
+  
       bookingService.getVTC(mva).subscribe((data: any) => {
         console.log(data);
         this.presentAlert();
@@ -59,6 +60,11 @@ this.deliveryType = type ?? this.deliveryType;
         this.form.controls.mva.setValue(
           data?.UpdateVehicleData?.mva ?? this.mva
         );
+        
+        this.form.controls.bookingId.setValue(
+          data?.UpdateVehicleData?.bookingNumber ?? this.mva
+        );
+
         this.minOdoMeter = data?.UpdateVehicleData?.lastOdo;
         this.regNumber = data?.UpdateVehicleData?.registration;
       });
@@ -81,6 +87,12 @@ this.deliveryType = type ?? this.deliveryType;
   updateVehicleData() {
     console.log(this.form.value);
     console.log(this.form.valid);
+    
+    let payload = this.form.value as any;
+    payload.mva = this.currentLeg.mvaNumber;
+    payload.bookingId = this.currentLeg.bookingNumber;
+    payload.type="CUSTOMER INSPECTION";
+    payload.stage = this.currentLeg.stageNumber;
     if (this.form.invalid) {
       this.form.markAsDirty();
       this.form.markAllAsTouched();

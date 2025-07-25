@@ -45,11 +45,39 @@ export class BookingService {
       `${this.baseUrl}Booking/operator/completeDelivery/${bookingId}/${stageNumber}`
     );
   }
+  
+  getStations() {
+    return this.http.get(
+      `${this.baseUrl}Booking/operator/getStations/`
+    );
+  }
+
+  getReasons() {
+    return [{code:"1", description:"Vehicle Inspection"}, {code:"2", description:"Damage Report"}, {code:"3", description:"Other"}];
+  }
+
+  submitInspection(payload: any) {
+
+     return this.http.post(`${this.baseUrl}Booking/operator/createVTC`, payload);
+
+  }
+
+  
+  closeInspection(payload: any) {
+
+     return this.http.post(`${this.baseUrl}Booking/operator/closeVTC`, payload);
+
+  }
+
+  
+
   beginDelivery(bookingId: string, stageNumber: number) {
     return this.http.get(
       `${this.baseUrl}Booking/operator/beginDelivery/${bookingId}/${stageNumber}`
     );
   }
+
+  _openVTC:any;
   _licenceNumber: string = '';
   _currentLeg: any;
   _deliveryType = '';

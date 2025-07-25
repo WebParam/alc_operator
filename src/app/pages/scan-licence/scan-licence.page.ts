@@ -184,7 +184,7 @@ export class ScanLicencePage implements OnInit {
       return;
     }
 
-    debugger;
+    
     try {
       this.isUploading = true;
 

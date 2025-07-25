@@ -10,23 +10,29 @@
 </ion-header>
 
 <ion-content>
-      <!-- <ion-button fill="outline" (click)="newVTC()">Create New</ion-button> -->
+  <!-- <ion-button fill="outline" (click)="newVTC()">Create New</ion-button> -->
 
   <div class="scanner-container" style="margin-top: 10%;">
     <video *ngIf="hasScanned" #video width="100%" height="300" autoplay muted playsinline></video>
   </div>
 
-  <p *ngIf="scanResult">Scanned MVA: {{ scanResult }}</p>
 
-  <ion-button expand="block" *ngIf="!hasScanned" (click)="continue()">Scan</ion-button>
-
-  <ion-input 
-    type="text" 
-    placeholder="MVA number" 
-    [(ngModel)]="mvaNumber">
+  <ion-input type="text" (ionChange)="loaded=false" placeholder="Vehicle Registration Number" [(ngModel)]="mvaNumber">
   </ion-input>
 
-  <ion-button expand="block" [disabled]="mvaNumber.length < 5" (click)="manual()">Proceed</ion-button>
+
+  <ion-row class="ion-margin-top">
+
+    <ion-col size="4">
+      <ion-button expand="block" [disabled]="mvaNumber.length < 5 || loaded==true" (click)="manual()">Proceed</ion-button>
+    </ion-col>
+    <ion-col size="4">
+      <ion-button expand="block" *ngIf="!hasScanned" (click)="continue()">Scan</ion-button>
+    </ion-col>
+    <ion-col size="4">
+      <ion-button expand="block" *ngIf="!hasScanned && loaded" (click)="newVTC()">Create new</ion-button>
+    </ion-col>
+  </ion-row>
 
   <ion-card *ngIf="mvaResults?.length">
     <ion-card-header>
@@ -36,10 +42,10 @@
       <ion-grid>
         <ion-row class="ion-text-center ion-padding">
           <ion-col style="text-align:left"><strong>MVA</strong></ion-col>
-          <ion-col  style="text-align:left"><strong>Driver</strong></ion-col>
-          <ion-col  style="text-align:left"><strong>Check Out</strong></ion-col>
-          <ion-col  style="text-align:left"><strong>Check In</strong></ion-col>
-          <ion-col ><strong>Actions</strong></ion-col>
+          <ion-col style="text-align:left"><strong>Driver</strong></ion-col>
+          <ion-col style="text-align:left"><strong>Check Out</strong></ion-col>
+          <ion-col style="text-align:left"><strong>Check In</strong></ion-col>
+          <ion-col><strong>Actions</strong></ion-col>
         </ion-row>
         <ion-row *ngFor="let item of mvaResults">
           <ion-col>{{ item.mva }}</ion-col>
@@ -54,7 +60,7 @@
           </ion-col>
           <ion-col style="text-align:center">
             <ion-button fill="outline" (click)="checkIn(item)">Check In</ion-button>
-            </ion-col>
+          </ion-col>
         </ion-row>
       </ion-grid>
     </ion-card-content>

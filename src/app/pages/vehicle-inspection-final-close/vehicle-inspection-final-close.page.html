@@ -1,0 +1,59 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Yard Inspection</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="form" (ngSubmit)="submitForm()" novalidate>
+    <div>
+      <ion-list class="ion-margin-top-50">
+        <ion-item class="ion-margin-top" lines="none">
+          <ion-label>Start Station</ion-label>
+          <ion-select formControlName="startStation" placeholder="Select Start Station">
+            <ion-select-option *ngFor="let station of stations" [value]="station.fromStation">
+              {{ station.stationDescription }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item class="ion-margin-top" lines="none">
+          <ion-label>End Station</ion-label>
+          <ion-select formControlName="endStation" placeholder="Select End Station">
+             <ion-select-option *ngFor="let station of stations" [value]="station.fromStation">
+              {{ station.stationDescription }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item class="ion-margin-top" lines="none">
+          <ion-label>Reason Code</ion-label>
+          <ion-select formControlName="reasonCode" placeholder="Select Reason">
+            <ion-select-option *ngFor="let reason of reasons" [value]="reason.code">
+              {{ reason.description }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item class="ion-margin-top" lines="none">
+          <ion-label position="floating">Remark</ion-label>
+          <ion-input type="text" formControlName="remark"></ion-input>
+        </ion-item>
+        <ion-item class="ion-margin-top" lines="none">
+          <ion-label position="floating">End km's</ion-label>
+          <ion-input
+            type="number"
+            formControlName="endKms"
+            (blur)="validateEndKms()"
+          ></ion-input>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <div class="ion-padding">
+      <ion-button expand="full" class="ion-margin-top-50" type="submit">
+        Confirm
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

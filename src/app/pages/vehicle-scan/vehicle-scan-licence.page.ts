@@ -9,6 +9,7 @@ import { ToastService } from 'src/app/services/toast.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { FormBuilder, Validators } from '@angular/forms';
 
+
 @Component({
   selector: 'vehicle-scan-licence',
   templateUrl: './vehicle-scan-licence.page.html',
@@ -23,7 +24,9 @@ export class VehicleScanLicencePage implements OnInit {
   public photos: any[] = [];
   mvaNumber: string = '';
   hasScanned: boolean = false;
+  loaded: boolean = false;
   mvaResults: any[] = [];
+  loadedVehicle:any = {};
 
   form = this.fb.group({
     licenceNumber: ['', [Validators.required]],
@@ -33,7 +36,7 @@ export class VehicleScanLicencePage implements OnInit {
     private router: Router,
     private store: Store,
     private bookingsService: BookingService,
-        private vehicleService: VehicleService,
+    private vehicleService: VehicleService,
     private toast: ToastService,
     private fb: FormBuilder
   ) {
@@ -51,6 +54,11 @@ export class VehicleScanLicencePage implements OnInit {
     await this.doScan();
     this.proceedText = 'Continue';
   }
+
+   async startNew() {
+        this.router.navigateByUrl(`/vehicle-inspection-yard/${this.loadedVehicle?.mva}`);
+  }
+
 
   public async takePhoto() {
     const capturedPhoto = await Camera.getPhoto({
@@ -77,14 +85,13 @@ export class VehicleScanLicencePage implements OnInit {
       }
     });
   }
-newVTC(){
+  newVTC() {
+    this.router.navigateByUrl(`/vehicle-accessories-vtc/${this.loadedVehicle?.mva}`);
+  }
 
-}
-  checkIn(item:any){     
-    const mva = item.mva;
-    
-    this.router.navigateByUrl(`vehicle-inspection-yard/${mva}`);
-
+  checkIn(item: any) {
+    this.bookingsService._openVTC=  item;
+    this.router.navigateByUrl(`vehicle-accessories-vtc-close/${this.loadedVehicle.mva}`);
   }
 
   async manual() {
@@ -93,28 +100,35 @@ newVTC(){
       return;
     }
 
+    this.loaded = true;
+
     const payload = new FormData();
     payload.append('mvaNumber', this.mvaNumber);
 
-this.vehicleService.getVehicleVTCRegistration(this.mvaNumber).subscribe({
-  next: (data: any) => {
-    
-    const _res = data.result;
-    const output = _res?.mvaOpenVtcOutput?.results ?? [];
+    this.vehicleService.getVehicleVTCRegistration(this.mvaNumber).subscribe({
+      next: (data: any) => {
 
-    if (output.length > 0) {
-      this.mvaResults = output;
-    } else {
-      this.toast.showToast('No VTC results found for this MVA');
-    }
-  },
-  error: async (error: any) => {
-    console.error('Error fetching VTC data:', error);
-    this.toast.showToast('Error fetching VTC data');
+        const _res = data.result;
+        const output = _res?.mvaOpenVtcOutput?.results ?? [];
+
+        const vehicleDetails = _res?.getVehicleDataWithVTCOutput ?? {};
+        this.loadedVehicle = vehicleDetails;
+        
+        this.bookingsService._openVTC = _res;
+
+        if (output.length > 0) {
+          this.mvaResults = output;
+        } else {
+          this.toast.showToast('No VTC results found for this MVA');
+        }
+      },
+      error: async (error: any) => {
+        console.error('Error fetching VTC data:', error);
+        this.toast.showToast('Error fetching VTC data');
+      }
+    });
+
   }
-});
-  
-    }
 
   async doScan() {
     try {

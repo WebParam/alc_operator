@@ -290,7 +290,7 @@ export class RentalAgreementPage implements OnInit {
     const compete: FormData = new FormData();
 
     const blob = this.base64ToBlob(base64Image);
-    debugger;
+    
     compete.append("data", JSON.stringify({
       type: this.bookingService.delieveryType,
       mvaNumber: this.mva,

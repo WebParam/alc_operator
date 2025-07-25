@@ -197,7 +197,22 @@ const routes: Routes = [
       import('./pages/vehicle-inspection-yard/vehicle-inspection-yard.module').then(
         (m) => m.VehicleInspectionPageModule
       ),
-  }, {
+  },
+   {
+    path: 'pre-inspection-vtc/:mva',
+    loadChildren: () =>
+      import('./pages/pre-inspection-vtc/pre-inspection-vtc.module').then(
+        (m) => m.PreInspectionPageModule
+      ),
+  }, 
+    {
+    path: 'pre-inspection-vtc-close/:mva',
+    loadChildren: () =>
+      import('./pages/pre-inspection-vtc-close/pre-inspection-vtc-close.module').then(
+        (m) => m.PreInspectionPageModule
+      ),
+  }, 
+  {
     path: 'vehicle-inspection-collection/:mva/:bookingId',
     loadChildren: () =>
       import('./pages/vehicle-inspection-collection/vehicle-inspection-collection.module').then(
@@ -286,6 +301,20 @@ const routes: Routes = [
         (m) => m.VehicleAccessoriesPageModule
       ),
   },
+    {
+    path: 'vehicle-accessories-vtc/:mva',
+    loadChildren: () =>
+      import('./pages/vehicle-accessories-vtc/vehicle-accessories-vtc.module').then(
+        (m) => m.VehicleAccessoriesPageModule
+      ),
+  },
+      {
+    path: 'vehicle-accessories-vtc-close/:mva',
+    loadChildren: () =>
+      import('./pages/vehicle-accessories-vtc-close/vehicle-accessories-vtc-close.module').then(
+        (m) => m.VehicleAccessoriesPageModule
+      ),
+  },
   {
     path: 'vehicle-accessories-replacement/:mva',
     loadChildren: () =>
@@ -347,6 +376,20 @@ const routes: Routes = [
     loadChildren: () =>
       import('./pages/account-locked/account-locked.module').then(
         (m) => m.AccountLockedPageModule
+      ),
+  },
+   {
+    path: 'complete-vtc/:mva',
+    loadChildren: () =>
+      import('./pages/vehicle-inspection-final/vehicle-inspection-final.module').then(
+        (m) => m.VehicleInspectionPageModule
+      ),
+  },
+    {
+    path: 'complete-vtc-close/:mva',
+    loadChildren: () =>
+      import('./pages/vehicle-inspection-final-close/vehicle-inspection-final-close.module').then(
+        (m) => m.VehicleInspectionPageModule
       ),
   },
   {

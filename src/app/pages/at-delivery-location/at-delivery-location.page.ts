@@ -43,7 +43,7 @@ export class AtDeliveryLocationPage implements OnInit {
     });
 
     this.currentLeg = this.bookingService.currentLeg;
-    debugger;
+    
     this.vehicleService.getVehicleVTCBasic(this.currentLeg.mvaNumber).subscribe((result: any) => {
       this.vehicleDetails = result.result.getVehicleDataWithVTCOutput;
 
@@ -161,7 +161,7 @@ export class AtDeliveryLocationPage implements OnInit {
     payload.type="CUSTOMER INSPECTION";
     payload.stage = this.currentLeg.stageNumber;
 
-    debugger;
+    
     if (this.form.invalid) {
       this.form.markAsDirty();
       this.form.markAllAsTouched();
