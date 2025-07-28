@@ -41,12 +41,11 @@ ngOnInit() {
   this.loadDropdowns();
 
   const vtc = this.bookingService._openVTC;
-
+debugger;
   this.form.controls['startStation'].setValue(vtc?.checkOutStatCode);
   this.form.controls['endStation'].setValue(vtc?.checkInStatCode);
-  this.form.controls['reasonCode'].setValue(vtc?.reasonCode);
+  this.form.controls['reasonCode'].setValue(vtc?.reasonCode.trim());
   this.form.controls['remark'].setValue(vtc?.remark);
-
   this.checkOutOdoReading = parseInt(vtc?.checkOutOdoReading || '0', 10);
   this.form.controls['endKms'].setValue(this.checkOutOdoReading);
 }

@@ -212,19 +212,13 @@ deleteDamage(damage:any){
   
       
 
-      this.http.post(`${this.baseUrl}Vehicles/damages`, payload
-        // {
-        //   headers: {
-        //     'Content-Type': 'multipart/form-data',
-        //   },
-        // }
-      )
+      this.http.post(`${this.baseUrl}Vehicles/damages`, payload)
       .subscribe((result) => {
         //customer inspection with new mva
         const p = this.bookingService.currentLeg;
         const res = p.vehicleDetails.results[0].replacesMva
         
-        this.router.navigateByUrl(`/complete-vtc/${this.mva}}`);
+        this.router.navigateByUrl(`/complete-vtc/${this.mva}`);
 
       });
 

@@ -53,7 +53,14 @@ export class BookingService {
   }
 
   getReasons() {
-    return [{code:"1", description:"Vehicle Inspection"}, {code:"2", description:"Damage Report"}, {code:"3", description:"Other"}];
+    return [
+      {code:"IN", description:"Inter City Transfer (ICT)"}, 
+      {code:"RN", description:"Local Transfer"}, 
+      {code:"PM", description:"Panel Shop"},
+      {code:"SA", description:"Sales Promotion"},
+      {code:"OT", description:"Staff use"},
+    {code:"DS", description:"Used car yard"}
+  ];
   }
 
   submitInspection(payload: any) {

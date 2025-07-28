@@ -25,6 +25,13 @@
             </ion-select-option>
           </ion-select>
         </ion-item>
+        <ion-item class="ion-margin-top" lines="none">
+          <ion-label>End Date</ion-label>
+          <ion-datetime
+            presentation="date-time"
+            formControlName="endDate"
+          ></ion-datetime>
+        </ion-item>
 
         <ion-item class="ion-margin-top" lines="none">
           <ion-label>Reason Code</ion-label>
@@ -34,7 +41,14 @@
             </ion-select-option>
           </ion-select>
         </ion-item>
-
+    <ion-item class="ion-margin-top" lines="none">
+          <ion-label position="floating">End km's</ion-label>
+          <ion-input
+            type="number"
+            formControlName="startKms"
+            (blur)="validateEndKms()"
+          ></ion-input>
+        </ion-item>
         <ion-item class="ion-margin-top" lines="none">
           <ion-label position="floating">Remark</ion-label>
           <ion-input type="text" formControlName="remark"></ion-input>

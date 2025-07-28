@@ -86,6 +86,7 @@ export class VehicleScanLicencePage implements OnInit {
     });
   }
   newVTC() {
+    debugger;
     this.router.navigateByUrl(`/vehicle-accessories-vtc/${this.loadedVehicle?.mva}`);
   }
 
@@ -100,7 +101,7 @@ export class VehicleScanLicencePage implements OnInit {
       return;
     }
 
-    this.loaded = true;
+
 
     const payload = new FormData();
     payload.append('mvaNumber', this.mvaNumber);
@@ -113,7 +114,7 @@ export class VehicleScanLicencePage implements OnInit {
 
         const vehicleDetails = _res?.getVehicleDataWithVTCOutput ?? {};
         this.loadedVehicle = vehicleDetails;
-        
+            this.loaded = true;
         this.bookingsService._openVTC = _res;
 
         if (output.length > 0) {
