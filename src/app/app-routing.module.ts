@@ -192,7 +192,7 @@ const routes: Routes = [
       ),
   },
     {
-    path: 'vehicle-inspection-yard/:mva',
+    path: 'vehicle-inspection-yard/:mva/:bookingId',
     loadChildren: () =>
       import('./pages/vehicle-inspection-yard/vehicle-inspection-yard.module').then(
         (m) => m.VehicleInspectionPageModule

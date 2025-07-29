@@ -228,7 +228,7 @@ raDetails:any;
     this.sendSignature(base64Data).subscribe({
       next: (response) => {
         console.log('sig resp', response);
-            
+            debugger;
         if(isDel == 'booking collection'){
         this.router.navigateByUrl(
             `/vehicle-inspection-yard/${this.mva}/${this.bookingId}`
@@ -287,8 +287,8 @@ raDetails:any;
       bookingNumber:this.bookingId,
       stageNumber: this.bookingDetails.stageNumber,
       driverRating: this.rating.toString(),
-      damageFound: this.damage,
-      additionalCharges: this.charges,
+      damageFound: this.damage ? "1" : "0",
+      additionalCharges:this.damage ? "1" : "0",
       noShow: 0,
       employeeNumber: this.userService?.user?.employeeNumber,
     }));
