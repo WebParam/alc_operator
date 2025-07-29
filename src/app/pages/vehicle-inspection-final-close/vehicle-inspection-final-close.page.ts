@@ -16,7 +16,8 @@ export class VehicleInspectionFinalPage implements OnInit {
     endStation: ['', Validators.required],
     reasonCode: ['', Validators.required],
     endKms: [0, Validators.required],
-    remark: ['']
+    remark: [''],
+     endDate: [new Date().toISOString(), Validators.required]  // <-- New field added
   });
   checkOutOdoReading: number = 0; // 🔑 store original value
   stations: any[] = [];
@@ -77,6 +78,7 @@ validateEndKms() {
   }
 
   async submitForm() {
+    debugger;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
