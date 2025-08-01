@@ -298,7 +298,7 @@ raDetails:any;
     compete.append("", this.signatureImg);
 
 
-    return this.bookingService.postUploadCustomerSignature(compete);
+    return this.bookingService.postCompleteExchangeCheckin(compete);
   }
 
 

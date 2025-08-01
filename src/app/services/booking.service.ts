@@ -198,7 +198,16 @@ export class BookingService {
     });
 
   }
+ postCompleteExchangeCheckin(body: FormData) {
+   
 
+    return this.http.post(`${this.baseUrl}vehicles/CompleteDelivery`, body, {
+      headers: {
+        enctype: 'multipart/form-data',
+      },
+    });
+
+  }
   postNoShow(bookingId: string, stage: string, mvaNumber:string, employeeNumber?: string) {
    
     const body ={

@@ -16,6 +16,7 @@ import { BookingService } from 'src/app/services/booking.service';
   styleUrls: ['./vehicle-inspection-replacement.page.scss'],
 })
 export class VehicleInspectionPage implements OnInit {
+   currentLeg: any = {};
   form = this.fb.group({
     odoMeter: ['', [Validators.required]],
     fuelLevel: ['', [Validators.required]],
@@ -30,6 +31,7 @@ export class VehicleInspectionPage implements OnInit {
   _bookingId = '';
   mva = '';
   showNoshow:boolean=true;
+    vehicledata: any;
   deliveryType = '';
   constructor(
     private bookingService: BookingService,
@@ -49,7 +51,7 @@ export class VehicleInspectionPage implements OnInit {
       this.form.controls.bookingId.setValue(params['bookingId']);
        const type = this.route.snapshot.queryParamMap.get('type');
       this.deliveryType = type ?? this.deliveryType;
-    
+       this.currentLeg = this.bookingService.currentLeg;
       bookingService.getVTC(mva).subscribe((data: any) => {
         console.log(data);
            this.presentAlert();
@@ -64,12 +66,20 @@ export class VehicleInspectionPage implements OnInit {
         );
         this.minOdoMeter = data?.UpdateVehicleData?.lastOdo;
         this.regNumber = data?.UpdateVehicleData?.registration;
+         this.vehicledata = data;
       });
     });
   }
 
   ngOnInit() {}
   updateVehicleData() {
+      let payload = {...this.form.value} as any;
+    payload.mva = this.currentLeg.mvaNumber;
+    payload.bookingId = this.currentLeg.bookingNumber;
+    payload.type="CUSTOMER INSPECTION";
+    payload.stage = this.currentLeg.stageNumber;
+
+
     console.log(this.form.value);
     console.log(this.form.valid);
     if (this.form.invalid) {
@@ -78,7 +88,7 @@ export class VehicleInspectionPage implements OnInit {
       return;
     } else {
       this.bookingService
-        .updateVehicleData(this.form.value)
+        .updateVehicleData(payload)
         .subscribe(async (res) => {
           const toast = await this.toastController.create({
             message: 'Vehicle data updated',
