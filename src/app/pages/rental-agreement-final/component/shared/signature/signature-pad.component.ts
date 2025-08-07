@@ -4,10 +4,10 @@ import { Store } from '@ngrx/store';
 import { BookingService } from 'src/app/services/booking.service';
 import { VehicleService } from 'src/app/services/vehicle.service';
 import { IDamage } from 'src/app/store/bookings.actions';
-import SignaturePad from 'signature_pad';
-import { UserService } from 'src/app/services/user.service';
+import { NgxStarRatingModule } from 'ngx-star-rating';
+
 @Component({
-  selector: 'app-rental-agreement-checkin',
+  selector: 'app-rental-agreement',
   templateUrl: './rental-agreement.page.html',
   styleUrls: ['./rental-agreement.page.scss']
 
@@ -17,8 +17,6 @@ export class RentalAgreementPage implements OnInit {
   booking: any;
   leg:any;
   signatureNeeded!: boolean;
-  damage:boolean = false;
-  charges:boolean = false;
   @ViewChild('canvas') canvasEl!: ElementRef;
   signatureImg!: string;
   missingAccessories: IDamage[] = [];
@@ -32,16 +30,13 @@ export class RentalAgreementPage implements OnInit {
   drivers:any[]=[];
   cc:string="";
   apiResponse:any;
-  fullvehicles:any;
   equipment:any[]=[];
   mva="";
-  manifestDetails: any;
   rating = 2;
- signaturePad!: SignaturePad;
- replacesmva:string="";
-bookingDetails:any;
-  // @ViewChild('signPadCanvas', { static: false }) signaturePadElement: any;
-raDetails:any;
+  replacesmva="";
+
+  @ViewChild('signPadCanvas', { static: false }) signaturePadElement: any;
+
   signImage: any;
   accessories = [
     { key: 'Baby Seat', price: '450.00' },
@@ -49,27 +44,12 @@ raDetails:any;
     { key: 'Collection Fee', price: '300.00' },
   ];
 
-  constructor(private store: Store, private _bookingService: BookingService, private router: Router, private route: ActivatedRoute,    private vehicleService: VehicleService,  private userService: UserService) {
+    constructor(private store: Store, private _bookingService: BookingService, private router: Router, private route: ActivatedRoute,    private vehicleService: VehicleService) {
    
     this.bookingService = _bookingService;
     this._vehicleService = vehicleService;
 
   }
-
-  //   getBookings() {
-  //   //NK: todo: pass in agent detailsr
-  //   this.bookingService
-  //     .getBookingManifestByEmployee(this.userService?.user?.employeeNumber)
-  //     .subscribe({
-  //       next: (bookings: any) => {
-  //        
-  //       },
-  //       error: (err: any) => {},
-  //     });
-  // }
-
-
-
 
   ionViewDidEnter(): void {
     this.route.params.subscribe((params) => {
@@ -78,7 +58,6 @@ raDetails:any;
       const mva = params['mva'];
     
       this.bookingId = bookingId;
-      
       this.bookingService.getBooking(bookingId).subscribe((res: any) => {
         this.mva = mva;
         this.currentBooking = res.getBookingResult;
@@ -86,13 +65,13 @@ raDetails:any;
         this.customer = res.customer;
         this.cc = `${res.customer.creditCardNumber.slice(4)}`;
         this.drivers = res.additionalDrivers;
-        this.equipment = res.getBookingResult.legs.leg[0].equipment.equipment; 
+        this.equipment = res.getBookingResult.legs.leg[0].equipment.equipment;  
         this.replacesmva = res.getBookingResult.legs.leg[0].vehicleDetails.results[0].replaceMvaNumber;
+        
       });
       
-      const leg = this.bookingService.currentLeg; 
-    
-      this._vehicleService.getVehicleVTC(mva).subscribe((result: any) => {
+
+   this._vehicleService.getVehicleVTC(mva).subscribe((result: any) => {
         
           const accessories = this.vehicleService.vehicleAccessories;
           
@@ -106,15 +85,9 @@ raDetails:any;
             });
             
             this.apiResponse = res;
-            this.fullvehicles = result.result.getVehicleDataWithVTCOutput;
-            
-            
           }
         });
-
-       
-       this.bookingDetails= this.bookingService.currentLeg;
-  
+   
 
     });
 
@@ -122,14 +95,11 @@ raDetails:any;
   }
 
   ngAfterViewInit() {
-     this.signaturePad = new SignaturePad(this.canvasEl.nativeElement);
     // this.signaturePad = new SignaturePad(this.canvasEl.nativeElement, {
     //   backgroundColor: 'rgba(255, 255, 255, 0)',
     //   penColor: 'rgb(255, 255, 255)',
     // });
   }
-  
-
   /*It's work in devices*/
   startSignPadDrawing(event: Event) {
     console.log(event);
@@ -209,30 +179,32 @@ raDetails:any;
   }
 
   complete() {
-    const base64Data = this.signaturePad.toDataURL();
-    this.signatureImg = base64Data;
-    this.signatureNeeded = this.signaturePad.isEmpty();
-    if (!this.signatureNeeded) {
-      this.signatureNeeded = false;
-    }
 
-    
+    var isDel = this.bookingService.currentLeg.vehicleDetails?.results[0]?.allocationType.trim();
 
-    var isDel = this.bookingService.currentLeg.allocationType.trim();
-    var isExch = this.bookingService.currentLeg.vehicleDetails?.results[0]?.replacesMva.trim();
 
-    this.bookingService.delieveryType = isExch.length>2?"EXCHANGE": isDel;
-    
-    const user = this.userService?.user?.employeeNumber;
 
-    this.sendSignature(base64Data).subscribe({
+    this.sendSignature().subscribe({
       next: (response) => {
-    
-          
+        console.log('sig resp', response);
+            
+        if(isDel == 'BOOKING COLLECTION'){
           this.router.navigateByUrl(
-            `/vehicle-inspection-new-vehicle/${this.bookingService.currentLeg.vehicleDetails?.results[0]?.replacesMva.trim()}/${this.bookingId}`
+            `/at-delivery-location/`
           );
-   
+        }
+        
+        if(isDel =='EXCHANGE'){
+          this.router.navigateByUrl(
+            `/pre-inspection/${this.replacesmva}`
+          );
+        }
+        else{
+          this.router.navigateByUrl(
+            `/manifest-screen`
+          );
+
+        }
         
       },
       error: (error) => console.log('sig err', error),
@@ -240,53 +212,23 @@ raDetails:any;
 
   }
 
-  public base64ToBlob(base64Data: string, contentType: string = '', sliceSize: number = 512): Blob {
-    // Remove the data URL prefix if present (e.g., "data:image/png;base64,")
-    const base64WithoutPrefix = base64Data.split(',')[1] || base64Data;
-    
-    const byteCharacters = atob(base64WithoutPrefix);
-    const byteArrays = [];
-  
-    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-      const slice = byteCharacters.slice(offset, offset + sliceSize);
-  
-      const byteNumbers = new Array(slice.length);
-      for (let i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
-      }
-  
-      const byteArray = new Uint8Array(byteNumbers);
-      byteArrays.push(byteArray);
-    }
-  
-    return new Blob(byteArrays, { type: contentType });
-  }
-
-  sendSignature(base64Image:string) {
+  sendSignature() {
     const compete: FormData = new FormData();
 
-    const blob = this.base64ToBlob(base64Image);
-    
 
- const test = this.apiResponse;
     compete.append("data", JSON.stringify({
-      type: this.bookingService.delieveryType,
       mvaNumber: this.mva,
       bookingNumber:this.bookingId,
-      stageNumber: this.bookingDetails.stageNumber,
+      stageNumber: this.currentBooking.stageNumber,
       driverRating: this.rating.toString(),
-      damageFound: this.damage ? "1" : "0",
-      additionalCharges:this.damage ? "1" : "0",
-      noShow: 0,
-      employeeNumber: this.userService?.user?.employeeNumber,
+      damageFound: 0,
+      noShow: 0
     }));
 
-
-    compete.append("signature", blob);
     compete.append("", this.signatureImg);
 
 
-    return this.bookingService.postCompleteExchangeCheckin(compete);
+    return this.bookingService.postUploadCustomerSignature(compete);
   }
 
 
@@ -322,14 +264,8 @@ raDetails:any;
   startDrawing(event: Event) {
     // works in device not in browser
   }
-
   moved(event: Event) {
     // works in device not in browser
   }
-
-  clearPad() {
-    this.signaturePad.clear();
-  }
-
  
 }

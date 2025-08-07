@@ -62,6 +62,13 @@ const routes: Routes = [
         (m) => m.BookingSummaryPageModule
       ),
   },
+    {
+    path: 'vehicle-inspection-new-vehicle',
+    loadChildren: () =>
+      import('./pages/vehicle-inspection-new-vehicle/vehicle-inspection.module').then(
+        (m) => m.VehicleInspectionPageModule
+      ),
+  },
   {
     path: 'playground',
     loadChildren: () =>
@@ -198,6 +205,13 @@ const routes: Routes = [
         (m) => m.VehicleInspectionPageModule
       ),
   },
+  {
+    path: 'vehicle-inspection-new-vehicle/:mva/:bookingId',
+    loadChildren: () =>
+      import('./pages/vehicle-inspection-new-vehicle/vehicle-inspection.module').then(
+        (m) => m.VehicleInspectionPageModule
+      ),
+  },
    {
     path: 'pre-inspection-vtc/:mva',
     loadChildren: () =>
@@ -205,6 +219,27 @@ const routes: Routes = [
         (m) => m.PreInspectionPageModule
       ),
   }, 
+  {
+    path: 'pre-inspection-new-vehicle/:mva',
+    loadChildren: () =>
+      import('./pages/pre-inspection-new-vehicle/pre-inspection-replacement.module').then(
+        (m) => m.PreInspectionPageModule
+      ),
+  }, 
+  {
+    path: 'rental-agreement-final/:id',
+    loadChildren: () =>
+      import('./pages/rental-agreement-final/rental-agreement.module').then(
+        (m) => m.RentalAgreementPageModule
+      ),
+  },
+   {
+    path: 'vehicle-inspection-new-vehicle/:mva',
+    loadChildren: () =>
+      import('./pages/vehicle-inspection-new-vehicle/vehicle-inspection.module').then(
+        (m) => m.VehicleInspectionPageModule
+      ),
+  },
     {
     path: 'pre-inspection-vtc-close/:mva',
     loadChildren: () =>
@@ -312,6 +347,13 @@ const routes: Routes = [
     path: 'vehicle-accessories-vtc-close/:mva',
     loadChildren: () =>
       import('./pages/vehicle-accessories-vtc-close/vehicle-accessories-vtc-close.module').then(
+        (m) => m.VehicleAccessoriesPageModule
+      ),
+  },
+  {
+    path: 'vehicle-accessories-new-vehicle/:mva',
+    loadChildren: () =>
+      import('./pages/vehicle-accesories-new-vehicle/vehicle-accessories.module').then(
         (m) => m.VehicleAccessoriesPageModule
       ),
   },
