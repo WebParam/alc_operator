@@ -168,8 +168,47 @@ deleteDamage(damage:any){
 
   }
 
+  // Validation method to check if all required images are uploaded
+  validateAllImagesUploaded(): boolean {
+    if (!this.apiResponse || this.apiResponse.length === 0) {
+      return true; // No damages to validate
+    }
+
+    const missingImages = this.apiResponse.filter((damage: any) => 
+      !damage.image && !damage.base64Image
+    );
+
+    return missingImages.length === 0;
+  }
+
+  // Method to get missing image locations for user feedback
+  getMissingImageLocations(): string[] {
+    if (!this.apiResponse) return [];
+    
+    return this.apiResponse
+      .filter((damage: any) => !damage.image && !damage.base64Image)
+      .map((damage: any) => damage.damageLocation);
+  }
+
+  async showValidationToast(message: string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 3000,
+      position: 'top',
+      color: 'danger'
+    });
+    toast.present();
+  }
+
   
   async continue() {
+    // Validate that all required images are uploaded
+    if (!this.validateAllImagesUploaded() && environment.validation.live) {
+      const missingLocations = this.getMissingImageLocations();
+      const message = `Please upload images for the following locations: ${missingLocations.join(', ')}`;
+      await this.showValidationToast(message);
+      return; // Stop execution if validation fails
+    }
     // this.router.navigateByUrl('/accessories-check');
     this.vehicleService.vehiclesDamages = this.updatedDamages;
   

@@ -9,6 +9,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { BookingService } from 'src/app/services/booking.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-vehicle-inspection',
