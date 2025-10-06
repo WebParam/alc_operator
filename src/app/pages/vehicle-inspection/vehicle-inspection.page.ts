@@ -109,7 +109,7 @@ export class VehicleInspectionPage implements OnInit {
     try {
       const reading = parseInt(this.form.controls.odoMeter.value ?? this.vehicledata.UpdateVehicleData?.lastOdo );
       debugger;
-      if (reading <= this.minOdoMeter) {
+      if (reading < this.minOdoMeter) {
         this.form.controls.odoMeter.setValue(this.minOdoMeter.toString());
       }
     } catch (e) {
