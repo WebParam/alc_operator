@@ -45,37 +45,45 @@
             </ion-list>
             <div>
              
-            <ion-img style="max-width: 35%; margin-left: 35%;" *ngIf="damage?.image" [src]="damage?.image" alt=""> </ion-img>
-            <ion-label style="max-width: 35%; margin-left: 35%;" *ngIf="damage?.description" >
-            {{damage?.description}}  
-            </ion-label>
-            
-            <ion-img style="max-width: 35%; margin-left: 35%;" *ngIf="damage?.base64Image" [src]="'data:image/png;base64,' + damage?.base64Image" alt="Damage Image"></ion-img>
+            <!-- Show existing images (from API) -->
+            <div *ngIf="damage?.image || damage?.base64Image">
+              <ion-text color="medium"><p>Existing damage image:</p></ion-text>
+              <ion-img style="max-width: 35%; margin-left: 35%;" *ngIf="damage?.image" [src]="damage?.image" alt="Existing Damage"> </ion-img>
+              <ion-img style="max-width: 35%; margin-left: 35%;" *ngIf="damage?.base64Image" [src]="'data:image/png;base64,' + damage?.base64Image" alt="Existing Damage"></ion-img>
+              <ion-label style="max-width: 35%; margin-left: 35%;" *ngIf="damage?.description" >
+                {{damage?.description}}  
+              </ion-label>
+            </div>
+
+            <!-- Show user-captured images -->
+            <div *ngIf="damage?.userImage">
+              <ion-text color="primary"><p>Your captured image:</p></ion-text>
+              <ion-img style="max-width: 35%; margin-left: 35%;" [src]="damage?.userImage" alt="User Captured Damage"> </ion-img>
+              <ion-label style="max-width: 35%; margin-left: 35%;" *ngIf="damage?.userDescription" >
+                {{damage?.userDescription}}  
+              </ion-label>
+            </div>
             
           </div>
             <p style="text-align: center;font-size: 21px;">{{damage.damageRemark}}</p>
-            <div  *ngIf="!damage?.base64Image && !damage.image" class="ion-padding">
+            <!-- Always show capture/edit button -->
+            <div class="ion-padding">
               <ion-button
                 class="ion-text-end"
                 (click)="capture(damage)"
                 color="light"
                 fill="solid"
                 expand="full"
-                >Add Damage</ion-button
+                >{{ userCapturedDamages.has(damage.damageLocation) ? 'Edit Damage' : 'Add Damage' }}</ion-button
               >
             </div>
-            <ion-icon
-              (click)="deleteDamage(damage)"
-              name="trash"
-              *ngIf="damage.image"
-              size="large"
-            ></ion-icon>
-            <ion-icon
-              (click)="deleteDamage(damage)"
-              name="trash"
-              *ngIf="damage.base64Image?.length>1"
-              size="large"
-            ></ion-icon>
+            <!-- Action buttons for existing damage -->
+            <div *ngIf="userCapturedDamages.has(damage.damageLocation)" class="damage-actions">
+              <ion-button fill="clear" color="danger" (click)="deleteDamage(damage)">
+                <ion-icon name="trash" slot="start"></ion-icon>
+                Remove
+              </ion-button>
+            </div>
           </ion-card-content>
         </ion-card>
       </div>
