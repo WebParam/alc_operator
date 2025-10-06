@@ -29,6 +29,7 @@ export class ScanLicencePage implements OnInit {
 
   form = this.fb.group({
     licenceNumber: ['', [Validators.required]],
+    expiryDay: ['', [Validators.required]],
     expiryMonth: ['', [Validators.required]],
     expiryYear: ['', [Validators.required]],
   });
@@ -49,6 +50,7 @@ export class ScanLicencePage implements OnInit {
   ];
 
   years: string[] = [];
+  days: string[] = [];
 
   constructor(
     private router: Router,
@@ -73,38 +75,53 @@ export class ScanLicencePage implements OnInit {
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
 
+    // Generate years (current year to 20 years in the future)
     for (let i = 0; i < 20; i++) {
       this.years.push((currentYear + i).toString());
     }
 
+    // Generate days (1-31)
+    for (let i = 1; i <= 31; i++) {
+      this.days.push(i.toString().padStart(2, '0'));
+    }
+
     // Add validator that checks if expiry date is valid
     this.form.valueChanges.subscribe(() => {
-      this.validateExpiryMonth();
+      this.validateExpiryDate();
     });
   }
 
 
 
-  validateExpiryMonth() {
+  validateExpiryDate() {
+    const expiryDay = this.form.value.expiryDay;
     const expiryMonth = this.form.value.expiryMonth;
     const expiryYear = this.form.value.expiryYear;
-    const control = this.form.get('expiryMonth');
+    const dayControl = this.form.get('expiryDay');
+    const monthControl = this.form.get('expiryMonth');
 
-    if (!expiryMonth || !expiryYear) {
-      control?.setErrors(null);
+    // Clear previous errors
+    dayControl?.setErrors(null);
+    monthControl?.setErrors(null);
+
+    if (!expiryDay || !expiryMonth || !expiryYear) {
       return;
     }
 
     const currentDate = new Date();
-    const selectedDate = new Date(parseInt(expiryYear), parseInt(expiryMonth) - 1, 1);
+    const expiryDate = new Date(parseInt(expiryYear), parseInt(expiryMonth) - 1, parseInt(expiryDay));
+    
+    // Check if the date is valid (handles invalid dates like Feb 31)
+    if (expiryDate.getDate() !== parseInt(expiryDay) || 
+        expiryDate.getMonth() !== parseInt(expiryMonth) - 1 || 
+        expiryDate.getFullYear() !== parseInt(expiryYear)) {
+      dayControl?.setErrors({ invalidDate: true });
+      return;
+    }
 
-    if (
-      parseInt(expiryYear) === currentDate.getFullYear() &&
-      selectedDate.getMonth() < currentDate.getMonth()
-    ) {
-      control?.setErrors({ pastMonth: true });
-    } else {
-      control?.setErrors(null);
+    // Check if the licence has expired
+    if (expiryDate < currentDate) {
+      monthControl?.setErrors({ expired: true });
     }
   }
 
@@ -178,9 +195,65 @@ export class ScanLicencePage implements OnInit {
     await alert.present();
   }
 
+  private isLicenceExpired(): boolean {
+    const expiryDay = this.form.value.expiryDay;
+    const expiryMonth = this.form.value.expiryMonth;
+    const expiryYear = this.form.value.expiryYear;
+    
+    if (!expiryDay || !expiryMonth || !expiryYear) {
+      return false;
+    }
+
+    const currentDate = new Date();
+    const expiryDate = new Date(parseInt(expiryYear), parseInt(expiryMonth) - 1, parseInt(expiryDay));
+    
+    // Check if the date is valid first
+    if (expiryDate.getDate() !== parseInt(expiryDay) || 
+        expiryDate.getMonth() !== parseInt(expiryMonth) - 1 || 
+        expiryDate.getFullYear() !== parseInt(expiryYear)) {
+      return true; // Invalid dates are considered expired
+    }
+    
+    return expiryDate < currentDate;
+  }
+
+  private async showExpiredLicenceAlert() {
+    const alert = await this.alertController.create({
+      header: 'Licence Expired',
+      message: 'The driver licence expiry date is in the past. Please update the licence date or mark as no show.',
+      buttons: [
+        {
+          text: 'Update Licence Date',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            // User can update the form fields
+            return true;
+          }
+        },
+        {
+          text: 'Mark as No Show',
+          cssClass: 'danger',
+          handler: () => {
+            this.markAsNoShow();
+          }
+        }
+      ],
+      cssClass: 'alertAvis'
+    });
+
+    await alert.present();
+  }
+
   public async continue() {
     if (this.photos.length === 0 || this.form.invalid) {
-      this.toast.showToast('Please take a photo, enter the licence number, and select expiry month and year.');
+      this.toast.showToast('Please take a photo, enter the licence number, and select expiry day, month and year.');
+      return;
+    }
+
+    // Check if licence is expired
+    if (this.isLicenceExpired()) {
+      await this.showExpiredLicenceAlert();
       return;
     }
 
@@ -195,9 +268,10 @@ export class ScanLicencePage implements OnInit {
       payload.append('file', mainPhotoBlob);
       payload.append('licenceNumber', this.form.value.licenceNumber ?? '');
       this.bookingsService._licenceNumber = this.form.value.licenceNumber ?? '';
+      const expiryDay = this.form.value.expiryDay;
       const expiryMonth = this.form.value.expiryMonth;
       const expiryYear = this.form.value.expiryYear;
-      const formattedDate = `${expiryYear}-${expiryMonth}`;
+      const formattedDate = `${expiryYear}-${expiryMonth}-${expiryDay}`;
       payload.append('expiryDate', formattedDate);
 
       for (let i = 0; i < this.additionalDrivers.length; i++) {
@@ -215,7 +289,7 @@ export class ScanLicencePage implements OnInit {
       }
 
 
-      this.bookingsService.uploadLicence(payload, this.currentLeg.bookingNumber, this.currentLeg.stageNumber,`${this.form.value.licenceNumber}-${this.form.value.expiryMonth}${this.form.value.expiryYear}`).subscribe(
+      this.bookingsService.uploadLicence(payload, this.currentLeg.bookingNumber, this.currentLeg.stageNumber,`${this.form.value.licenceNumber}-${this.form.value.expiryDay}${this.form.value.expiryMonth}${this.form.value.expiryYear}`).subscribe(
         (res: any) => {
           this.isUploading = false;
           const _res = JSON.parse(res);

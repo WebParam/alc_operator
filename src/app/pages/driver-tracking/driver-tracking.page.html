@@ -1,0 +1,74 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Driver Tracking - Booking {{ bookingId }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="refreshLocation()" [disabled]="isLoading">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Loading indicator -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading driver location...</p>
+  </div>
+
+  <!-- Error message -->
+  <ion-card *ngIf="error" color="danger">
+    <ion-card-content>
+      <ion-icon name="warning-outline"></ion-icon>
+      {{ error }}
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Status info -->
+  <ion-card *ngIf="!isLoading && !error">
+    <ion-card-header>
+      <ion-card-title>Live Driver Location</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-icon name="time-outline" slot="start"></ion-icon>
+        <ion-label>
+          <h3>Last Updated</h3>
+          <p>{{ lastUpdated || 'Never' }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-icon name="car-outline" slot="start"></ion-icon>
+        <ion-label>
+          <h3>Booking ID</h3>
+          <p>{{ bookingId }}</p>
+        </ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-icon name="location-outline" slot="start"></ion-icon>
+        <ion-label>
+          <h3>Tracking Status</h3>
+          <p>{{ locationSubscription ? 'Active' : 'Inactive' }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Map container -->
+  <div class="map-container">
+    <div id="trackingMap" class="tracking-map"></div>
+  </div>
+
+  <!-- Instructions -->
+  <ion-card>
+    <ion-card-content>
+      <ion-text color="medium">
+        <p>
+          <ion-icon name="information-circle-outline"></ion-icon>
+          This page shows the real-time location of the driver for booking {{ bookingId }}.
+          The location updates automatically every 5 seconds.
+        </p>
+      </ion-text>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

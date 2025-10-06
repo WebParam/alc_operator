@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Marker } from '@capacitor/google-maps';
 import { Geolocation } from '@capacitor/geolocation';
 import {
@@ -15,7 +15,7 @@ import { BookingService } from 'src/app/services/booking.service';
   templateUrl: './driver-navigator.page.html',
   styleUrls: ['./driver-navigator.page.scss'],
 })
-export class DriverNavigatorPage implements OnInit {
+export class DriverNavigatorPage implements OnInit, OnDestroy {
   @ViewChild('map') mapRef: ElementRef | undefined;
   address = '';
   map!: google.maps.Map;
@@ -33,6 +33,11 @@ export class DriverNavigatorPage implements OnInit {
   booking:any;
   arrivalTimeCalculated = false;
   currentLeg: any;
+  private watchPositionId: string = '';
+  private locationUpdateInterval: any;
+  driverId: string = 'driver123'; // Temporary - should be retrieved from user service
+  private lastApiCallTime: number = 0;
+  private readonly API_CALL_THROTTLE_MS = 20000; // 20 seconds throttle
   constructor(
     private nativeGeocoder: NativeGeocoder,
     private navigationService: NavigationService,
@@ -40,140 +45,148 @@ export class DriverNavigatorPage implements OnInit {
     private bookingService: BookingService
   ) { }
   ionViewDidEnter(): void {
-    this.createMap();
+    // this.createMap();
     console.log(this.bookingService.currentLeg);
     this.currentLeg = this.bookingService.currentLeg;
   }
 
-  ngOnInit() { }
-
-  async createMap() {
-    const coordinates = await Geolocation.getCurrentPosition({
-      enableHighAccuracy: true,
-    });
-    const currentPosition = {
-      lat: coordinates.coords.latitude,
-      lng: coordinates.coords.longitude,
-    };
-    // this.map = await GoogleMap.create({
-    //   id: 'my-map',
-    //   element: this.mapRef?.nativeElement,
-    //   apiKey: environment.mapsKey,
-    //   config: {
-    //     center: currentPosition,
-    //     zoom: 14,
-    //   },
-    // });
-
-    // this.map.enableClustering(2);
-
-    let mapProp = {
-      center: new google.maps.LatLng(
-        coordinates.coords.latitude,
-        coordinates.coords.longitude
-      ),
-      zoom: 12,
-    };
-
-    this.map = new google.maps.Map(
-      document.getElementById('googleMap') as any,
-      mapProp
-    );
-    this.setDriversPosition(currentPosition);
-
-    this.navigationService
-      .getCustomerPosition(this.currentLeg.bookingNumber)
-      .subscribe((position: any) => {
-        this.setCustomerPosition(position);
-        if (!this.address) {
-          let options: NativeGeocoderOptions = {
-            useLocale: true,
-            maxResults: 5,
-          };
-          this.nativeGeocoder
-            .reverseGeocode(position?.lat, position?.lng, options)
-            .then((result: /*NativeGeocoderResult[]*/ any[]) => {
-              console.log(JSON.stringify(result[0]));
-              this.address = result[0]?.addressLines[0];
-            })
-            .catch((error: any) => console.log(error));
-        }
-      });
-
-    this.directionsRenderer.setMap(this.map);
-  }
-  async setDriversPosition(coords: LatLng) {
-    if (coords) {
-      let marker!: google.maps.Marker;
-      console.log('coords', coords);
-      console.log('marker', marker);
-      if (this.markers.length <= 1) {
-        marker = new google.maps.Marker({
-          position: coords,
-          map: this.map,
-          title: 'Driver',
-        });
-        this.markers.push(marker);
-        this.markers[0].setMap(this.map);
-      } else {
-        this.markers[0].setPosition(coords);
-      }
-      this.driverPosition = new google.maps.LatLng(coords.lat, coords.lng);
-      this.bounds.extend(coords);
-      this.map.fitBounds(this.bounds);
-      // this.calcRoute();
-    }
+  ngOnInit() { 
+    // Expose test method globally for debugging
+    // (window as any).driverNavTest = () => this.testDriverLocationTracking();
   }
 
-  async setCustomerPosition(coords: LatLng) {
-    if (coords) {
-      if (!this.markers[1]) {
-        const marker = new google.maps.Marker({
-          position: coords,
-          map: this.map,
-          title: 'You',
-        });
-        this.markers.push(marker);
-        this.markers[0].setMap(this.map);
-        this.bounds.extend(coords);
-        this.customerPosition = new google.maps.LatLng(coords.lat, coords.lng);
-      } else {
-        this.markers[1].setPosition(coords);
-      }
-      this.bounds.extend(coords);
-      this.map.fitBounds(this.bounds);
-      this.calcRoute();
-    }
+  ngOnDestroy(): void {
+    // Clean up location tracking when component is destroyed
+    this.stopLocationTracking();
   }
 
-  calcRoute() {
-    if (!this.customerPosition || !this.driverPosition) {
-      return;
-    }
-    let request = {
-      origin: this.driverPosition,
-      destination: this.customerPosition,
-      travelMode: google.maps.TravelMode['DRIVING'],
-    };
-    const _this = this;
-    this.directionsService.route(
-      request,
-      function (response: any, status: string) {
-        if (status == 'OK') {
-          _this.directionsRenderer.setDirections(response);
-          if (!_this.arrivalTimeCalculated) {
-            let now = new Date().getTime();
-            response.routes[0].legs.forEach((leg: any) => {
-              now += leg.duration.value * 1000;
-            });
-            _this.estimatedTime = new Date(now).toISOString();
-            console.log('time', _this.estimatedTime);
-            _this.arrivalTimeCalculated = true;
-          }
-        }
-      }
-    );
-  }
+  // async createMap() {
+  //   const coordinates = await Geolocation.getCurrentPosition({
+  //     enableHighAccuracy: true,
+  //   });
+  //   const currentPosition = {
+  //     lat: coordinates.coords.latitude,
+  //     lng: coordinates.coords.longitude,
+  //   };
+  //   // this.map = await GoogleMap.create({
+  //   //   id: 'my-map',
+  //   //   element: this.mapRef?.nativeElement,
+  //   //   apiKey: environment.mapsKey,
+  //   //   config: {
+  //   //     center: currentPosition,
+  //   //     zoom: 14,
+  //   //   },
+  //   // });
+
+  //   // this.map.enableClustering(2);
+
+  //   let mapProp = {
+  //     center: new google.maps.LatLng(
+  //       coordinates.coords.latitude,
+  //       coordinates.coords.longitude
+  //     ),
+  //     zoom: 12,
+  //   };
+
+  //   this.map = new google.maps.Map(
+  //     document.getElementById('googleMap') as any,
+  //     mapProp
+  //   );
+  //   this.setDriversPosition(currentPosition);
+
+  //   this.navigationService
+  //     .getCustomerPosition(this.currentLeg.bookingNumber)
+  //     .subscribe((position: any) => {
+  //       this.setCustomerPosition(position);
+  //       if (!this.address) {
+  //         let options: NativeGeocoderOptions = {
+  //           useLocale: true,
+  //           maxResults: 5,
+  //         };
+  //         this.nativeGeocoder
+  //           .reverseGeocode(position?.lat, position?.lng, options)
+  //           .then((result: /*NativeGeocoderResult[]*/ any[]) => {
+  //             console.log(JSON.stringify(result[0]));
+  //             this.address = result[0]?.addressLines[0];
+  //           })
+  //           .catch((error: any) => console.log(error));
+  //       }
+  //     });
+
+  //   this.directionsRenderer.setMap(this.map);
+  // }
+  // async setDriversPosition(coords: LatLng) {
+  //   if (coords) {
+  //     let marker!: google.maps.Marker;
+  //     console.log('coords', coords);
+  //     console.log('marker', marker);
+  //     if (this.markers.length <= 1) {
+  //       marker = new google.maps.Marker({
+  //         position: coords,
+  //         map: this.map,
+  //         title: 'Driver',
+  //       });
+  //       this.markers.push(marker);
+  //       this.markers[0].setMap(this.map);
+  //     } else {
+  //       this.markers[0].setPosition(coords);
+  //     }
+  //     this.driverPosition = new google.maps.LatLng(coords.lat, coords.lng);
+  //     this.bounds.extend(coords);
+  //     this.map.fitBounds(this.bounds);
+  //     // this.calcRoute();
+  //   }
+  // }
+
+  // async setCustomerPosition(coords: LatLng) {
+  //   if (coords) {
+  //     if (!this.markers[1]) {
+  //       const marker = new google.maps.Marker({
+  //         position: coords,
+  //         map: this.map,
+  //         title: 'You',
+  //       });
+  //       this.markers.push(marker);
+  //       this.markers[0].setMap(this.map);
+  //       this.bounds.extend(coords);
+  //       this.customerPosition = new google.maps.LatLng(coords.lat, coords.lng);
+  //     } else {
+  //       this.markers[1].setPosition(coords);
+  //     }
+  //     this.bounds.extend(coords);
+  //     this.map.fitBounds(this.bounds);
+  //     this.calcRoute();
+  //   }
+  // }
+
+  // calcRoute() {
+  //   if (!this.customerPosition || !this.driverPosition) {
+  //     return;
+  //   }
+  //   let request = {
+  //     origin: this.driverPosition,
+  //     destination: this.customerPosition,
+  //     travelMode: google.maps.TravelMode['DRIVING'],
+  //   };
+  //   const _this = this;
+  //   this.directionsService.route(
+  //     request,
+  //     function (response: any, status: string) {
+  //       if (status == 'OK') {
+  //         _this.directionsRenderer.setDirections(response);
+  //         if (!_this.arrivalTimeCalculated) {
+  //           let now = new Date().getTime();
+  //           response.routes[0].legs.forEach((leg: any) => {
+  //             now += leg.duration.value * 1000;
+  //           });
+  //           _this.estimatedTime = new Date(now).toISOString();
+  //           console.log('time', _this.estimatedTime);
+  //           _this.arrivalTimeCalculated = true;
+  //         }
+  //       }
+  //     }
+  //   );
+  // }
 
   endTrip() {
     this.bookingService
@@ -185,54 +198,143 @@ export class DriverNavigatorPage implements OnInit {
   }
 
   async startTrip(): Promise<void> {
-    // TODO: Confirm that position watching stops after end navigation
-
-    let watchId = '';
     if (this.navText == 'Start') {
       this.navText = 'End';
+      
+      // Start continuous location tracking
+      await this.startLocationTracking();
+      
+      // Begin delivery process
       this.bookingService
         .beginDelivery(
           this.currentLeg.bookingNumber,
           this.currentLeg.stageNumber
         )
         .subscribe((result:any) => {
-
           this.booking = result;
           const book = this.bookingService.currentLeg;
           
-
           const destGPS = result.getBookingResult.legs.leg[0].destinationAddress.coordinate;
-           const collGPS = result.getBookingResult.legs.leg[0].collectionAddress.coordinate;
+          const collGPS = result.getBookingResult.legs.leg[0].collectionAddress.coordinate;
 
           const url = `https://waze.com/ul?ll=${destGPS.latitude},${destGPS.longitude}&navigate=yes`;
           window.open(url);
         });
+      } else {
+        // Stop location tracking
+        await this.stopLocationTracking();
+        this.navText = 'Start';
+      }
+  }
 
-      watchId = await Geolocation.watchPosition(
-        {
-          enableHighAccuracy: false,
-          maximumAge: 0,
-          timeout: 10000,
-        },
-        (postion) => {
-          if (postion) {
-            const { latitude, longitude } = postion.coords;
-            this.navigationService.setDriversPosition(
-              latitude,
-              longitude,
-              this.currentLeg.bookingNumber
-            );
-            this.setDriversPosition({ lat: latitude, lng: longitude });
+  /**
+   * Start continuous location tracking for the driver
+   */
+  private async startLocationTracking(): Promise<void> {
+    try {
+    
+      // Reset throttle timer to allow immediate first call
+      this.lastApiCallTime = 0;
+      
+      // Get initial position
+      const coordinates = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+      });
+      
+    
+      // Track initial location via API (will always call since throttle is reset)
+      this.updateDriverLocation(
+        coordinates.coords.latitude,
+        coordinates.coords.longitude
+      );
+      
+        // Start watcher for position changes
+        this.watchPositionId = (await Geolocation.watchPosition(
+          {
+            enableHighAccuracy: true,
+            maximumAge: 5000, // Cache position results for 5 seconds (GPS can update frequently)
+            timeout: 10000, // Timeout after 10 seconds
+          },
+        (position) => {
+          if (position) {
+            const { latitude, longitude } = position.coords;
+            this.updateDriverLocation(latitude, longitude);
           }
         }
-      );
-
-  
-    } else {
-      await Geolocation.clearWatch({
-        id: watchId,
-      });
-      this.navText = 'Start';
+      )).toString();
+      
+    } catch (error) {
+      console.error('Failed to start location tracking:', error);
     }
+  }
+
+  /**
+   * Stop location tracking and cleanup resources
+   */
+  private async stopLocationTracking(): Promise<void> {
+    try {
+      if (this.watchPositionId) {
+        await Geolocation.clearWatch({
+          id: this.watchPositionId,
+        });
+        this.watchPositionId = '';
+      }
+      
+      if (this.locationUpdateInterval) {
+        clearInterval(this.locationUpdateInterval);
+        this.locationUpdateInterval = null;
+      }
+      
+      console.log('Stopped location tracking for driver:', this.driverId);
+    } catch (error) {
+      console.error('Failed to stop location tracking:', error);
+    }
+  }
+
+  /**
+   * Update driver location via the booking service API with throttling
+   */
+  private updateDriverLocation(latitude: number, longitude: number): void {
+    const now = Date.now();
+    const timeSinceLastCall = now - this.lastApiCallTime;
+    
+    // Only call API if enough time has passed (20 seconds throttle)
+    if (timeSinceLastCall >= this.API_CALL_THROTTLE_MS) {
+      console.log('📍 Calling API - throttle cleared:', {
+        timeSinceLastCall: Math.round(timeSinceLastCall / 1000) + 's',
+        throttle: this.API_CALL_THROTTLE_MS / 1000 + 's',
+        coordinates: [latitude, longitude]
+      });
+      
+      this.lastApiCallTime = now;
+      
+      this.bookingService.trackDriverLocation(
+        this.driverId,
+        latitude,
+        longitude,
+        this.currentLeg?.bookingNumber || '',
+        this.currentLeg?.stageNumber?.toString() || ''
+      ).subscribe(
+        (response: any) => {
+          console.log('✅ API call successful:', {
+            timestamp: new Date().toISOString(),
+            success: response.success
+          });
+        },
+        (error) => {
+          console.error('❌ API call failed:', error);
+        }
+      );
+    } else {
+      const remainingTime = Math.ceil((this.API_CALL_THROTTLE_MS - timeSinceLastCall) / 1000);
+      console.log(`⏱️ Throttled - next API call in ${remainingTime}s`);
+    }
+  }
+
+
+  openTrackingPage() {
+    const trackingUrl = `/driver-tracking/${this.currentLeg.bookingNumber}`;
+    const fullUrl = `${window.location.origin}${trackingUrl}`;
+    window.open(fullUrl, '_blank');
   }
 }

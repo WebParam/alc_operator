@@ -191,7 +191,7 @@
 
             </ion-col>
  <ion-col size="4">
-              <ion-button expand="full" (click)="skipInspect(booking, _booking)" class="action-buttons">
+            <ion-button *ngIf="_booking.bookingType?.trim() =='booking delivery'" expand="full" (click)="skipInspect(booking, _booking)" class="action-buttons">
                 Begin {{ _booking.bookingType?.trim() =="booking delivery"?"delivery":"collection"}}</ion-button>
             </ion-col>
             <ion-col>

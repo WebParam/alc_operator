@@ -29,6 +29,7 @@
     label="Description"
     labelPlacement="floating"
     [required]="requireDescription"
+    [disabled]="!webUrl"
     [errorText]="requireDescription && !description ? 'Description is required' : ''"
   ></ion-input>
 </ion-card-content>

@@ -78,9 +78,9 @@ raDetails:any;
       const mva = params['mva'];
     
       this.bookingId = bookingId;
-      
-      this.bookingService.getBooking(bookingId).subscribe((res: any) => {
         this.mva = mva;
+      this.bookingService.getBooking(bookingId).subscribe((res: any) => {
+      
         this.currentBooking = res.getBookingResult;
         this.leg = res.getBookingResult.legs.leg[0];
         this.customer = res.customer;

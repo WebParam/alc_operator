@@ -159,6 +159,18 @@
       <ion-button expand="full" *ngIf="navText=='Start'" (click)="startTrip()">
         Start navigation</ion-button>
       <ion-button expand="full" *ngIf="navText!='Start'" (click)="endTrip()">At delivery</ion-button>
+      
+      <!-- Driver Tracking Link - only show when navigation is active -->
+      <div *ngIf="navText!='Start'" class="ion-margin-top">
+        <ion-item button (click)="openTrackingPage()">
+          <ion-icon name="location-outline" slot="start"></ion-icon>
+          <ion-label>
+            <h3>View Driver Tracking</h3>
+            <p>Click to open tracking page in new tab</p>
+          </ion-label>
+          <ion-icon name="open-outline" slot="end"></ion-icon>
+        </ion-item>
+      </div>
       <!-- </ion-card-content>
         </ion-card> -->
 

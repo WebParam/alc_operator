@@ -17,10 +17,10 @@ export const environment = {
   },
   
   baseUrl:'https://avis-dev-api.azurewebsites.net/',
-  // baseUrl: 'https://localhost:7003/', 
+  // baseUrl: 'http://localhost:5170/', 
   // baseUrl: 'https://avis-dev.geekymedia.club/',
   api: {
-    register: 'User',
+    register: 'User',   
     bookings: 'Booking',
     // getByEmail: 'User/getByEmail',
     login: 'user/operator/login',

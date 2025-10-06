@@ -54,28 +54,26 @@
             
           </div>
             <!-- <p style="text-align: center;font-size: 21px;">{{damage.damageRemark}}</p> -->
-            <div  *ngIf="!damage?.base64Image && !damage.image" class="ion-padding">
+            
+            <!-- Always show capture/edit button -->
+            <div class="ion-padding">
               <ion-button
                 class="ion-text-end"
                 (click)="capture(damage)"
                 color="light"
                 fill="solid"
                 expand="full"
-                >Add Damage</ion-button
+                >{{ (damage?.image || damage?.base64Image) ? 'Edit Damage' : 'Add Damage' }}</ion-button
               >
             </div>
-            <ion-icon
-              (click)="deleteDamage(damage)"
-              name="trash"
-              *ngIf="damage.image"
-              size="large"
-            ></ion-icon>
-            <ion-icon
-              (click)="deleteDamage(damage)"
-              name="trash"
-              *ngIf="damage.base64Image?.length>1"
-              size="large"
-            ></ion-icon>
+            
+            <!-- Action buttons for existing damage -->
+            <div *ngIf="damage.image || damage.base64Image?.length>1" class="damage-actions">
+              <ion-button fill="clear" color="danger" (click)="deleteDamage(damage)">
+                <ion-icon name="trash" slot="start"></ion-icon>
+                Remove
+              </ion-button>
+            </div>
           </ion-card-content>
         </ion-card>
       </div>

@@ -17,6 +17,26 @@
     <ion-input [formControl]="form.controls['licenceNumber']" placeholder="Enter licence number"></ion-input>
   </ion-item>
 
+  <!-- Expiry Day -->
+  <ion-item
+    [class.ion-invalid]="form.get('expiryDay')?.invalid && form.get('expiryDay')?.touched"
+    [class.ion-valid]="form.get('expiryDay')?.valid && form.get('expiryDay')?.touched"
+    class="ion-margin-bottom"
+  >
+    <ion-label position="stacked">Expiry Day</ion-label>
+    <ion-select
+      placeholder="Select day"
+      [formControl]="form.controls['expiryDay']"
+      interface="popover"
+    >
+      <ion-select-option *ngFor="let d of days" [value]="d">{{ d }}</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-note slot="error" color="danger" *ngIf="form.get('expiryDay')?.errors?.['invalidDate'] && form.get('expiryDay')?.touched">
+    Invalid date selected.
+  </ion-note>
+
   <!-- Expiry Month -->
 <ion-item
   [class.ion-invalid]="form.get('expiryMonth')?.invalid && form.get('expiryMonth')?.touched"
@@ -33,11 +53,9 @@
   </ion-select>
 </ion-item>
 
-<ion-note slot="error" color="danger" *ngIf="form.get('expiryMonth')?.errors?.['pastMonth'] && form.get('expiryMonth')?.touched">
-  Month is in the past.
+<ion-note slot="error" color="danger" *ngIf="form.get('expiryMonth')?.errors?.['expired'] && form.get('expiryMonth')?.touched">
+  Licence has expired.
 </ion-note>
-
-
 
   <!-- Expiry Year -->
   <ion-item>

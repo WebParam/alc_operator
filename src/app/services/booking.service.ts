@@ -244,7 +244,7 @@ export class BookingService {
     formData.append('back-left', blob, 'sign.png');
     formData.append(
       'data',
-      '{ "mva":"18921394", "stageNumber":"", "bookingId":"" ,"VehicleAccessories":[],"VehicleQCheck":[]}'
+      '{ "mva":"18921394", "stageNumber":"", "bookingId":":"" ,"VehicleAccessories":[],"VehicleQCheck":[]}'
     );
 
     return this.http.post('https://localhost:7003/Vehicles/damages', formData, {
@@ -253,4 +253,26 @@ export class BookingService {
       },
     });
   }
+
+  // Track driver location with GPS coordinates
+  trackDriverLocation(driverId: string, latitude: number, longitude: number, bookingId?: string, stageNumber?: string) {
+    const trackingData = {
+      latitude,
+      longitude,
+      bookingId: bookingId || '',
+      stageNumber: stageNumber || ''
+    };
+
+    return this.http.post(`${this.baseUrl}vehicles/trackDriver/${driverId}`, trackingData);
+  }
+
+  // Get driver location without sending coordinates
+  getDriverLocation(driverId: string) {
+    return this.http.post(`${this.baseUrl}vehicles/trackDriver/${driverId}`, {});
+  }
+
+  // Note: Additional driver tracking endpoints would need to be implemented in the backend:
+  // - Driver location history
+  // - Driver status management
+  // - Active drivers on booking
 }

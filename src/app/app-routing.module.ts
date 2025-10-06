@@ -438,6 +438,13 @@ const routes: Routes = [
     path: 'sign',
     component: SignaturePadComponent,
   },
+  {
+    path: 'driver-tracking/:bookingId',
+    loadChildren: () =>
+      import('./pages/driver-tracking/driver-tracking.module').then(
+        (m) => m.DriverTrackingPageModule
+      ),
+  },
 ];
 
 @NgModule({

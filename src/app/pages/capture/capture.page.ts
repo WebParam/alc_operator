@@ -42,10 +42,14 @@ export class CapturePage implements OnInit {
   }
 
   savePicture() {
+    // Only allow saving if image is captured
+    if (!this.webUrl) {
+      return; // Prevent saving without image
+    }
     
     const damage = {
       id: UUID.UUID(),
-      damageDescription:this.description,
+      damageDescription: this.description,
       damageLocation: this.position,
       damageImage: this.webUrl,
       isNew: true,
