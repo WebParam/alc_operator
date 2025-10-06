@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { BookingService } from 'src/app/services/booking.service';
 import { VehicleService } from 'src/app/services/vehicle.service';
 import { UserService } from 'src/app/services/user.service';
@@ -37,7 +37,7 @@ export class AtDeliveryLocationPage implements OnInit {
     this.form = this.fb.group({
       odoMeter: [
         0,
-        [Validators.required, Validators.min(this.minOdoMeter)],
+        [Validators.required, this.odometerValidator()],
       ],
       fuelLevel: ["G1", Validators.required],
     });
@@ -49,10 +49,10 @@ export class AtDeliveryLocationPage implements OnInit {
 
       this.minOdoMeter = this.vehicleDetails.lastOdo || 0;
 
-      // Set form control AFTER min value is known
+      // Update the validator with the new min value
       this.form.get('odoMeter')?.setValidators([
         Validators.required,
-        Validators.min(this.minOdoMeter),
+        this.odometerValidator(),
       ]);
       this.form.get('odoMeter')?.updateValueAndValidity();
 
@@ -60,23 +60,34 @@ export class AtDeliveryLocationPage implements OnInit {
         odoMeter: this.minOdoMeter,
         fuelLevel: this.vehicleDetails.fuelLevel || 'G1',
       });
+
+      // Mark form as touched to show validation errors immediately
+      this.form.markAsDirty();
+      this.form.markAllAsTouched();
     });
 
   }
 
-  checkOdo() {
-    const odoControl = this.form.get('odoMeter');
-    const enteredOdo = odoControl?.value;
-
-    if (enteredOdo < this.minOdoMeter) {
-      odoControl?.patchValue(this.minOdoMeter, { emitEvent: false });
-      odoControl?.setErrors({ belowMinimum: true });
-      odoControl?.markAsTouched();
-    } else {
-      odoControl?.setErrors(null);
-      odoControl?.markAsTouched(); // ensures it gets the red/green underline
-    }
+  odometerValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value || value === '') {
+        return null; // Let required validator handle empty values
+      }
+      
+      const numericValue = parseInt(value);
+      if (isNaN(numericValue)) {
+        return { invalidNumber: true };
+      }
+      
+      if (numericValue <= this.minOdoMeter) {
+        return { odometerTooLow: true };
+      }
+      
+      return null;
+    };
   }
+
 
   async markAsNoShow() {
     const alert = await this.alertController.create({
@@ -188,6 +199,10 @@ export class AtDeliveryLocationPage implements OnInit {
       this.vehicleService.lastOdo = parseInt(this.form.controls['odoMeter'].value ?? '0');
       this.vehicleService.lastFuel = this.form.controls['fuelLevel'].value ?? 'G1';
       this.updateVehicleData();
+    } else {
+      // Mark form as touched to show validation errors
+      this.form.markAsDirty();
+      this.form.markAllAsTouched();
     }
   }
 }

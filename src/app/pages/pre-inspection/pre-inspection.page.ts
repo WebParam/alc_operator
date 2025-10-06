@@ -218,9 +218,8 @@ deleteDamage(damage:any){
   }
 
   async continue() {
-    const live = false;
     // Validate that all required images are uploaded
-    if (!this.validateAllImagesUploaded() && live) {
+    if (!this.validateAllImagesUploaded() && environment.validation.live) {
       const missingLocations = this.getMissingImageLocations();
       const message = `Please upload images for the following locations: ${missingLocations.join(', ')}`;
       await this.showValidationToast(message);

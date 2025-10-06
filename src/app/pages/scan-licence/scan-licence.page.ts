@@ -21,7 +21,7 @@ export class ScanLicencePage implements OnInit {
   public isUploading = false;
   public mva = '';
   currentLeg: any = {};
-
+  public invalidDate = false;
   public additionalDrivers: {
     licenceNumber: string;
     photo?: { filepath: string; webviewPath: string };
@@ -92,7 +92,6 @@ export class ScanLicencePage implements OnInit {
   }
 
 
-
   validateExpiryDate() {
     const expiryDay = this.form.value.expiryDay;
     const expiryMonth = this.form.value.expiryMonth;
@@ -122,6 +121,11 @@ export class ScanLicencePage implements OnInit {
     // Check if the licence has expired
     if (expiryDate < currentDate) {
       monthControl?.setErrors({ expired: true });
+      dayControl?.setErrors({ expired: true });
+      this.invalidDate = true;
+      this.showInvalidDateAlert()
+    }else{
+      this.invalidDate = false;
     }
   }
 
@@ -195,6 +199,49 @@ export class ScanLicencePage implements OnInit {
     await alert.present();
   }
 
+  public isFormComplete(): boolean {
+    const licenceNumber = this.form.value.licenceNumber;
+    const expiryDay = this.form.value.expiryDay;
+    const expiryMonth = this.form.value.expiryMonth;
+    const expiryYear = this.form.value.expiryYear;
+    
+    return !!(licenceNumber && expiryDay && expiryMonth && expiryYear);
+  }
+
+  private validateDate(): boolean {
+    const expiryDay = this.form.value.expiryDay;
+    const expiryMonth = this.form.value.expiryMonth;
+    const expiryYear = this.form.value.expiryYear;
+    
+    if (!expiryDay || !expiryMonth || !expiryYear) {
+      return false;
+    }
+
+    const expiryDate = new Date(parseInt(expiryYear), parseInt(expiryMonth) - 1, parseInt(expiryDay));
+    
+    // Check if the date is valid (handles invalid dates like Feb 31)
+    return expiryDate.getDate() === parseInt(expiryDay) && 
+           expiryDate.getMonth() === parseInt(expiryMonth) - 1 && 
+           expiryDate.getFullYear() === parseInt(expiryYear);
+  }
+
+  private async showInvalidDateAlert() {
+    const alert = await this.alertController.create({
+      header: 'Invalid Date',
+      message: 'The selected date is not valid. Please check the day, month, and year combination.',
+      buttons: [
+        {
+          text: 'OK',
+          role: 'cancel',
+          cssClass: 'secondary'
+        }
+      ],
+      cssClass: 'alertAvis'
+    });
+
+    await alert.present();
+  }
+
   private isLicenceExpired(): boolean {
     const expiryDay = this.form.value.expiryDay;
     const expiryMonth = this.form.value.expiryMonth;
@@ -204,15 +251,9 @@ export class ScanLicencePage implements OnInit {
       return false;
     }
 
+    // Date validation is already handled in validateDate() method
     const currentDate = new Date();
     const expiryDate = new Date(parseInt(expiryYear), parseInt(expiryMonth) - 1, parseInt(expiryDay));
-    
-    // Check if the date is valid first
-    if (expiryDate.getDate() !== parseInt(expiryDay) || 
-        expiryDate.getMonth() !== parseInt(expiryMonth) - 1 || 
-        expiryDate.getFullYear() !== parseInt(expiryYear)) {
-      return true; // Invalid dates are considered expired
-    }
     
     return expiryDate < currentDate;
   }
@@ -246,8 +287,15 @@ export class ScanLicencePage implements OnInit {
   }
 
   public async continue() {
-    if (this.photos.length === 0 || this.form.invalid) {
+    if (this.photos.length === 0 || !this.isFormComplete()) {
       this.toast.showToast('Please take a photo, enter the licence number, and select expiry day, month and year.');
+      return;
+    }
+
+    // Validate the date first
+    const isValidDate = this.validateDate();
+    if (!isValidDate) {
+      await this.showInvalidDateAlert();
       return;
     }
 

@@ -77,22 +77,24 @@
     type="number"
     formControlName="odoMeter"
     [min]="minOdoMeter"
-    (ionChange)="checkOdo()"
+    errorText="Odometer reading must be greater than {{minOdoMeter}} KMS"
   ></ion-input>
-  <ion-note slot="helper"> Odometer reading cannot be lower than {{ minOdoMeter }}.</ion-note>
 </ion-item>
 
 <ion-note
   slot="error"
   color="danger"
-  *ngIf="form.get('odoMeter')?.hasError('belowMinimum') && form.get('odoMeter')?.touched"
+  *ngIf="form.get('odoMeter')?.hasError('odometerTooLow') && form.get('odoMeter')?.touched"
 >
-  Odometer reading cannot be lower than {{ minOdoMeter }}.
+  Odometer reading must be greater than {{ minOdoMeter }} KMS
 </ion-note>
 
-
-<ion-note slot="error" color="danger" *ngIf="form.get('odoMeter')?.hasError('belowMinimum') && form.get('odoMeter')?.touched">
-  Odometer reading cannot be lower than {{ minOdoMeter }}.
+<ion-note
+  slot="error"
+  color="danger"
+  *ngIf="form.get('odoMeter')?.hasError('invalidNumber') && form.get('odoMeter')?.touched"
+>
+  Please enter a valid number
 </ion-note>
 
     <span style="position: absolute; right: 1.5rem; bottom: 1rem">KMS</span>

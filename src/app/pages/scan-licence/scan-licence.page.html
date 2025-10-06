@@ -18,11 +18,7 @@
   </ion-item>
 
   <!-- Expiry Day -->
-  <ion-item
-    [class.ion-invalid]="form.get('expiryDay')?.invalid && form.get('expiryDay')?.touched"
-    [class.ion-valid]="form.get('expiryDay')?.valid && form.get('expiryDay')?.touched"
-    class="ion-margin-bottom"
-  >
+  <ion-item class="ion-margin-bottom">
     <ion-label position="stacked">Expiry Day</ion-label>
     <ion-select
       placeholder="Select day"
@@ -33,29 +29,17 @@
     </ion-select>
   </ion-item>
 
-  <ion-note slot="error" color="danger" *ngIf="form.get('expiryDay')?.errors?.['invalidDate'] && form.get('expiryDay')?.touched">
-    Invalid date selected.
-  </ion-note>
-
   <!-- Expiry Month -->
-<ion-item
-  [class.ion-invalid]="form.get('expiryMonth')?.invalid && form.get('expiryMonth')?.touched"
-  [class.ion-valid]="form.get('expiryMonth')?.valid && form.get('expiryMonth')?.touched"
-  class="ion-margin-bottom"
->
-  <ion-label position="stacked">Expiry Month</ion-label>
-  <ion-select
-    placeholder="Select month"
-    [formControl]="form.controls['expiryMonth']"
-    interface="popover"
-  >
-    <ion-select-option *ngFor="let m of months" [value]="m.value">{{ m.name }}</ion-select-option>
-  </ion-select>
-</ion-item>
-
-<ion-note slot="error" color="danger" *ngIf="form.get('expiryMonth')?.errors?.['expired'] && form.get('expiryMonth')?.touched">
-  Licence has expired.
-</ion-note>
+  <ion-item class="ion-margin-bottom">
+    <ion-label position="stacked">Expiry Month</ion-label>
+    <ion-select
+      placeholder="Select month"
+      [formControl]="form.controls['expiryMonth']"
+      interface="popover"
+    >
+      <ion-select-option *ngFor="let m of months" [value]="m.value">{{ m.name }}</ion-select-option>
+    </ion-select>
+  </ion-item>
 
   <!-- Expiry Year -->
   <ion-item>
@@ -64,7 +48,16 @@
       <ion-select-option *ngFor="let y of years" [value]="y">{{ y }}</ion-select-option>
     </ion-select>
   </ion-item>
-
+  <div *ngIf="invalidDate" class="ion-margin-top">
+    <ion-item class="ion-margin-top">
+      <ion-icon name="alert-circle-outline" style="color: red;" slot="start"></ion-icon>
+      <ion-label>
+        <h3 style="font-weight:bold">Drivers licence has expired</h3>
+        <p>Please select a valid date or mark as no show below</p>
+      </ion-label>
+      <!-- <ion-icon name="open-outline" slot="end"></ion-icon> -->
+    </ion-item>
+  </div>
   <!-- Preview of main driver photo -->
   <div *ngIf="photos.length > 0" class="preview-container" style="margin-top: 16px;">
     <ion-text color="medium"><p>Preview of captured licence:</p></ion-text>
@@ -106,7 +99,7 @@
   <!-- Continue Button -->
 <ion-button
   expand="block"
-  [disabled]="photos.length === 0 || form.invalid || isUploading"
+  [disabled]="photos.length === 0 || !isFormComplete() || isUploading"
   (click)="continue()">
     <ion-spinner *ngIf="isUploading" slot="start" name="dots"></ion-spinner>
     Continue

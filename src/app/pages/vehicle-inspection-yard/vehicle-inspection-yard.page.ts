@@ -18,7 +18,7 @@ import { environment } from 'src/environments/environment';
 })
 export class VehicleInspectionPage implements OnInit {
   form = this.fb.group({
-    odoMeter: ['', [Validators.required]],
+    odoMeter: ['', [Validators.required, this.odometerValidator()]],
     fuelLevel: ['', [Validators.required]],
     mva: ['', [Validators.required]],
     regConfirmed: [false, [Validators.requiredTrue]],
@@ -85,6 +85,26 @@ this.deliveryType = type ?? this.deliveryType;
 
   ngOnInit() {}
 
+  odometerValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value || value === '') {
+        return null; // Let required validator handle empty values
+      }
+      
+      const numericValue = parseInt(value);
+      if (isNaN(numericValue)) {
+        return { invalidNumber: true };
+      }
+      
+      if (numericValue <= this.minOdoMeter) {
+        return { odometerTooLow: true };
+      }
+      
+      return null;
+    };
+  }
+
   updateVehicleData() {
     console.log(this.form.value);
     console.log(this.form.valid);
@@ -115,16 +135,6 @@ this.deliveryType = type ?? this.deliveryType;
     }
   }
 
-  checkOdo() {
-    try {
-      const reading = parseInt(this.form.controls.odoMeter.value ?? '0');
-      if (reading < this.minOdoMeter) {
-        this.form.controls.odoMeter.setValue(this.minOdoMeter.toString());
-      }
-    } catch (e) {
-      this.form.controls.odoMeter.setValue(this.minOdoMeter.toString());
-    }
-  }
 
  async markAsNoShow() {
     const alert = await this.alertController.create({

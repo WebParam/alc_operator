@@ -18,14 +18,23 @@
             labelPlacement="floating"
             [placeholder]="form.controls.odoMeter.value"
             formControlName="odoMeter"
-            errorText="Odometer reading is required"
+            errorText="Odometer reading must be greater than {{minOdoMeter}} KMS"
             ngModel
             [min]="minOdoMeter"
-            (ionChange)="checkOdo()"
           >
           </ion-input
           ><span style="position: absolute; right: 1.5rem; bottom: 1rem"
             >KMS</span
+          >
+          <!-- <ion-text
+            color="danger"
+            *ngIf="form.controls.odoMeter.touched && form.controls.odoMeter.errors?.['odometerTooLow']"
+            >Odometer reading must be greater than {{minOdoMeter}} KMS</ion-text
+          > -->
+          <ion-text
+            color="danger"
+            *ngIf="form.controls.odoMeter.touched && form.controls.odoMeter.errors?.['invalidNumber']"
+            >Please enter a valid number</ion-text
           >
         </ion-item>
         <ion-item class="ion-margin-top" lines="none">
