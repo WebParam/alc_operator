@@ -11,9 +11,9 @@ export const environment = {
     appId: '1:932067447152:web:77d29904bf94943c16bfb5',
     measurementId: 'G-Y75FTRPS8C',
   },
- baseUrl: 'http://localhost:5170/',
+//  baseUrl: 'http://localhost:5170/',
   
-  // baseUrl:'https://avis-dev-api.azurewebsites.net/',
+  baseUrl:'https://avis-dev-api.azurewebsites.net/',
 
   // baseUrl: 'https://avis-dev.geekymedia.club/',
   api: {

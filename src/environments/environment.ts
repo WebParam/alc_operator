@@ -19,8 +19,8 @@ export const environment = {
     appId: '1:17023308128:web:eb6ce5c5a9292d3a03ce05',
   },
   
-  // baseUrl:'https://avis-dev-api.azurewebsites.net/',
-  baseUrl: 'http://localhost:5170/', 
+  baseUrl:'https://avis-dev-api.azurewebsites.net/',
+  // baseUrl: 'http://localhost:5170/', 
   // baseUrl: 'https://avis-dev.geekymedia.club/',
   api: {
     register: 'User',   
