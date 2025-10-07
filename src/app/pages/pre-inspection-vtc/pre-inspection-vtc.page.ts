@@ -8,6 +8,7 @@ import { CapturePage } from '../capture/capture.page';
 import { BookingService } from 'src/app/services/booking.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { Geolocation } from '@capacitor/geolocation';
 
 @Component({
   selector: 'vtc-pre-inspection',
@@ -88,7 +89,25 @@ export class PreInspectionPage implements OnInit {
 
   ionViewWillEnter() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.getCurrentLocation();
+  }
+
+  async getCurrentLocation() {
+    try {
+      const coordinates = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+      });
+      
+      // Format GPS location as "latitude,longitude"
+      this.vehicleService.gpsLocation = `${coordinates.coords.latitude},${coordinates.coords.longitude}`;
+      
+      console.log('GPS Location:', this.vehicleService.gpsLocation);
+    } catch (error) {
+      console.error('Error getting GPS location:', error);
+      this.vehicleService.gpsLocation = "0,0"; // Default fallback
+    }
+  }
 
   
 deleteDamage(damage:any){
@@ -274,6 +293,7 @@ deleteDamage(damage:any){
         bookingId:this.currentLeg?.bookingNumber,
         vehicleAccessories: this.vehicleService.vehicleAccessories,
         VehicleQCheck: fullQCheck,
+        gpsLocation: this.vehicleService.gpsLocation,
       };
      
      

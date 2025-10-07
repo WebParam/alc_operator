@@ -8,6 +8,7 @@ import { VehicleService } from 'src/app/services/vehicle.service';
 import { IDamage, setNewDamages } from 'src/app/store/bookings.actions';
 import { environment } from 'src/environments/environment';
 import { CapturePage } from '../capture/capture.page';
+import { Geolocation } from '@capacitor/geolocation';
 
 @Component({
   selector: 'app-customer-inspection',
@@ -81,11 +82,24 @@ allVehicleDamages: any[] = [];
     });
   }
 
-  ngOnInit() {  
-   
-    
-   
-  
+  ngOnInit() {
+    this.getCurrentLocation();
+  }
+
+  async getCurrentLocation() {
+    try {
+      const coordinates = await Geolocation.getCurrentPosition({
+        enableHighAccuracy: true,
+      });
+      
+      // Format GPS location as "latitude,longitude"
+      this.vehicleService.gpsLocation = `${coordinates.coords.latitude},${coordinates.coords.longitude}`;
+      
+      console.log('GPS Location:', this.vehicleService.gpsLocation);
+    } catch (error) {
+      console.error('Error getting GPS location:', error);
+      this.vehicleService.gpsLocation = "0,0"; // Default fallback
+    }
   }
 
   ionViewWillEnter(){
@@ -286,6 +300,7 @@ deleteDamage(damage:any){
         bookingId:this.currentLeg?.bookingNumber,
         vehicleAccessories: this.vehicleService.vehicleAccessories,
         VehicleQCheck: fullQCheck,
+        gpsLocation: this.vehicleService.gpsLocation,
       };
      
      

@@ -1,6 +1,9 @@
 export const environment = {
   production: false,
   mapsKey: 'AIzaSyA_pMgEY3hnhEpXOjOM7Kgtede5PE-K-7Y',
+  validation: {
+    live: true, // Set to true to enable image validation across all inspection pages
+  },
   firebase: {
     apiKey: 'AIzaSyCeCe49eW9H81QpRE8YG5s-tjg6Q4MfKOc',
     authDomain: 'avis-project-81bba.firebaseapp.com',

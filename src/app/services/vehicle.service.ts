@@ -14,6 +14,7 @@ export class VehicleService {
   vehiclesDamages: any[] = [];
   lastOdo: number = 0;
   lastFuel: string = "G1";
+  gpsLocation: string = "";
   
   baseUrl = environment.baseUrl;
   constructor(private http: HttpClient, private fApp: FirebaseApp) {}
