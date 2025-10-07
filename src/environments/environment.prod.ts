@@ -1,5 +1,5 @@
 export const environment = {
-  production: true,
+  production: false,
   mapsKey: 'AIzaSyA_pMgEY3hnhEpXOjOM7Kgtede5PE-K-7Y',
   firebase: {
     apiKey: 'AIzaSyCeCe49eW9H81QpRE8YG5s-tjg6Q4MfKOc',
@@ -11,9 +11,9 @@ export const environment = {
     appId: '1:932067447152:web:77d29904bf94943c16bfb5',
     measurementId: 'G-Y75FTRPS8C',
   },
-//  baseUrl: 'http://localhost:5170/',
+ baseUrl: 'http://localhost:5170/',
   
-  baseUrl:'https://avis-dev-api.azurewebsites.net/',
+  // baseUrl:'https://avis-dev-api.azurewebsites.net/',
 
   // baseUrl: 'https://avis-dev.geekymedia.club/',
   api: {

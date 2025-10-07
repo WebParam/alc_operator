@@ -227,8 +227,8 @@ export class ScanLicencePage implements OnInit {
 
   private async showInvalidDateAlert() {
     const alert = await this.alertController.create({
-      header: 'Invalid Date',
-      message: 'The selected date is not valid. Please check the day, month, and year combination.',
+      header: 'Expired Licence',
+      message: 'The selected licence is expired. Please update the licence date or mark as no show.',
       buttons: [
         {
           text: 'OK',

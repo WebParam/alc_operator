@@ -19,6 +19,7 @@ export class AtDeliveryLocationPage implements OnInit {
   form!: FormGroup;
   minOdoMeter = 0;
   vehicleDetails: any;
+  currentDateTime: string = '';
 
   constructor(
     private router: Router,
@@ -43,6 +44,9 @@ export class AtDeliveryLocationPage implements OnInit {
     });
 
     this.currentLeg = this.bookingService.currentLeg;
+    
+    // Set current date and time
+    this.currentDateTime = new Date().toLocaleString();
     
     this.vehicleService.getVehicleVTCBasic(this.currentLeg.mvaNumber).subscribe((result: any) => {
       this.vehicleDetails = result.result.getVehicleDataWithVTCOutput;
