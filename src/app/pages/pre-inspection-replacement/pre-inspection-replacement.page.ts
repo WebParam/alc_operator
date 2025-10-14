@@ -313,9 +313,9 @@ deleteDamage(damage:any){
       .subscribe((result) => {
         //customer inspection with new mva
         const p = this.bookingService.currentLeg;
- 
+ debugger;
         // this.router.navigateByUrl(`/rental-agreement-replacement/${p.bookingNumber}/${p.mvaNumber}`);
-         this.router.navigateByUrl(`/vehicle-inspection-new-vehicle/${p.mvaNumber}`);
+         this.router.navigateByUrl(`/vehicle-inspection-new-vehicle/${p.mvaNumber}/${p.bookingNumber}`);
         //  this.router.navigateByUrl(`/customer-accessories/${res}`);
 // rental-agreement-replacement/:id
       });

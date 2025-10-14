@@ -48,6 +48,7 @@ export class VehicleInspectionPage implements OnInit {
   ) {
     this.route.params.subscribe((params) => {
       this.mva = params['mva'];
+      debugger;
       this.bookingId = params['bookingId'];
       this._bookingId = params['bookingId'];
       this.deliveryType = params['delivery-type'];
@@ -104,7 +105,7 @@ export class VehicleInspectionPage implements OnInit {
     payload.bookingId = this.currentLeg.bookingNumber;
     payload.type="PRE INSPECTION";
     payload.stage = this.currentLeg.stageNumber;
-
+    debugger;
     if (this.form.invalid) {
       this.form.markAsDirty();
       this.form.markAllAsTouched();
