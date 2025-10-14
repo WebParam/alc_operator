@@ -88,7 +88,7 @@ validateEndKms() {
     payload.mva = this.mva;
     payload.employeeNbr = this.userService?.user?.employeeNumber;
     payload.raNumber = "0";
-    debugger;
+    
     
     // Replace with actual submission logic
     this.bookingService.submitInspection(payload).subscribe(async () => {

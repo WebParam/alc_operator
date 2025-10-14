@@ -86,7 +86,7 @@ export class VehicleScanLicencePage implements OnInit {
     });
   }
   newVTC() {
-    debugger;
+    
     this.router.navigateByUrl(`/vehicle-accessories-vtc/${this.loadedVehicle?.mva}`);
   }
 

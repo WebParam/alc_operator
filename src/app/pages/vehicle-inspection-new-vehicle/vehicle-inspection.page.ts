@@ -157,7 +157,7 @@ export class VehicleInspectionPage implements OnInit {
 
 
   navigate() {
-    
+    debugger;
     this.vehicleService.lastOdo = parseInt(this.form.controls.odoMeter.value?? '0');
     
     this.vehicleService.lastFuel = this.form.controls.fuelLevel.value??"G1";

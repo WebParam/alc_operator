@@ -61,19 +61,32 @@
   <!-- Preview of main driver photo -->
   <div *ngIf="photos.length > 0" class="preview-container" style="margin-top: 16px;">
     <ion-text color="medium"><p>Preview of captured licence:</p></ion-text>
-    <img [src]="photos[0].webviewPath" alt="Captured Photo" style="width: 30%; border-radius: 8px;" />
+    <img [src]="photos[0].webviewPath" alt="Captured Photo" style="width: 30%;max-height: 200px; border-radius: 8px;" />
   </div>
 
   <!-- Buttons -->
   <ion-row class="ion-margin-top">
     <ion-col size="4">
       <ion-button expand="block" (click)="takePhoto()">Capture Licence Photo</ion-button>
+      <!-- Tooltip for licence image requirement -->
+      <div *ngIf="photos.length === 0" class="tooltip-text">
+        <ion-text color="danger">
+          <small>*licence image is required</small>
+        </ion-text>
+      </div>
     </ion-col>
-    <ion-col size="4">
-      <ion-button expand="block" (click)="addAdditionalDriver()">Add Additional Driver</ion-button>
-    </ion-col>
+  
     <ion-col size="4">
       <ion-button expand="block" (click)="markAsNoShow()">Mark No Show</ion-button>
+    </ion-col>
+      <ion-col size="4">
+      <ion-button 
+        expand="block" 
+        (click)="addAdditionalDriver()"
+        [disabled]="photos.length === 0 || !isFormComplete()"
+        [style.display]="photos.length === 0 || !isFormComplete() ? 'none' : 'block'">
+        Add Additional Driver
+      </ion-button>
     </ion-col>
   </ion-row>
 

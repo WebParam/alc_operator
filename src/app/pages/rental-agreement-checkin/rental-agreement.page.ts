@@ -228,7 +228,7 @@ raDetails:any;
     this.sendSignature(base64Data).subscribe({
       next: (response) => {
         console.log('sig resp', response);
-            debugger;
+            
         if(isDel == 'booking collection'){
         this.router.navigateByUrl(
             `/vehicle-inspection-yard/${this.mva}/${this.bookingId}`

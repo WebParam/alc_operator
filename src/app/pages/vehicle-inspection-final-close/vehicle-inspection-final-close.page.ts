@@ -42,7 +42,7 @@ ngOnInit() {
   this.loadDropdowns();
 
   const vtc = this.bookingService._openVTC;
-debugger;
+
   this.form.controls['startStation'].setValue(vtc?.checkOutStatCode);
   this.form.controls['endStation'].setValue(vtc?.checkInStatCode);
   this.form.controls['reasonCode'].setValue(vtc?.reasonCode.trim());
@@ -78,7 +78,7 @@ validateEndKms() {
   }
 
   async submitForm() {
-    debugger;
+    
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
