@@ -24,6 +24,9 @@ export class ScanLicencePage implements OnInit {
   public invalidDate = false;
   public additionalDrivers: {
     licenceNumber: string;
+    expiryDay: string;
+    expiryMonth: string;
+    expiryYear: string;
     photo?: { filepath: string; webviewPath: string };
   }[] = [];
 
@@ -167,7 +170,13 @@ export class ScanLicencePage implements OnInit {
   }
 
   public addAdditionalDriver() {
-    this.additionalDrivers.push({ licenceNumber: '', photo: undefined });
+    this.additionalDrivers.push({ 
+      licenceNumber: '', 
+      expiryDay: '',
+      expiryMonth: '',
+      expiryYear: '',
+      photo: undefined 
+    });
   }
 
   removeAdditionalDriver(index: number) {
@@ -261,7 +270,7 @@ export class ScanLicencePage implements OnInit {
   private async showExpiredLicenceAlert() {
     const alert = await this.alertController.create({
       header: 'Licence Expired',
-      message: 'The driver licence expiry date is in the past. Please update the licence date or mark as no show.',
+      message: 'Scanned main driver license has expired, please contact branch manager',
       buttons: [
         {
           text: 'Update Licence Date',
@@ -277,6 +286,34 @@ export class ScanLicencePage implements OnInit {
           cssClass: 'danger',
           handler: () => {
             this.markAsNoShow();
+          }
+        }
+      ],
+      cssClass: 'alertAvis'
+    });
+
+    await alert.present();
+  }
+
+    private async showAdditionalExpiredLicenceAlert(driverIndex: number) {
+    const alert = await this.alertController.create({
+      header: 'Additional Driver Licence Expired',
+      message: `Driver ${driverIndex + 1}'s licence has expired. Please update the licence date or remove this driver.`,
+      buttons: [
+        {
+          text: 'Update Licence Date',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            // User can update the form fields
+            return true;
+          }
+        },
+        {
+          text: 'Remove Additional Driver',
+          cssClass: 'danger',
+          handler: () => {
+            this.removeAdditionalDriver(driverIndex);
           }
         }
       ],
@@ -331,6 +368,20 @@ export class ScanLicencePage implements OnInit {
           return;
         }
 
+        // Check if additional driver form is complete (includes expiry date)
+        if (!this.isAdditionalDriverFormComplete(driver)) {
+          this.toast.showToast(`Driver ${i + 1} expiry date is required.`);
+          this.isUploading = false;
+          return;
+        }
+
+        // Validate additional driver's license expiry
+        if (!this.validateAdditionalDriverDate(driver)) {
+          await this.showAdditionalExpiredLicenceAlert(i);
+          this.isUploading = false;
+          return;
+        }
+
         const blob = await fetch(driver.photo.webviewPath).then((res) => res.blob());
         payload.append(`additionalDriverPhotos`, blob, `driver${i + 1}.jpg`);
         payload.append(`additionalDriverNumbers`, driver.licenceNumber);
@@ -381,5 +432,25 @@ export class ScanLicencePage implements OnInit {
   }
   logoff() {
     this.router.navigateByUrl('/login');
+  }
+
+  // Additional driver validation method
+  private validateAdditionalDriverDate(driver: any): boolean {
+    if (!driver.expiryDay || !driver.expiryMonth || !driver.expiryYear) {
+      return false;
+    }
+
+    const currentDate = new Date();
+    const expiryDate = new Date(parseInt(driver.expiryYear), parseInt(driver.expiryMonth) - 1, parseInt(driver.expiryDay));
+    
+    // Check if the date is valid and not expired
+    return expiryDate.getDate() === parseInt(driver.expiryDay) && 
+           expiryDate.getMonth() === parseInt(driver.expiryMonth) - 1 && 
+           expiryDate.getFullYear() === parseInt(driver.expiryYear) &&
+           expiryDate >= currentDate;
+  }
+
+  private isAdditionalDriverFormComplete(driver: any): boolean {
+    return !!(driver.licenceNumber && driver.expiryDay && driver.expiryMonth && driver.expiryYear && driver.photo?.webviewPath);
   }
 }

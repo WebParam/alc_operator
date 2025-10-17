@@ -147,11 +147,11 @@
 </ion-button>
 
 <ion-button
-  [disabled]="!form.valid"
+  [disabled]="!form.valid || currentLeg?.allocationType === 'booking collection'"
   [color]="form.valid ? 'dark' : 'medium'"
   expand="full"
   (click)="scanLicense()"
-  *ngIf="currentLeg?.allocationType !== 'booking collection' && (currentLeg?.allocationType === 'booking collection' && currentLeg?.allocationType === 'exchange')"
+  *ngIf="currentLeg?.allocationType !== 'booking collection'"
 >
   Scan driver license
 </ion-button>

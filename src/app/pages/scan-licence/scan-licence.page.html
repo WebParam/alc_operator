@@ -92,12 +92,46 @@
 
   <!-- Additional Driver Inputs -->
   <div *ngFor="let driver of additionalDrivers; let i = index" class="ion-margin-top">
+    <h4>Additional Driver {{ i + 1 }}</h4>
+    
     <ion-item>
       <ion-label position="stacked">Driver {{ i + 1 }} Licence Number</ion-label>
       <ion-input [(ngModel)]="driver.licenceNumber" placeholder="Enter licence number"></ion-input>
       <ion-button slot="end" fill="clear" color="danger" (click)="removeAdditionalDriver(i)">
         <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
       </ion-button>
+    </ion-item>
+
+    <!-- Additional Driver Expiry Day -->
+    <ion-item class="ion-margin-bottom">
+      <ion-label position="stacked">Expiry Day</ion-label>
+      <ion-select
+        placeholder="Select day"
+        [(ngModel)]="driver.expiryDay"
+        interface="popover"
+      >
+        <ion-select-option *ngFor="let d of days" [value]="d">{{ d }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Additional Driver Expiry Month -->
+    <ion-item class="ion-margin-bottom">
+      <ion-label position="stacked">Expiry Month</ion-label>
+      <ion-select
+        placeholder="Select month"
+        [(ngModel)]="driver.expiryMonth"
+        interface="popover"
+      >
+        <ion-select-option *ngFor="let m of months" [value]="m.value">{{ m.name }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Additional Driver Expiry Year -->
+    <ion-item class="ion-margin-bottom">
+      <ion-label position="stacked">Expiry Year</ion-label>
+      <ion-select placeholder="Select year" [(ngModel)]="driver.expiryYear">
+        <ion-select-option *ngFor="let y of years" [value]="y">{{ y }}</ion-select-option>
+      </ion-select>
     </ion-item>
 
     <ion-button expand="block" fill="outline" (click)="takeAdditionalPhoto(i)">

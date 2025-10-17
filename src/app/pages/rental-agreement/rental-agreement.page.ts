@@ -247,7 +247,7 @@ export class RentalAgreementPage implements OnInit {
           );
         }
         else if (isDel == 'exchange') {
-
+          debugger;
           this.router.navigateByUrl(
             `/vehicle-inspection-yard/${this.bookingService.currentLeg.vehicleDetails?.results[0]?.replacesMva.trim()}/${this.bookingId}`
           );
