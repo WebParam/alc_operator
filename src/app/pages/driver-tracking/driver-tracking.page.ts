@@ -29,7 +29,7 @@ export class DriverTrackingPage implements OnInit, OnDestroy {
     this.route.params.subscribe(params => {
       this.bookingId = params['bookingId'];
       this.initializeMap();
-      this.startLocationTracking();
+      this.startLocationTracking(this.bookingId);
     });
   }
 
@@ -81,11 +81,11 @@ export class DriverTrackingPage implements OnInit, OnDestroy {
     }
   }
 
-  startLocationTracking() {
+  startLocationTracking(bookingId: string) {
     // Update location every 5 seconds
     this.locationSubscription = interval(5000)
       .pipe(
-        switchMap(() => this.navigationService.getDriverLocation('driver123')) // TODO: Use actual driver ID
+        switchMap(() => this.navigationService.getDriverLocation(bookingId)) // TODO: Use actual driver ID
       )
       .subscribe(
         (location) => {
@@ -100,7 +100,7 @@ export class DriverTrackingPage implements OnInit, OnDestroy {
       );
 
     // Get initial location immediately
-    this.navigationService.getDriverLocation('driver123').subscribe(
+    this.navigationService.getDriverLocation(bookingId).subscribe(
       (location) => {
         this.updateDriverLocation(location);
         this.lastUpdated = new Date().toLocaleTimeString();

@@ -35,7 +35,7 @@ export class DriverNavigatorPage implements OnInit, OnDestroy {
   currentLeg: any;
   private watchPositionId: string = '';
   private locationUpdateInterval: any;
-  driverId: string = 'driver123'; // Temporary - should be retrieved from user service
+  driverId: string =""; // Temporary - should be retrieved from user service
   private lastApiCallTime: number = 0;
   private readonly API_CALL_THROTTLE_MS = 20000; // 20 seconds throttle
   constructor(
@@ -48,9 +48,12 @@ export class DriverNavigatorPage implements OnInit, OnDestroy {
     // this.createMap();
     console.log(this.bookingService.currentLeg);
     this.currentLeg = this.bookingService.currentLeg;
+    this.driverId = this.currentLeg.bookingNumber;
   }
 
   ngOnInit() { 
+
+
     // Expose test method globally for debugging
     // (window as any).driverNavTest = () => this.testDriverLocationTracking();
   }
@@ -333,8 +336,8 @@ export class DriverNavigatorPage implements OnInit, OnDestroy {
 
 
   openTrackingPage() {
-    const trackingUrl = `/driver-tracking/${this.currentLeg.bookingNumber}`;
-    const fullUrl = `${window.location.origin}${trackingUrl}`;
+    const trackingUrl = `https://alcmicrosite.avis.co.za/assets/track?trackid=${this.currentLeg.bookingNumber}`;
+    const fullUrl = `${trackingUrl}`;
     window.open(fullUrl, '_blank');
   }
 }
