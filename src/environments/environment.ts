@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   mapsKey: 'AIzaSyA_pMgEY3hnhEpXOjOM7Kgtede5PE-K-7Y',
   validation: {
-    live: true, // Set to true to enable image validation across all inspection pages
+    live: false, // Set to true to enable image validation across all inspection pages
   },
   firebase: {
     apiKey: 'AIzaSyBXY-NxEGS6y1eDPwr8kJs6qc0hxUiG3YE',

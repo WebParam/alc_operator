@@ -220,7 +220,20 @@ export class DriverNavigatorPage implements OnInit, OnDestroy {
           const destGPS = result.getBookingResult.legs.leg[0].destinationAddress.coordinate;
           const collGPS = result.getBookingResult.legs.leg[0].collectionAddress.coordinate;
 
-          const url = `https://waze.com/ul?ll=${destGPS.latitude},${destGPS.longitude}&navigate=yes`;
+          // Try to build a human-readable destination address to show in Waze
+          const destAddrObj = result.getBookingResult.legs.leg[0].destinationAddress || {};
+          const addressText =
+            destAddrObj.formattedAddress ||
+            (Array.isArray(destAddrObj.addressLines) ? destAddrObj.addressLines.join(', ') : undefined) ||
+            destAddrObj.address ||
+            destAddrObj.street ||
+            destAddrObj.suburb ||
+            destAddrObj.city ||
+            `${destGPS.latitude},${destGPS.longitude}`;
+debugger;
+          const encodedAddress = encodeURIComponent(addressText);
+          // Include the address in the 'q' parameter so Waze will display it when opening
+          const url = `https://waze.com/ul?ll=${destGPS.latitude},${destGPS.longitude}&q=${encodedAddress}&navigate=yes`;
           window.open(url);
         });
       } else {

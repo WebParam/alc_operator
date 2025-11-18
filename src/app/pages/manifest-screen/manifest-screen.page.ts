@@ -270,8 +270,14 @@ filterBookings(type: string) {
 
     if(allocation=="exchange"){
       //delivery
-      this.router.navigateByUrl(
-        `/vehicle-inspection/${leg.vehicleDetails.results[0].replacesMva}/${booking.bookingId}`
+      //"mvaNumber": ,--new
+      //"replacesMva":--old
+      
+      // this.router.navigateByUrl(
+      //   `/vehicle-inspection/${leg.vehicleDetails.results[0].replacesMva}/${booking.bookingId}`
+      // );
+       this.router.navigateByUrl(
+        `/vehicle-inspection/${leg.mvaNumber}/${booking.bookingId}`
       );
     }
   }

@@ -150,10 +150,13 @@ export class AtDeliveryLocationPage implements OnInit {
 
   replacementInspection(mva: string) {
     const replacesMva = this.bookingService._currentLeg.vehicleDetails.results[0].replacesMva;
+    // const _mva = this.bookingService._currentLeg.mvaNumber;
     this.vehicleService.lastOdo = parseInt(this.form.controls['odoMeter'].value ?? '0');
     this.vehicleService.lastFuel = this.form.controls['fuelLevel'].value ?? 'G1';
 debugger;
     this.router.navigateByUrl(
+       //"mvaNumber": ,--new
+      //"replacesMva":--old
       `/vehicle-inspection-replacement/${replacesMva}/${this.currentLeg?.bookingNumber}`
     );
   }
