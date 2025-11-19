@@ -110,7 +110,7 @@ this.deliveryType = type ?? this.deliveryType;
     console.log(this.form.valid);
     
     let payload = this.form.value as any;
-    payload.mva = this.currentLeg.mvaNumber;
+    payload.mva = this.mva;
     payload.bookingId = this.currentLeg.bookingNumber;
     payload.type="CUSTOMER INSPECTION";
     payload.stage = this.currentLeg.stageNumber;

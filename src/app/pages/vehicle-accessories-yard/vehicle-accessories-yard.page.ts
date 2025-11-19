@@ -61,7 +61,7 @@ export class VehicleAccessoriesPage implements OnInit {
     this.apiResponse?.forEach((item: any) => {
       const payload = {
         guid: item.guid,
-        mva: item.mva,
+        mva: this.mva,
         accessorySpecification: item.accessorySpecification,
         accessoryValue: item.accessoryValue,
         accessoryFound: item.accessoryFound2 ? 'Y' : 'N',

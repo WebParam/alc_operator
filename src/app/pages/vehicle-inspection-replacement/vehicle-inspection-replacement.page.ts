@@ -94,7 +94,7 @@ export class VehicleInspectionPage implements OnInit {
   }
   updateVehicleData() {
       let payload = {...this.form.value} as any;
-    payload.mva = this.currentLeg.mvaNumber;
+    payload.mva = this.mva;
     payload.bookingId = this.currentLeg.bookingNumber;
     payload.type="CUSTOMER INSPECTION";
     payload.stage = this.currentLeg.stageNumber;

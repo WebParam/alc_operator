@@ -39,6 +39,7 @@ export class PreInspectionPage implements OnInit {
   apiResponse: any;
   lastStep :any = false;
   isVtc = false;
+  isDataLoaded = false;
   userCapturedDamages: Set<string> = new Set(); // Track which damages user has captured
   originalImages: Map<string, any> = new Map(); // Store original images separately
   constructor(
@@ -55,14 +56,21 @@ export class PreInspectionPage implements OnInit {
     const isVtc = this.route.snapshot.queryParamMap.get('vtc');
     this.isVtc = isVtc === 'true' ? true : false;
     this.lastStep = this.bookingService.delieveryType =='BOOKING COLLECTION' || this.bookingService.delieveryType =='EXCHANGE' ? true : false;
+  }
+
+  ionViewWillEnter() {
+    this.isDataLoaded = false;
+    this.loadDamageData();
+  }
+
+  loadDamageData() {
     this.route.params.subscribe((params) => {
       this.mva = params['mva'];
-      vehicleService.getVehicleVTC(this.mva).subscribe((result: any) => {
+      this.vehicleService.getVehicleVTC(this.mva).subscribe((result: any) => {
         console.log(result);
         const accessories = this.vehicleService.vehicleAccessories;
         
         if (result?.result?.vehicleQcheckOutput?.results) {
-         
           var res = result?.result?.vehicleQcheckOutput.results.map((r: any) => {
             return {
               ...r,
@@ -82,12 +90,18 @@ export class PreInspectionPage implements OnInit {
               });
             }
           });
+          
+          // Small delay to ensure images are ready to render
+          setTimeout(() => {
+            this.isDataLoaded = true;
+          }, 300);
         }
+      }, (error) => {
+        console.error('Error loading damage data:', error);
+        this.isDataLoaded = true; // Show page even on error
       });
     });
   }
-
-  ionViewWillEnter() {}
 
   ngOnInit() {
     this.getCurrentLocation();
