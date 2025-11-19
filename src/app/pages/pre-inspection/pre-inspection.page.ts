@@ -40,6 +40,7 @@ export class PreInspectionPage implements OnInit {
   lastStep :any = false;
   isVtc = false;
   isDataLoaded = false;
+  isLoadingData = false; // Prevent concurrent API calls
   userCapturedDamages: Set<string> = new Set(); // Track which damages user has captured
   originalImages: Map<string, any> = new Map(); // Store original images separately
   constructor(
@@ -59,6 +60,12 @@ export class PreInspectionPage implements OnInit {
   }
 
   ionViewWillEnter() {
+    // Prevent duplicate calls if already loading
+    if (this.isLoadingData) {
+      console.log('Already loading data, skipping duplicate call');
+      return;
+    }
+    
     // Always reload fresh data to ensure images are present
     this.isDataLoaded = false;
     this.apiResponse = null; // Clear previous data
@@ -68,6 +75,10 @@ export class PreInspectionPage implements OnInit {
   loadDamageData() {
     // Get mva directly from route snapshot to avoid multiple subscriptions
     this.mva = this.route.snapshot.params['mva'];
+    
+    // Set loading flag to prevent concurrent calls
+    this.isLoadingData = true;
+    console.log('Starting API call for MVA:', this.mva);
     
     this.vehicleService.getVehicleVTC(this.mva).subscribe((result: any) => {
       console.log('VTC API Response:', result);
@@ -97,11 +108,14 @@ export class PreInspectionPage implements OnInit {
         // Small delay to ensure images are ready to render
         setTimeout(() => {
           this.isDataLoaded = true;
+          this.isLoadingData = false; // Reset loading flag
+          console.log('Data loaded successfully');
         }, 300);
       }
     }, (error) => {
       console.error('Error loading damage data:', error);
       this.isDataLoaded = true; // Show page even on error
+      this.isLoadingData = false; // Reset loading flag even on error
     });
   }
 

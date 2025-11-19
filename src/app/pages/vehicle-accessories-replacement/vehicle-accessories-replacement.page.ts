@@ -22,7 +22,7 @@ export class VehicleAccessoriesPage implements OnInit {
       this.mva = params['mva'];
       const isVtc = this.route.snapshot.queryParamMap.get('vtc');
       this.isVtc = isVtc === 'true' ? true : false;
-      vehicleService.getVehicleVTC(this.mva).subscribe((result: any) => {
+      vehicleService.getVehicleVTCBasic(this.mva).subscribe((result: any) => {
         
         console.log(result);
         if (result?.result?.vehicleAccessorsOutput?.results) {
