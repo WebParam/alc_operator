@@ -39,6 +39,7 @@ export class PreInspectionPage implements OnInit {
   apiResponse: any;
   lastStep :any = false;
   isVtc = false;
+  isDataLoaded = false;
   userCapturedDamages: Set<string> = new Set(); // Track which damages user has captured
   originalImages: Map<string, any> = new Map(); // Store original images separately
   constructor(
@@ -55,39 +56,54 @@ export class PreInspectionPage implements OnInit {
     const isVtc = this.route.snapshot.queryParamMap.get('vtc');
     this.isVtc = isVtc === 'true' ? true : false;
     this.lastStep = this.bookingService.delieveryType =='BOOKING COLLECTION' || this.bookingService.delieveryType =='EXCHANGE' ? true : false;
-    this.route.params.subscribe((params) => {
-      this.mva = params['mva'];
-      vehicleService.getVehicleVTC(this.mva).subscribe((result: any) => {
-        console.log(result);
-        const accessories = this.vehicleService.vehicleAccessories;
-        
-        if (result?.result?.vehicleQcheckOutput?.results) {
-         
-          var res = result?.result?.vehicleQcheckOutput.results.map((r: any) => {
-            return {
-              ...r,
-              accessoryFound2: r.accessoryFound == 'Y' ? true : false,
-            };
-          });
-          
-          this.apiResponse = res;
-          
-          // Store original images for each damage location
-          res.forEach((damage: any) => {
-            if (damage.image || damage.base64Image) {
-              this.originalImages.set(damage.damageLocation, {
-                image: damage.image,
-                base64Image: damage.base64Image,
-                damageRemark: damage.damageRemark
-              });
-            }
-          });
-        }
-      });
-    });
   }
 
-  ionViewWillEnter() {}
+  ionViewWillEnter() {
+    // Always reload fresh data to ensure images are present
+    this.isDataLoaded = false;
+    this.apiResponse = null; // Clear previous data
+    this.loadDamageData();
+  }
+
+  loadDamageData() {
+    // Get mva directly from route snapshot to avoid multiple subscriptions
+    this.mva = this.route.snapshot.params['mva'];
+    
+    this.vehicleService.getVehicleVTC(this.mva).subscribe((result: any) => {
+      console.log('VTC API Response:', result);
+      const accessories = this.vehicleService.vehicleAccessories;
+      
+      if (result?.result?.vehicleQcheckOutput?.results) {
+        var res = result?.result?.vehicleQcheckOutput.results.map((r: any) => {
+          return {
+            ...r,
+            accessoryFound2: r.accessoryFound == 'Y' ? true : false,
+          };
+        });
+        
+        this.apiResponse = res;
+        
+        // Store original images for each damage location
+        res.forEach((damage: any) => {
+          if (damage.image || damage.base64Image) {
+            this.originalImages.set(damage.damageLocation, {
+              image: damage.image,
+              base64Image: damage.base64Image,
+              damageRemark: damage.damageRemark
+            });
+          }
+        });
+        
+        // Small delay to ensure images are ready to render
+        setTimeout(() => {
+          this.isDataLoaded = true;
+        }, 300);
+      }
+    }, (error) => {
+      console.error('Error loading damage data:', error);
+      this.isDataLoaded = true; // Show page even on error
+    });
+  }
 
   ngOnInit() {
     this.getCurrentLocation();

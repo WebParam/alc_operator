@@ -10,7 +10,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content [fullscreen]="true">
-  <ion-accordion-group>
+  <ion-accordion-group *ngIf="isDataLoaded">
     <ion-accordion
       [value]="damage.damageLocation"
       *ngFor="let damage of apiResponse"
