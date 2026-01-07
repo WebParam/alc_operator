@@ -1,0 +1,324 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+
+    <ion-title>Rental agreement</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<!-- Force bottom offset to 0 for debugging large bottom gap (override Ionic's computed --offset-bottom) -->
+<ion-content [fullscreen]="true" style="--offset-bottom: 0px;">
+  <ion-card class="ion-margin-top">
+    <ion-card-header class="ion-text-center">
+      <ion-text>Booking #{{booking?.bookingNumber}}  <br />
+      </ion-text>
+    </ion-card-header>
+  </ion-card>
+ 
+<ion-grid ion-padding>
+      <!-- <ng-container *ngFor="let _booking of selectedBookings">
+        <ng-container *ngFor="let booking of _booking?.legs;  let i = index"> -->
+          <ion-row> 
+            <ion-col>
+              <ion-img style="width: 150px"
+                [src]="booking?.vehicleDetails?.results[booking?.vehicleDetails?.results.length-1]?.storageUrl?.storageUrl"></ion-img>
+
+            </ion-col>
+            <ion-col>
+              <span class="" style="font-weight: bold; font-size:18px">
+                Booking #{{booking?.bookingNumber}}
+                <!-- {{booking?.vehicleDetails?.results[booking?.vehicleDetails?.results.length-1]?.vehicleTypeDescription}} -->
+                </span>
+            </ion-col>
+
+          </ion-row>
+          <ion-row>
+            <ion-col size="9">
+             
+
+              <ion-row>
+                <ion-col>
+                   <p style="font-weight: bold;">
+                      Start:<br/>
+                         <ion-label>
+                       
+                          {{booking.bookingDate}}  {{booking.timeFrom}}
+                        
+                      </ion-label>
+                    </p>
+                  </ion-col>
+                  <ion-col> 
+                     <p style="font-weight: bold;">
+                      End: <br/>
+                        <ion-label>
+                      
+                          {{booking.vehicleDetails?.results[0]?.bookingDateTo}}  {{booking.timeTo}}
+                      
+                        </ion-label>
+                    </p>
+                  </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-label>
+                    <p style="font-weight: bold;">
+                      Customer:
+                      <small style="font-weight: normal;">{{booking.customerName}}
+                        <!-- {{switchNameFormat(booking.vehicleDetails.results[booking?.vehicleDetails?.results.length-1]?.mainPassengerName)}} -->
+                      </small>
+                    </p>
+
+
+                  </ion-label>
+                </ion-col>
+
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-label>
+                    <p style="font-weight: bold;">
+                      Delivery location:
+                      <small style="font-weight: normal;">{{booking.destinationAddress}}
+                         {{booking.destinationAddress2}}
+                        <!-- {{switchNameFormat(booking.vehicleDetails.results[booking?.vehicleDetails?.results.length-1]?.mainPassengerName)}} -->
+                      </small>
+                    </p>
+
+
+                  </ion-label>
+                </ion-col>
+
+              </ion-row>
+               <ion-row>
+                <ion-col>
+                  <ion-label>
+                    <p style="font-weight: bold;">
+                      Vehicle details:
+                      <small style="font-weight: normal;">
+                        {{booking?.vehicleDetails?.results[booking?.vehicleDetails?.results.length-1]?.vehicleTypeDescription}}
+                      </small>
+                    </p>
+
+
+                  </ion-label>
+                </ion-col>
+
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-label>
+
+                    <p style="font-weight: bold;">
+                      <!-- {{booking.serviceTypeDescription}}    -->
+                      Location:
+                      <small style="font-weight: normal;">
+                        <span class="small-text">
+                          {{booking.destinationAddress}}
+                          {{booking.destinationAddress2}}
+                        </span>
+
+                      </small>
+                    </p>
+                
+
+
+                  </ion-label>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-label *ngIf="booking.miscellaneousCharges.results.length > 0">
+                    <p style="font-weight: bold;">
+                      <span> Accessories </span>
+                    </p>
+                    <ng-container *ngFor="let accessory of booking.miscellaneousCharges.results">
+                      <p>
+                        <small style="font-weight: normal;">
+                          <span class="small-text">
+                            - {{accessory.description}}
+                          </span>
+                        </small>
+                      </p>
+                    </ng-container>
+                  </ion-label>
+                  <ion-label *ngIf="booking.miscellaneousCharges.results.length == 0">
+                    <p><span style="font-weight: bold;"> No accessories </span></p>
+
+
+                  </ion-label>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col *ngIf="booking.remarks.results.length > 0">
+                  <ion-label>
+                    <p><span style="font-weight: bold;">Note: </span><span class="xsmall-text">
+                        {{booking.remarks.results[0].remarkText}} </span></p>
+                  </ion-label>
+                </ion-col>
+                <ion-col *ngIf="booking.remarks.results.length == 0">
+                  <ion-label>
+                    <p><span style="font-weight: bold;" class="xsmall-text">No note </span></p>
+                  </ion-label>
+                </ion-col>
+              </ion-row>
+            </ion-col>
+            <ion-col size="3" style="text-align: center">
+              <p style="
+                  padding-top: 8%;
+                  padding-bottom: 8%;
+                  padding-left: 1%;
+                  padding-right: 1%;
+                  font-weight: bold;
+                ">
+                <!-- <ion-label>
+                  <div
+                    style=" font-size: 35px;width: fit-content; background-color: rgb(96, 96, 96); color: white; padding: 2px 8px; font-weight: bold; border-radius: 3px;">
+                 <button ion-button disabled style="background: transparent; color: white; font-size: 35px; box-shadow: none; padding: 0; margin: 0; height: auto; line-height: normal; border: none;">
+                   View</button>
+                  </div>
+                </ion-label> -->
+              </p>
+
+            </ion-col>
+          </ion-row>
+          
+
+            <ion-row>
+                <ion-col>
+                  <ion-label>
+                    <p style="font-weight: bold;">
+                     Rental days:
+                      <small style="font-weight: normal;">
+                        <!-- {{switchNameFormat(booking.vehicleDetails.results[booking?.vehicleDetails?.results.length-1]?.mainPassengerName)}} -->
+                      </small>
+                    </p>
+                  </ion-label>
+                </ion-col>
+                 <ion-col>
+                  <ion-label>
+                    <p>
+                      {{ daysBetween(this.bookingService._currentLeg?.bookingDate, this.bookingService._currentLeg?.vehicleDetails?.results[0]?.bookingDateTo) }}
+                    </p>
+                  </ion-label>
+                </ion-col>
+
+            </ion-row>
+
+              <ion-row>
+                <ion-col>
+                  <ion-label>
+                    <p style="font-weight: bold;">
+                     Check in Odo:
+                      <small style="font-weight: normal;">{{booking.customerTitle}}
+                        <!-- {{switchNameFormat(booking.vehicleDetails.results[booking?.vehicleDetails?.results.length-1]?.mainPassengerName)}} -->
+                      </small>
+                    </p>
+                  </ion-label>
+                </ion-col>
+                 <ion-col>
+                  <ion-label>
+                    <p>
+                      {{this.bookingService._currentLeg?.latestOdo}}
+                    </p>
+                  </ion-label>
+                </ion-col>
+
+            </ion-row>
+             <ion-row>
+                <ion-col>
+                  <ion-label>
+                    <p style="font-weight: bold;">
+                     Check in station:
+                      <small style="font-weight: normal;">
+                        <!-- {{switchNameFormat(booking.vehicleDetails.results[booking?.vehicleDetails?.results.length-1]?.mainPassengerName)}} -->
+                      </small>
+                    </p>
+                  </ion-label>
+                </ion-col>
+                 <ion-col>
+                  <ion-label>
+                    <p>
+                      {{this.bookingService._currentLeg?.toDestination}}
+                    </p>
+                  </ion-label>
+                </ion-col>
+
+              </ion-row>
+              <ion-row>
+                <ion-col>
+                  <ion-label>
+                    <p style="font-weight: bold;">
+                    Date & time
+                      <small style="font-weight: normal;"> 
+                        <!-- {{switchNameFormat(booking.vehicleDetails.results[booking?.vehicleDetails?.results.length-1]?.mainPassengerName)}} -->
+                      </small>
+                    </p>
+                  </ion-label>
+                </ion-col>
+                 <ion-col>
+                  <ion-label>
+                    <p style="">
+                      
+                     {{currentDate | date:'dd/MM/yyyy HH:mm'}} 
+                   
+                    </p>
+                    
+                  </ion-label>
+                </ion-col>
+
+            </ion-row>
+             <ion-row>
+                <ion-col>
+                  <ion-label>
+                    <p style="font-weight: bold;">
+                     Fuel guage
+                      <small style="font-weight: normal;">
+                        <!-- {{switchNameFormat(booking.vehicleDetails.results[booking?.vehicleDetails?.results.length-1]?.mainPassengerName)}} -->
+                      </small>
+                    </p>
+                  </ion-label>
+                </ion-col>
+                 <ion-col>
+                  <ion-label>
+                    <p style="font-weight: bold;">
+                     {{this.bookingService._currentLeg?.latestFuelLevel}}
+                    </p>
+                  </ion-label>
+                </ion-col>
+
+            </ion-row>
+
+          <ion-row>
+            <ion-col>
+              <ion-item lines="none">
+                <ion-checkbox slot="start" [(ngModel)]="damageExists"></ion-checkbox>
+                <ion-label>
+                 Damage
+                  
+                </ion-label>
+              </ion-item>
+              </ion-col>
+              <ion-col>
+              <ion-item lines="none">
+                <ion-checkbox slot="start" [(ngModel)]="additionalCharges"></ion-checkbox>
+                <ion-label>
+                 Additional charges
+                </ion-label>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+       
+        <!-- </ng-container>
+        <hr style="border-bottom: 1px solid whitesmoke; margin: 21px" />
+      </ng-container> -->
+    </ion-grid>
+
+
+
+  <ion-button expand="full" (click)="complete()" class="ion-margin-top-50" type="submit">
+    Complete inspection
+  </ion-button>
+</ion-content>

@@ -319,27 +319,12 @@ deleteDamage(damage:any){
   
       
 
-      this.http.post(`${this.baseUrl}Vehicles/damages`, payload
-        // {
-        //   headers: {
-        //     'Content-Type': 'multipart/form-data',
-        //   },
-        // }
-      )
+      this.http.post(`${this.baseUrl}Vehicles/damages`, payload)
       .subscribe((result) => {
-        //customer inspection with new mva
         const p = this.bookingService.currentLeg;
- debugger;
-        // this.router.navigateByUrl(`/rental-agreement-replacement/${p.bookingNumber}/${p.mvaNumber}`);
-         this.router.navigateByUrl(`/vehicle-inspection-new-vehicle/${p.mvaNumber}/${p.bookingNumber}`);
-        //  this.router.navigateByUrl(`/customer-accessories/${res}`);
-// rental-agreement-replacement/:id
+      debugger;
+      this.router.navigateByUrl(`/replacement-agreement/${p.bookingNumber}/${p.mvaNumber}`);
       });
 
-    // });
-
-
-
-    
   }
 }

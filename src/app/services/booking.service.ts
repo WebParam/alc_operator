@@ -125,6 +125,9 @@ export class BookingService {
     }>
   ) {
     value.odoMeter = value.odoMeter?.toString();
+    this._currentLeg.latestOdo = value.odoMeter;
+    this._currentLeg.latestFuelLevel = value.fuelLevel;
+    
     return this.http.post(`${this.baseUrl}vehicles/getUpdateVehicle`, value);
   }
   baseUrl = environment.baseUrl;
@@ -198,7 +201,7 @@ export class BookingService {
     });
 
   }
- postCompleteExchangeCheckin(body: FormData) {
+ postCompleteExchangeCheckin(body: any) {
    
 
     return this.http.post(`${this.baseUrl}vehicles/CompleteDelivery`, body, {
