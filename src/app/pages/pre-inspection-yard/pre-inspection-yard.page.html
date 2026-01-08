@@ -60,7 +60,9 @@
             </div>
             
           </div>
-            <p style="text-align: center;font-size: 21px;">{{damage.damageRemark}}</p>
+            <p style="text-align: center;font-size: 21px;">
+              {{ damage.userDescription || damage.damageRemark || damage.damageDescription || '' }}
+            </p>
             <!-- Always show capture/edit button -->
             <div class="ion-padding">
               <ion-button

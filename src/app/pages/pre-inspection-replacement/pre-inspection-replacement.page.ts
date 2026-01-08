@@ -220,14 +220,91 @@ deleteDamage(damage:any){
   
       // Convert the response into a Blob
       const blob = await response.blob();
-      // Create a File from the Blob with the specified name
-      const file = new File([blob], fileName, { type: blob.type });
+      // If the blob is large, compress it (resize + reduce quality)
+      const COMPRESS_THRESHOLD = 500 * 1024; // 500KB
+      let finalBlob: Blob = blob;
 
-      return file; // Return the Blob
+      try {
+        if (blob.size > COMPRESS_THRESHOLD && blob.type.startsWith('image/')) {
+          finalBlob = await this.compressImageBlob(blob, 1280, 1280, 0.75);
+        }
+      } catch (compressErr) {
+        console.warn('Image compression failed, using original blob', compressErr);
+        finalBlob = blob;
+      }
+
+      // Create a File from the (possibly compressed) Blob with the specified name
+      const fileType = finalBlob.type || 'image/jpeg';
+      const file = new File([finalBlob], fileName, { type: fileType });
+
+      return file; // Return the File
     } catch (error) {
       console.error("Error creating Blob from local URL:", error);
       throw error; // Re-throw error to handle it elsewhere if needed
     }
+  }
+
+  /**
+   * Compress an image Blob by drawing it to a canvas, scaling down and
+   * exporting as JPEG (or keeping original mime if not provided).
+   */
+  private compressImageBlob(blob: Blob, maxWidth = 500, maxHeight = 500, quality = 0.4): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      try {
+        const url = URL.createObjectURL(blob);
+        const img = new Image();
+        img.onload = () => {
+          try {
+            let { width, height } = img;
+
+            // Calculate target dimensions while keeping aspect ratio
+            const aspect = width / height;
+            if (width > maxWidth) {
+              width = maxWidth;
+              height = Math.round(width / aspect);
+            }
+            if (height > maxHeight) {
+              height = maxHeight;
+              width = Math.round(height * aspect);
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+              URL.revokeObjectURL(url);
+              return reject(new Error('Could not get canvas context'));
+            }
+
+            // Draw the image into the canvas
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Prefer JPEG for better compression unless original is PNG with transparency
+            const useType = 'image/jpeg';
+
+            canvas.toBlob((resultBlob) => {
+              URL.revokeObjectURL(url);
+              if (resultBlob) {
+                resolve(resultBlob);
+              } else {
+                reject(new Error('Canvas toBlob returned null'));
+              }
+            }, useType, quality);
+          } catch (err) {
+            URL.revokeObjectURL(url);
+            reject(err);
+          }
+        };
+        img.onerror = (e) => {
+          URL.revokeObjectURL(url);
+          reject(new Error('Failed to load image for compression'));
+        };
+        img.src = url;
+      } catch (err) {
+        reject(err);
+      }
+    });
   }
 
   async uploadDamages(){

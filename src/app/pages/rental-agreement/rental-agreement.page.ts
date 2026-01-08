@@ -108,7 +108,7 @@ export class RentalAgreementPage implements OnInit {
 
       });
 
-      this._vehicleService.getVehicleVTC(mva).subscribe((result: any) => {
+      this._vehicleService.getVehicleVTCBasic(mva).subscribe((result: any) => {
 
         const accessories = this.vehicleService.vehicleAccessories;
 

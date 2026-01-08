@@ -193,7 +193,7 @@ export class DriverNavigatorPage implements OnInit, OnDestroy {
 
   endTrip() {
     this.bookingService
-      .endDelivery(this.currentLeg.bookingNumber, this.currentLeg.stageNumber)
+      .endDelivery(this.currentLeg.bookingNumber, this.currentLeg.stageNumber, this.currentLeg.mvaNumber)
       .subscribe((result) => {
         console.log(result);
         this.router.navigateByUrl('/at-delivery-location');

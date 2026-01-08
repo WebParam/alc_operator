@@ -17,8 +17,6 @@ export const environment = {
  baseUrl: 'http://localhost:5170/',
   
   // baseUrl:'https://avis-dev-api.azurewebsites.net/',
-
-  // baseUrl: 'https://avis-dev.geekymedia.club/',
   api: {
     register: 'User',
     bookings: 'Booking',

@@ -92,7 +92,7 @@ export class RentalAgreementPage implements OnInit {
 
       const leg = this.bookingService.currentLeg;
       debugger;
-      this._vehicleService.getVehicleVTC(mva).subscribe((result: any) => {
+      this._vehicleService.getVehicleVTCBasic(mva).subscribe((result: any) => {
 
         const accessories = this.vehicleService.vehicleAccessories;
 

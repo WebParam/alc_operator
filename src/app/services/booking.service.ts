@@ -40,9 +40,9 @@ export class BookingService {
       `${this.baseUrl}Booking/bookingRentalAgreement/${bookingNumber}`
     );
   }
-  endDelivery(bookingId: string, stageNumber: number) {
+  endDelivery(bookingId: string, stageNumber: number, mva:string) {
     return this.http.get(
-      `${this.baseUrl}Booking/operator/completeDelivery/${bookingId}/${stageNumber}`
+      `${this.baseUrl}Booking/operator/completeDelivery/${bookingId}/${stageNumber}/${mva}`
     );
   }
   
