@@ -30,7 +30,7 @@
       <ion-button expand="block" *ngIf="!hasScanned" (click)="continue()">Scan</ion-button>
     </ion-col>
     <ion-col size="4">
-      <ion-button expand="block" *ngIf="!hasScanned && loaded" (click)="newVTC()">Create new</ion-button>
+      <ion-button expand="block" *ngIf="!hasScanned && loaded && loadedVehicle?.mva" (click)="newVTC()">Create new</ion-button>
     </ion-col>
   </ion-row>
 

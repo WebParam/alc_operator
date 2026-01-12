@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { BookingService } from 'src/app/services/booking.service';
 import { ToastService } from 'src/app/services/toast.service';
+import { UserService } from 'src/app/services/user.service';
 import {
   Camera,
   CameraResultType,
@@ -62,7 +63,8 @@ export class ScanLicencePage implements OnInit {
     private bookingsService: BookingService,
     private toast: ToastService,
     private fb: FormBuilder,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private userService: UserService
   ) {
     this.store
       .select((store: any) => store.bookings)
@@ -195,10 +197,14 @@ export class ScanLicencePage implements OnInit {
           text: 'OK',
           handler: () => {
             this.route.params.subscribe((params: any) => {
-              const bId = params['bookingId'];
-              this.bookingsService.postNoShow(bId, '1', this.mva).subscribe(() => {
-                this.router.navigateByUrl('/manifest-screen');
-              });
+              const user = this.userService?.user?.employeeNumber;
+              const bId = parseInt(this.currentLeg.bookingNumber) || params['bookingId'];
+              const stageNumber = parseInt(this.currentLeg.stageNumber) || params['stageNumber'];
+              this.bookingsService
+                .postNoShow(bId, stageNumber, this.bookingsService.currentLeg.mvaNumber, user)
+                .subscribe(() => {
+                  this.router.navigateByUrl('/manifest-screen');
+                });
             });
           },
         },

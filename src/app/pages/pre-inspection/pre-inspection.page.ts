@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ModalController, ToastController } from '@ionic/angular';
+import { AlertController, ModalController, ToastController } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { VehicleService } from 'src/app/services/vehicle.service';
 import { IDamage, setNewDamages } from 'src/app/store/bookings.actions';
@@ -50,7 +50,9 @@ export class PreInspectionPage implements OnInit {
     private toastController: ToastController,
     private modalCtrl: ModalController,
     private bookingService: BookingService,
-    private http: HttpClient
+    private http: HttpClient,
+    private alertController: AlertController,
+    private cdr: ChangeDetectorRef
   ) {
     
     this.currentLeg = this.bookingService.currentLeg;
@@ -187,27 +189,51 @@ deleteDamage(damage:any){
         existingDescription: damage.userDescription || damage.damageRemark || ''
       }
     });
-    modal.present();
+    await modal.present();
 
-    const { data, role } = await modal.onWillDismiss();
+    // Use onDidDismiss instead of onWillDismiss to ensure modal is fully closed
+    // This fixes tablet issues where the thumbnail wouldn't appear on first capture
+    const { data, role } = await modal.onDidDismiss();
     
     if (data && data.damageImage) {
       console.log('data', data);
       
-      // Store user-captured image separately
-      damage.userImage = data?.damageImage;
+      // Compress image immediately when captured to prevent memory issues later
+      let compressedImageUrl = data.damageImage;
+      try {
+        const response = await fetch(data.damageImage);
+        const originalBlob = await response.blob();
+        
+        // Always compress on capture to reduce memory footprint
+        if (originalBlob.type.startsWith('image/')) {
+          const compressedBlob = await this.compressImageBlob(originalBlob, 1280, 1280, 0.75);
+          // Revoke old blob URL to free memory
+          if (data.damageImage.startsWith('blob:')) {
+            URL.revokeObjectURL(data.damageImage);
+          }
+          compressedImageUrl = URL.createObjectURL(compressedBlob);
+        }
+      } catch (compressErr) {
+        console.warn('Compression on capture failed, using original', compressErr);
+      }
+      
+      // Store compressed image
+      damage.userImage = compressedImageUrl;
       damage.userDescription = data?.damageDescription;
       
       // Track that user has captured this damage
       this.userCapturedDamages.add(damage.damageLocation);
       
       damage.files = damage.files
-        ? [...damage.files, data.damageImage]
-        : [data.damageImage];
-      const response = await fetch(data.damageImage);
-      const fileData = await response.blob();
+        ? [...damage.files, compressedImageUrl]
+        : [compressedImageUrl];
+      const response2 = await fetch(compressedImageUrl);
+      const fileData = await response2.blob();
       console.log(fileData);
       this.saveDamange(damage, fileData);
+      
+      // Manually trigger change detection to ensure thumbnail appears on tablets
+      this.cdr.detectChanges();
     }
   }
 
@@ -250,6 +276,11 @@ deleteDamage(damage:any){
       // Create a File from the (possibly compressed) Blob with the specified name
       const fileType = finalBlob.type || 'image/jpeg';
       const file = new File([finalBlob], fileName, { type: fileType });
+
+      // Clean up blob URL if it's a blob URL to free memory
+      if (url.startsWith('blob:')) {
+        URL.revokeObjectURL(url);
+      }
 
       return file; // Return the File
     } catch (error) {
@@ -359,6 +390,36 @@ deleteDamage(damage:any){
     toast.present();
   }
 
+  async showErrorAlert(header: string, message: string) {
+    const alert = await this.alertController.create({
+      header: header,
+      message: message,
+      buttons: ['OK'],
+      cssClass: 'alertAvis',
+    });
+    await alert.present();
+  }
+
+  /**
+   * Process images one at a time to prevent memory overflow on low-RAM devices
+   */
+  private async processImagesSequentially(): Promise<File[]> {
+    const files: File[] = [];
+    
+    for (const img of this.updatedDamages) {
+      const file = await this.createBlobFromLocalURL(
+        img.userImage || img.image, 
+        img.damageLocation
+      );
+      files.push(file);
+      
+      // Give browser time to garbage collect between images
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    
+    return files;
+  }
+
   async continue() {
     // Validate that all required images are uploaded
     if (!this.validateAllImagesUploaded() && environment.validation.live) {
@@ -374,24 +435,22 @@ deleteDamage(damage:any){
     var t = this.updatedDamages
     const payload = new FormData();
     
-    const blobs = await Promise.all(
-      this.updatedDamages.map(async (img: any, index: number) => {
-        
-        return await this.createBlobFromLocalURL(img.userImage || img.image, img.damageLocation);
-      })
-    );
+    let blobs: File[];
+    try {
+      // Process sequentially instead of Promise.all to prevent memory spikes on low-RAM devices
+      blobs = await this.processImagesSequentially();
+    } catch (error) {
+      console.error('Error processing images:', error);
+      await this.showErrorAlert('Image Processing Error', 'Failed to process images. Please try again or retake the photos.');
+      return;
+    }
 
       blobs.map((x, index)=>{
-        
-        
         payload.append(`images${index}`, x);
       });
-      
 
-      
       const meta = this.apiResponse.filter((x:any)=>{return x.dmsEntryId.length>1;})
       const meta2 = meta.map((x:any)=>{return {...x, base64Image:""}});
-
 
       const fullQCheck = [...this.updatedDamages, ...meta2];
 
@@ -407,36 +466,44 @@ deleteDamage(damage:any){
         gpsLocation: this.vehicleService.gpsLocation,
       };
      
-     
       payload.append('data', JSON.stringify(jsonData));
       payload.append('stageNumber', this.currentLeg?.stageNumber);
       payload.append('bookingId', this.currentLeg?.bookingNumber);
-  
-      
 
-      this.http.post(`${this.baseUrl}Vehicles/damages`, payload
-      )
-      .subscribe((result) => {
-        
-
-        const isDel = this.bookingService.delieveryType =='BOOKING COLLECTION' ? true : false;
-        const exch = this.bookingService.delieveryType =='EXCHANGE' ? true : false;
-        
-        if(isDel || exch || this.isVtc){
-          {this.router.navigateByUrl('/manifest-screen'); }
-        }
-        else{
-          switch (this.bookingService.delieveryType) {
-            case 'exchange':
-              this.router.navigateByUrl('/booking-summary');
-              break;
-            case 'transfer':
-              this.router.navigateByUrl('/booking-summary');
-              break;
-            default:
-              this.router.navigateByUrl('/driver-navigator');
+      this.http.post(`${this.baseUrl}Vehicles/damages`, payload)
+      .subscribe({
+        next: (result) => {
+          const isDel = this.bookingService.delieveryType =='BOOKING COLLECTION' ? true : false;
+          const exch = this.bookingService.delieveryType =='EXCHANGE' ? true : false;
+          
+          if(isDel || exch || this.isVtc){
+            {this.router.navigateByUrl('/manifest-screen'); }
           }
-        }       
+          else{
+            switch (this.bookingService.delieveryType) {
+              case 'exchange':
+                this.router.navigateByUrl('/booking-summary');
+                break;
+              case 'transfer':
+                this.router.navigateByUrl('/booking-summary');
+                break;
+              default:
+                this.router.navigateByUrl('/driver-navigator');
+            }
+          }
+        },
+        error: async (error) => {
+          console.error('Error uploading damages:', error);
+          if (error.status === 401 || error.status === 403) {
+            await this.showErrorAlert('Session Expired', 'Your session has expired. Please log in again.');
+          } else if (error.status === 0) {
+            await this.showErrorAlert('Network Error', 'Unable to connect to server. Please check your internet connection and try again.');
+          } else if (error.status === 413) {
+            await this.showErrorAlert('Upload Failed', 'Images are too large. Please retake photos with lower quality.');
+          } else {
+            await this.showErrorAlert('Upload Failed', 'Failed to upload inspection data. Please try again.');
+          }
+        }
       });
   }
 }

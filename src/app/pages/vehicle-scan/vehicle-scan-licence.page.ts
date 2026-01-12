@@ -124,15 +124,27 @@ export class VehicleScanLicencePage implements OnInit {
       return;
     }
 
-
+    // Capitalize input before sending - backend is case sensitive
+    const upperMvaNumber = this.mvaNumber.toUpperCase();
+    this.mvaNumber = upperMvaNumber;
 
     const payload = new FormData();
-    payload.append('mvaNumber', this.mvaNumber);
+    payload.append('mvaNumber', upperMvaNumber);
 
-    this.vehicleService.getVehicleVTCRegistration(this.mvaNumber).subscribe({
+    this.vehicleService.getVehicleVTCRegistration(upperMvaNumber).subscribe({
       next: (data: any) => {
 
         const _res = data.result;
+        
+        // Check if response has valid data - if all key fields are null, it's an error
+        if (!_res?.getVehicleDataWithVTCOutput && !_res?.vehicleAccessorsOutput && !_res?.vehicleQcheckOutput) {
+          this.toast.showToast('Vehicle not found. Please check the registration number.');
+          this.loaded = false;
+          this.mvaResults = [];
+          this.loadedVehicle = {};
+          return;
+        }
+        
         const output = _res?.mvaOpenVtcOutput?.results ?? [];
 
         const vehicleDetails = _res?.getVehicleDataWithVTCOutput ?? {};
