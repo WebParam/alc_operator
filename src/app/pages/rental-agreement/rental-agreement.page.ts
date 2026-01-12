@@ -94,7 +94,7 @@ export class RentalAgreementPage implements OnInit {
           // If 4 or fewer digits, show only stars
           this.cc = '*'.repeat(ccNum.length);
         }
-
+        debugger;
         this.drivers = res.additionalDrivers;
         this.equipment = res.getBookingResult.legs.leg[0].equipment.equipment;
         this.replacesmva = res.getBookingResult.legs.leg[0].vehicleDetails.results[0].replaceMvaNumber;
@@ -108,7 +108,7 @@ export class RentalAgreementPage implements OnInit {
 
       });
 
-      this._vehicleService.getVehicleVTC(mva).subscribe((result: any) => {
+      this._vehicleService.getVehicleVTCBasic(mva).subscribe((result: any) => {
 
         const accessories = this.vehicleService.vehicleAccessories;
 

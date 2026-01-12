@@ -89,14 +89,38 @@ validateEndKms() {
     payload.employeeNbr = this.userService?.user?.employeeNumber;
     payload.raNumber = this.bookingService._openVTC.rentalagreementNumber;
 
-    this.bookingService.closeInspection(payload).subscribe(async () => {
+    this.bookingService.closeInspection(payload).subscribe(async (res:any) => {
+      const bodyStr = JSON.stringify(res || '');
+      if (bodyStr.includes('Adapter Runtime')) {
+        const errToast = await this.toastController.create({
+          message: bodyStr,
+          duration: 4000,
+          position: 'top',
+          color: 'danger'
+        });
+        await errToast.present();
+        return;
+      }
+
       const toast = await this.toastController.create({
         message: 'Inspection submitted successfully.',
         duration: 1500,
         position: 'bottom',
       });
       await toast.present();
-      this.router.navigateByUrl('/manifest-screen');
+
+      // clear open vtc so scan page opens with no prefilled VTC
+      this.bookingService._openVTC = null;
+
+      this.router.navigateByUrl('/vehicle-scan-licence');
+    }, async (err:any) => {
+      const errToast = await this.toastController.create({
+        message: 'Error submitting inspection. Please try again.',
+        duration: 3000,
+        position: 'top',
+        color: 'danger'
+      });
+      await errToast.present();
     });
   }
 }

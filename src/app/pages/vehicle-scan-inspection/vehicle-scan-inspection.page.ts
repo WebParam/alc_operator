@@ -109,6 +109,7 @@ export class VehicleScanInspectionPage implements OnInit {
     }
   }
   checkOdo() {
+    debugger;
     try {
       const reading = parseInt(this.form.controls.odoMeter.value ?? '0');
       if (reading < this.minOdoMeter) {

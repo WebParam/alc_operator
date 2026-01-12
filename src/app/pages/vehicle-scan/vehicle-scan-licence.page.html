@@ -24,7 +24,7 @@
   <ion-row class="ion-margin-top">
 
     <ion-col size="4">
-      <ion-button expand="block" [disabled]="mvaNumber.length < 5 || loaded==true" (click)="manual()">Proceed</ion-button>
+      <ion-button expand="block" [disabled]="mvaNumber.length < 5" (click)="manual()">Search</ion-button>
     </ion-col>
     <ion-col size="4">
       <ion-button expand="block" *ngIf="!hasScanned" (click)="continue()">Scan</ion-button>

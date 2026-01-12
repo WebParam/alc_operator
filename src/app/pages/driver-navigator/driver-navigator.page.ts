@@ -63,6 +63,19 @@ export class DriverNavigatorPage implements OnInit, OnDestroy {
     this.stopLocationTracking();
   }
 
+  // Ionic lifecycle: called when leaving the view (but component may stay alive)
+  async ionViewWillLeave(): Promise<void> {
+    // Ensure tracking stops when user navigates away from this page
+    await this.stopLocationTracking();
+    // Reset UI state
+    this.navText = 'Start';
+  }
+
+  // Also catch didLeave to be extra safe
+  async ionViewDidLeave(): Promise<void> {
+    await this.stopLocationTracking();
+  }
+
   // async createMap() {
   //   const coordinates = await Geolocation.getCurrentPosition({
   //     enableHighAccuracy: true,
@@ -193,7 +206,7 @@ export class DriverNavigatorPage implements OnInit, OnDestroy {
 
   endTrip() {
     this.bookingService
-      .endDelivery(this.currentLeg.bookingNumber, this.currentLeg.stageNumber)
+      .endDelivery(this.currentLeg.bookingNumber, this.currentLeg.stageNumber, this.currentLeg.mvaNumber)
       .subscribe((result) => {
         console.log(result);
         this.router.navigateByUrl('/at-delivery-location');

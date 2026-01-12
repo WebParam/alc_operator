@@ -49,6 +49,29 @@ export class VehicleScanLicencePage implements OnInit {
     this.form.markAllAsTouched();
   }
 
+  // Ionic lifecycle - runs every time the view becomes active
+  ionViewWillEnter() {
+    // Reset scan state
+    this.hasScanned = false;
+    this.proceedText = 'Capture Licence';
+
+    const open = this.bookingsService._openVTC;
+    if (open) {
+      // If an open VTC is intentionally present, populate view
+      this.mvaResults = open.mvaOpenVtcOutput?.results ?? [];
+      this.loadedVehicle = open.getVehicleDataWithVTCOutput ?? {};
+      // prefer registration/mva fields if present
+      this.mvaNumber = this.loadedVehicle?.mva ?? (this.loadedVehicle?.registration ?? '').trim();
+      this.loaded = true;
+    } else {
+      // Clear any previous state so page is blank
+      this.mvaNumber = '';
+      this.mvaResults = [];
+      this.loadedVehicle = {};
+      this.loaded = false;
+    }
+  }
+
   async continue() {
     this.hasScanned = true;
     await this.doScan();
@@ -115,6 +138,7 @@ export class VehicleScanLicencePage implements OnInit {
         const vehicleDetails = _res?.getVehicleDataWithVTCOutput ?? {};
         this.loadedVehicle = vehicleDetails;
             this.loaded = true;
+            debugger;
         this.bookingsService._openVTC = _res;
 
         if (output.length > 0) {

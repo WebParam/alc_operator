@@ -40,9 +40,9 @@ export class BookingService {
       `${this.baseUrl}Booking/bookingRentalAgreement/${bookingNumber}`
     );
   }
-  endDelivery(bookingId: string, stageNumber: number) {
+  endDelivery(bookingId: string, stageNumber: number, mva:string) {
     return this.http.get(
-      `${this.baseUrl}Booking/operator/completeDelivery/${bookingId}/${stageNumber}`
+      `${this.baseUrl}Booking/operator/completeDelivery/${bookingId}/${stageNumber}/${mva}`
     );
   }
   
@@ -125,6 +125,9 @@ export class BookingService {
     }>
   ) {
     value.odoMeter = value.odoMeter?.toString();
+    this._currentLeg.latestOdo = value.odoMeter;
+    this._currentLeg.latestFuelLevel = value.fuelLevel;
+    
     return this.http.post(`${this.baseUrl}vehicles/getUpdateVehicle`, value);
   }
   baseUrl = environment.baseUrl;
@@ -175,7 +178,11 @@ export class BookingService {
   }
 
   uploadLicence(body: FormData, bookingId: string, stage: string, licenceNumber?: string) {
-    return this.http.post(`${this.baseUrl}saveLicence/${bookingId}/${stage}/${licenceNumber}`, body);
+    // Backend sometimes returns a plain text JSON string; request response as text so callers can parse reliably.
+    // We cast responseType to 'json' to satisfy HttpClient typings while actually receiving text.
+    return this.http.post(`${this.baseUrl}saveLicence/${bookingId}/${stage}/${licenceNumber}`, body, {
+      responseType: 'text' as 'json',
+    });
 
   }
 
@@ -198,7 +205,7 @@ export class BookingService {
     });
 
   }
- postCompleteExchangeCheckin(body: FormData) {
+ postCompleteExchangeCheckin(body: any) {
    
 
     return this.http.post(`${this.baseUrl}vehicles/CompleteDelivery`, body, {

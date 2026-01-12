@@ -379,6 +379,13 @@ const routes: Routes = [
       ),
   },
    {
+    path: 'replacement-agreement/:id/:mva',
+    loadChildren: () =>
+      import('./pages/replacement-agreement/rental-agreement.module').then(
+        (m) => m.RentalAgreementPageModule
+      ),
+  },
+   {
     path: 'vehicle-scan-licence',
     loadChildren: () =>
       import('./pages/vehicle-scan/vehicle-scan-licence.module').then(

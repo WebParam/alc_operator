@@ -41,15 +41,16 @@ export class VehicleInspectionFinalPage implements OnInit {
 
  ngOnInit() {
   this.loadDropdowns();
-
+  debugger;
   const vtc = this.bookingService._openVTC;
-
+ 
   this.form.controls['startStation'].setValue(vtc?.checkOutStatCode);
   this.form.controls['endStation'].setValue(vtc?.checkInStatCode);
-  this.form.controls['reasonCode'].setValue(vtc?.reasonCode.trim());
+  this.form.controls['reasonCode'].setValue(vtc?.reasonCode?.trim());
   this.form.controls['remark'].setValue(vtc?.remark);
-  this.checkOutOdoReading = parseInt(vtc?.checkOutOdoReading || '0', 10);
-  this.form.controls['startKms'].setValue(this.checkOutOdoReading);
+  this.checkOutOdoReading = parseInt(vtc.getVehicleDataWithVTCOutput?.lastOdo || '0', 10);
+
+  this.form.controls['startKms'].setValue(vtc.getVehicleDataWithVTCOutput?.lastOdo);
 }
 
   loadDropdowns() {
@@ -91,7 +92,21 @@ validateEndKms() {
     
     
     // Replace with actual submission logic
-    this.bookingService.submitInspection(payload).subscribe(async () => {
+    this.bookingService.submitInspection(payload).subscribe(async (res: any) => {
+      // Some responses may contain an error payload that includes "Adapter Runtime"
+      const bodyStr = JSON.stringify(res || '');
+      if (bodyStr.includes('Adapter Runtime')) {
+        // show an alert/toast and do not navigate
+        const errToast = await this.toastController.create({
+          message: bodyStr,
+          duration: 4000,
+          position: 'top',
+          color: 'danger'
+        });
+        await errToast.present();
+        return; // do not proceed to navigation
+      }
+
       const toast = await this.toastController.create({
         message: 'Inspection submitted successfully.',
         duration: 1500,
@@ -99,7 +114,19 @@ validateEndKms() {
       });
       await toast.present();
 
-      this.router.navigateByUrl('/manifest-screen');
+      // Clear open VTC so vehicle-scan-licence loads without pre-filled data
+      this.bookingService._openVTC = null;
+
+      this.router.navigateByUrl('/vehicle-scan-licence');
+    }, async (err:any) => {
+      // Network or server error - show error and don't navigate
+      const errToast = await this.toastController.create({
+        message: 'Error submitting inspection. Please try again.',
+        duration: 3000,
+        position: 'top',
+        color: 'danger'
+      });
+      await errToast.present();
     });
   }
 }

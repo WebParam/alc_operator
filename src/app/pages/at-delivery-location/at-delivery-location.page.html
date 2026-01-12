@@ -151,13 +151,13 @@
   [color]="form.valid ? 'dark' : 'medium'"
   expand="full"
   (click)="scanLicense()"
-  *ngIf="currentLeg?.allocationType !== 'booking collection'"
+  *ngIf="currentLeg?.allocationType !== 'booking collection' && currentLeg.allocationType!=='exchange'"
 >
   Scan driver license
 </ion-button>
 
  <!-- <div class="ion-padding"> -->
-    <ion-button  *ngIf="currentLeg?.allocationType!=='booking collection'"  expand="full"
+    <ion-button  *ngIf="currentLeg?.allocationType!=='booking collection' && currentLeg.allocationType!=='exchange'" expand="full"
     (click)="markAsNoShow()"
      class="">
       Mark as no show

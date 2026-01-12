@@ -111,7 +111,7 @@ export class AtDeliveryLocationPage implements OnInit {
               const user = this.userService?.user?.employeeNumber;
               const bId = parseInt(this.currentLeg.bookingNumber) || params['bookingId'];
               const stageNumber = parseInt(this.currentLeg.stageNumber) || params['stageNumber'];
-
+debugger;
               this.bookingService
                 .postNoShow(bId, stageNumber, this.bookingService.currentLeg.mvaNumber, user)
                 .subscribe(() => {

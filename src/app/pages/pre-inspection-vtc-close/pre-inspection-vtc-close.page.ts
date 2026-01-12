@@ -230,6 +230,69 @@ deleteDamage(damage:any){
     }
   }
 
+  /**
+   * Compress an image Blob by drawing it to a canvas, scaling down and
+   * exporting as JPEG (or keeping original mime if not provided).
+   */
+  private compressImageBlob(blob: Blob, maxWidth = 500, maxHeight = 500, quality = 0.4): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      try {
+        const url = URL.createObjectURL(blob);
+        const img = new Image();
+        img.onload = () => {
+          try {
+            let { width, height } = img;
+
+            // Calculate target dimensions while keeping aspect ratio
+            const aspect = width / height;
+            if (width > maxWidth) {
+              width = maxWidth;
+              height = Math.round(width / aspect);
+            }
+            if (height > maxHeight) {
+              height = maxHeight;
+              width = Math.round(height * aspect);
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+              URL.revokeObjectURL(url);
+              return reject(new Error('Could not get canvas context'));
+            }
+
+            // Draw the image into the canvas
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Prefer JPEG for better compression unless original is PNG with transparency
+            const useType = 'image/jpeg';
+
+            canvas.toBlob((resultBlob) => {
+              URL.revokeObjectURL(url);
+              if (resultBlob) {
+                resolve(resultBlob);
+              } else {
+                reject(new Error('Canvas toBlob returned null'));
+              }
+            }, useType, quality);
+          } catch (err) {
+            URL.revokeObjectURL(url);
+            reject(err);
+          }
+        };
+        img.onerror = (e) => {
+          URL.revokeObjectURL(url);
+          reject(new Error('Failed to load image for compression'));
+        };
+        img.src = url;
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
   async uploadDamages(){
 
   }
@@ -282,18 +345,33 @@ deleteDamage(damage:any){
     var t = this.updatedDamages
     const payload = new FormData();
     
-    const blobs = await Promise.all(
+    // Create Files from the stored URLs and compress each before appending.
+    const files = await Promise.all(
       this.updatedDamages.map(async (img: any, index: number) => {
-        
-        return await this.createBlobFromLocalURL(img.userImage || img.image, img.damageLocation);
+        try {
+          // Convert URL/dataURL to a File
+          const originalFile = await this.createBlobFromLocalURL(img.userImage || img.image, img.damageLocation);
+
+          // Try to compress the file; fall back to original on error
+          try {
+            const compressedBlob = await this.compressImageBlob(originalFile as Blob, 800, 800, 0.5);
+            const compressedFile = new File([compressedBlob], (originalFile as File).name || `image_${index}.jpg`, { type: compressedBlob.type || 'image/jpeg' });
+            return compressedFile;
+          } catch (compressErr) {
+            console.warn('Image compression failed, using original file', compressErr);
+            return originalFile as File;
+          }
+        } catch (err) {
+          console.error('Failed to create file from URL for damage', img, err);
+          return null;
+        }
       })
     );
 
-      blobs.map((x, index)=>{
-        
-        
-        payload.append(`images${index}`, x);
-      });
+    // Append only successfully created files
+    files.forEach((f, idx) => {
+      if (f) payload.append(`images${idx}`, f as File);
+    });
       
 
       

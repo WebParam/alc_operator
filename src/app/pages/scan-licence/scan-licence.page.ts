@@ -148,6 +148,7 @@ export class ScanLicencePage implements OnInit {
         },
       ];
     } catch (err) {
+     
       this.toast.showToast('Camera error. Please try again.');
     }
   }
@@ -349,8 +350,9 @@ export class ScanLicencePage implements OnInit {
       const payload = new FormData();
 
       const mainPhoto = this.photos[0];
-      const mainPhotoBlob = await fetch(mainPhoto.webviewPath ?? '').then((res) => res.blob());
-      payload.append('file', mainPhotoBlob);
+      // create compressed File from local URL (handles large images)
+      const mainPhotoFile = await this.createBlobFromLocalURL(mainPhoto.webviewPath ?? '', 'licence.jpg');
+      payload.append('file', mainPhotoFile);
       payload.append('licenceNumber', this.form.value.licenceNumber ?? '');
       this.bookingsService._licenceNumber = this.form.value.licenceNumber ?? '';
       const expiryDay = this.form.value.expiryDay;
@@ -382,27 +384,67 @@ export class ScanLicencePage implements OnInit {
           return;
         }
 
-        const blob = await fetch(driver.photo.webviewPath).then((res) => res.blob());
-        payload.append(`additionalDriverPhotos`, blob, `driver${i + 1}.jpg`);
+        const driverFile = await this.createBlobFromLocalURL(driver.photo.webviewPath, `driver${i + 1}.jpg`);
+        payload.append(`additionalDriverPhotos`, driverFile, `driver${i + 1}.jpg`);
         payload.append(`additionalDriverNumbers`, driver.licenceNumber);
       }
 
 
-      this.bookingsService.uploadLicence(payload, this.currentLeg.bookingNumber, this.currentLeg.stageNumber,`${this.form.value.licenceNumber}-${this.form.value.expiryDay}${this.form.value.expiryMonth}${this.form.value.expiryYear}`).subscribe(
-        (res: any) => {
-          this.isUploading = false;
-          const _res = JSON.parse(res);
-          if (_res?.createDocOutput?.result?.success === true) {
-            this.inspection();
-          } else {
+      this.bookingsService
+        .uploadLicence(
+          payload,
+          this.currentLeg.bookingNumber,
+          this.currentLeg.stageNumber,
+          `${this.form.value.licenceNumber}-${this.form.value.expiryDay}${this.form.value.expiryMonth}${this.form.value.expiryYear}`
+        )
+        .subscribe(
+          (res: any) => {
+            this.isUploading = false;
+
+            // Robust parsing: try to JSON.parse repeatedly in case the server double-encodes JSON
+            let parsed: any = res;
+            try {
+              for (let i = 0; i < 3 && typeof parsed === 'string'; i++) {
+                try {
+                  parsed = JSON.parse(parsed);
+                } catch (e) {
+                  // If parsing fails, stop trying further
+                  console.warn('uploadLicence: JSON.parse attempt failed at depth', i, e);
+                  break;
+                }
+              }
+            } catch (e) {
+              console.warn('Failed to fully parse uploadLicence response', e, res);
+            }
+
+            console.debug('uploadLicence parsed response:', parsed);
+
+            // Accept boolean true, string 'true', numeric 1, or nested result flags
+            const nestedSuccess = parsed?.createDocOutput?.result?.success;
+            const success =
+              nestedSuccess === true ||
+              nestedSuccess === 'true' ||
+              nestedSuccess === 1 ||
+              parsed?.success === true ||
+              parsed?.success === 'true' ||
+              parsed?.status === 'OK' ||
+              parsed === true ||
+              parsed === 'true';
+
+            if (success) {
+              this.inspection();
+              return;
+            }
+
+            console.log('ERROR - upload did not indicate success. Parsed:', parsed);
             this.toast.showToast('Upload failed. Please try again.');
+          },
+          (err: any) => {
+            this.isUploading = false;
+            console.error('uploadLicence error', err);
+            this.toast.showToast('Upload failed. Please check your connection.');
           }
-        },
-        () => {
-          this.isUploading = false;
-          this.toast.showToast('Upload failed. Please check your connection.');
-        }
-      );
+        );
     } catch (err) {
       this.isUploading = false;
       this.toast.showToast('Unexpected error occurred during upload.');
@@ -452,5 +494,104 @@ export class ScanLicencePage implements OnInit {
 
   private isAdditionalDriverFormComplete(driver: any): boolean {
     return !!(driver.licenceNumber && driver.expiryDay && driver.expiryMonth && driver.expiryYear && driver.photo?.webviewPath);
+  }
+
+  async createBlobFromLocalURL(url: string, fileName: string) {
+    try {
+      // Fetch the data from the local URL
+      const response = await fetch(url);
+
+      // Ensure the fetch was successful
+      if (!response.ok) {
+        throw new Error(`Failed to fetch URL: ${response.statusText}`);
+      }
+
+      // Convert the response into a Blob
+      const blob = await response.blob();
+      // If the blob is large, compress it (resize + reduce quality)
+      const COMPRESS_THRESHOLD = 500 * 1024; // 500KB
+      let finalBlob: Blob = blob;
+
+      try {
+        if (blob.size > COMPRESS_THRESHOLD && blob.type.startsWith('image/')) {
+          finalBlob = await this.compressImageBlob(blob, 1280, 1280, 0.75);
+        }
+      } catch (compressErr) {
+        console.warn('Image compression failed, using original blob', compressErr);
+        finalBlob = blob;
+      }
+
+      // Create a File from the (possibly compressed) Blob with the specified name
+      const fileType = finalBlob.type || 'image/jpeg';
+      const file = new File([finalBlob], fileName, { type: fileType });
+
+      return file; // Return the File
+    } catch (error) {
+      console.error('Error creating Blob from local URL:', error);
+      throw error; // Re-throw error to handle it elsewhere if needed
+    }
+  }
+
+  /**
+   * Compress an image Blob by drawing it to a canvas, scaling down and
+   * exporting as JPEG (or keeping original mime if not provided).
+   */
+  private compressImageBlob(blob: Blob, maxWidth = 500, maxHeight = 500, quality = 0.4): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      try {
+        const url = URL.createObjectURL(blob);
+        const img = new Image();
+        img.onload = () => {
+          try {
+            let { width, height } = img;
+
+            // Calculate target dimensions while keeping aspect ratio
+            const aspect = width / height;
+            if (width > maxWidth) {
+              width = maxWidth;
+              height = Math.round(width / aspect);
+            }
+            if (height > maxHeight) {
+              height = maxHeight;
+              width = Math.round(height * aspect);
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+              URL.revokeObjectURL(url);
+              return reject(new Error('Could not get canvas context'));
+            }
+
+            // Draw the image into the canvas
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Prefer JPEG for better compression unless original is PNG with transparency
+            const useType = 'image/jpeg';
+
+            canvas.toBlob((resultBlob) => {
+              URL.revokeObjectURL(url);
+              if (resultBlob) {
+                resolve(resultBlob);
+              } else {
+                reject(new Error('Canvas toBlob returned null'));
+              }
+            }, useType, quality);
+          } catch (err) {
+            URL.revokeObjectURL(url);
+            reject(err);
+          }
+        };
+        img.onerror = (e) => {
+          URL.revokeObjectURL(url);
+          reject(new Error('Failed to load image for compression'));
+        };
+        img.src = url;
+      } catch (err) {
+        reject(err);
+      }
+    });
   }
 }
