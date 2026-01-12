@@ -87,12 +87,20 @@ export class RentalAgreementPage implements OnInit {
 
         this.drivers = res.additionalDrivers;
         this.equipment = res.getBookingResult.legs.leg[0].equipment.equipment;
+<<<<<<< HEAD
        
+=======
+        this.replacesmva = res.getBookingResult.legs.leg[0].vehicleDetails.results[0].replaceMvaNumber;
+>>>>>>> 26e2ca35bcaa1a9cbf14da0be3607f6399af6fbf
       });
 
       const leg = this.bookingService.currentLeg;
       debugger;
+<<<<<<< HEAD
       this._vehicleService.getVehicleVTC(mva).subscribe((result: any) => {
+=======
+      this._vehicleService.getVehicleVTCBasic(mva).subscribe((result: any) => {
+>>>>>>> 26e2ca35bcaa1a9cbf14da0be3607f6399af6fbf
 
         const accessories = this.vehicleService.vehicleAccessories;
 

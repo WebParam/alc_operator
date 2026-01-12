@@ -277,11 +277,14 @@ deleteDamage(damage:any){
       const fileType = finalBlob.type || 'image/jpeg';
       const file = new File([finalBlob], fileName, { type: fileType });
 
+<<<<<<< HEAD
       // Clean up blob URL if it's a blob URL to free memory
       if (url.startsWith('blob:')) {
         URL.revokeObjectURL(url);
       }
 
+=======
+>>>>>>> 26e2ca35bcaa1a9cbf14da0be3607f6399af6fbf
       return file; // Return the File
     } catch (error) {
       console.error("Error creating Blob from local URL:", error);
@@ -470,6 +473,7 @@ deleteDamage(damage:any){
       payload.append('stageNumber', this.currentLeg?.stageNumber);
       payload.append('bookingId', this.currentLeg?.bookingNumber);
 
+<<<<<<< HEAD
       this.http.post(`${this.baseUrl}Vehicles/damages`, payload)
       .subscribe({
         next: (result) => {
@@ -478,6 +482,29 @@ deleteDamage(damage:any){
           
           if(isDel || exch || this.isVtc){
             {this.router.navigateByUrl('/manifest-screen'); }
+=======
+      this.http.post(`${this.baseUrl}Vehicles/damages`, payload
+      )
+      .subscribe((result) => {
+        
+
+        const isDel = this.bookingService.delieveryType =='BOOKING COLLECTION' ? true : false;
+        const exch = this.bookingService.delieveryType =='EXCHANGE' ? true : false;
+        
+        if(isDel || exch || this.isVtc){
+          {this.router.navigateByUrl('/manifest-screen'); }
+        }
+        else{
+          switch (this.bookingService.delieveryType) {
+            case 'exchange':
+              this.router.navigateByUrl('/booking-summary');
+              break;
+            case 'transfer':
+              this.router.navigateByUrl('/booking-summary');
+              break;
+            default:
+              this.router.navigateByUrl('/driver-navigator');
+>>>>>>> 26e2ca35bcaa1a9cbf14da0be3607f6399af6fbf
           }
           else{
             switch (this.bookingService.delieveryType) {

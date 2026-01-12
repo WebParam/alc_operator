@@ -246,11 +246,14 @@ deleteDamage(damage:any){
       const fileType = finalBlob.type || 'image/jpeg';
       const file = new File([finalBlob], fileName, { type: fileType });
 
+<<<<<<< HEAD
       // Clean up blob URL if it's a blob URL to free memory
       if (url.startsWith('blob:')) {
         URL.revokeObjectURL(url);
       }
 
+=======
+>>>>>>> 26e2ca35bcaa1a9cbf14da0be3607f6399af6fbf
       return file; // Return the File
     } catch (error) {
       console.error("Error creating Blob from local URL:", error);

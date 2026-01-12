@@ -263,11 +263,14 @@ deleteDamage(damage:any){
       const fileType = finalBlob.type || 'image/jpeg';
       const file = new File([finalBlob], fileName, { type: fileType });
 
+<<<<<<< HEAD
       // Clean up blob URL if it's a blob URL to free memory
       if (url.startsWith('blob:')) {
         URL.revokeObjectURL(url);
       }
 
+=======
+>>>>>>> 26e2ca35bcaa1a9cbf14da0be3607f6399af6fbf
       return file; // Return the File
     } catch (error) {
       console.error("Error creating Blob from local URL:", error);
@@ -453,6 +456,7 @@ deleteDamage(damage:any){
       payload.append('bookingId', this.currentLeg?.bookingNumber);
 
       this.http.post(`${this.baseUrl}Vehicles/damages`, payload)
+<<<<<<< HEAD
       .subscribe({
         next: (result) => {
           const p = this.bookingService.currentLeg;
@@ -470,6 +474,12 @@ deleteDamage(damage:any){
             await this.showErrorAlert('Upload Failed', 'Failed to upload inspection data. Please try again.');
           }
         }
+=======
+      .subscribe((result) => {
+        const p = this.bookingService.currentLeg;
+      debugger;
+      this.router.navigateByUrl(`/replacement-agreement/${p.bookingNumber}/${p.mvaNumber}`);
+>>>>>>> 26e2ca35bcaa1a9cbf14da0be3607f6399af6fbf
       });
 
   }
